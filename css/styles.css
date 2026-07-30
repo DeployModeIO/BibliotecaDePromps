@@ -1214,6 +1214,38 @@ footer .hazard-line { opacity: .35; }
   border: 1px solid var(--line);
 }
 
+.chat-api-row {
+  display: flex; gap: .4rem;
+  padding: .4rem .7rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-2);
+  flex-shrink: 0;
+}
+.chat-api-key {
+  flex: 1;
+  font-family: var(--f-mono);
+  font-size: .66rem;
+  letter-spacing: .04em;
+  padding: .35rem .4rem;
+  background: var(--bg-1);
+  color: var(--txt);
+  border: 1px solid var(--line);
+}
+.chat-api-key:focus { outline: 1px solid var(--amber); }
+.chat-api-detect {
+  font-family: var(--f-mono);
+  font-size: .6rem;
+  letter-spacing: .06em;
+  padding: .3rem .6rem;
+  background: var(--bg-3);
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.chat-api-detect:hover { background: var(--amber-dim); }
+.chat-api-detect:disabled { opacity: .5; cursor: default; }
+
 .chat-conv-list {
   display: flex; gap: .3rem; overflow-x: auto;
   padding: .4rem .7rem;

@@ -14,11 +14,12 @@ const AIChat = (() => {
   ];
 
   const DEFAULT_PROVIDERS = [
-    { id: 'openai', name: 'OpenAI', endpoint: 'https://api.openai.com/v1/chat/completions', type: 'cloud', apiKey: '', models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'], defaultModel: 'gpt-4o-mini' },
+    { id: 'openai', name: 'OpenAI', endpoint: 'https://api.openai.com/v1/chat/completions', type: 'cloud', apiKey: '', models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'], defaultModel: 'gpt-4o-mini', modelsEndpoint: 'https://api.openai.com/v1/models' },
     { id: 'anthropic', name: 'Anthropic', endpoint: 'https://api.anthropic.com/v1/messages', type: 'cloud', apiKey: '', models: ['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229', 'claude-3-haiku-20240307'], defaultModel: 'claude-3-5-sonnet-20241022', headers: { 'anthropic-version': '2023-06-01' } },
-    { id: 'groq', name: 'Groq', endpoint: 'https://api.groq.com/openai/v1/chat/completions', type: 'cloud', apiKey: '', models: ['llama-3.1-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'], defaultModel: 'llama-3.1-70b-versatile' },
-    { id: 'deepseek', name: 'DeepSeek', endpoint: 'https://api.deepseek.com/v1/chat/completions', type: 'cloud', apiKey: '', models: ['deepseek-chat', 'deepseek-reasoner'], defaultModel: 'deepseek-chat' },
-    { id: 'openrouter', name: 'OpenRouter', endpoint: 'https://openrouter.ai/api/v1/chat/completions', type: 'cloud', apiKey: '', models: ['openai/gpt-4o', 'anthropic/claude-3.5-sonnet', 'google/gemini-2.0-flash'], defaultModel: 'openai/gpt-4o' },
+    { id: 'groq', name: 'Groq', endpoint: 'https://api.groq.com/openai/v1/chat/completions', type: 'cloud', apiKey: '', models: ['llama-3.1-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'], defaultModel: 'llama-3.1-70b-versatile', modelsEndpoint: 'https://api.groq.com/openai/v1/models' },
+    { id: 'deepseek', name: 'DeepSeek', endpoint: 'https://api.deepseek.com/v1/chat/completions', type: 'cloud', apiKey: '', models: ['deepseek-chat', 'deepseek-reasoner'], defaultModel: 'deepseek-chat', modelsEndpoint: 'https://api.deepseek.com/v1/models' },
+    { id: 'openrouter', name: 'OpenRouter', endpoint: 'https://openrouter.ai/api/v1/chat/completions', type: 'cloud', apiKey: '', models: ['openai/gpt-4o', 'anthropic/claude-3.5-sonnet', 'google/gemini-2.0-flash'], defaultModel: 'openai/gpt-4o', modelsEndpoint: 'https://openrouter.ai/api/v1/models' },
+    { id: 'alibaba', name: 'Alibaba Token Plan', endpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions', type: 'cloud', apiKey: '', models: ['qwen-max', 'qwen-plus', 'qwen-turbo', 'deepseek-r1', 'deepseek-v3', 'llama3-70b', 'qwen2.5-72b'], defaultModel: 'qwen-plus', modelsEndpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/models' },
   ];
 
   const state = {
@@ -110,6 +111,59 @@ const AIChat = (() => {
     return results;
   }
 
+  async function detectModels() {
+    const provider = state.providers.find(p => p.id === state.activeProvider);
+    if (!provider || !provider.apiKey) {
+      showToast('Ingrese una API Key primero');
+      return;
+    }
+    const modelsUrl = provider.modelsEndpoint || provider.endpoint.replace('/chat/completions', '/models');
+    el.detectModelsBtn.textContent = '...';
+    el.detectModelsBtn.disabled = true;
+    updateStatus('detectando modelos...');
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 8000);
+      const resp = await fetch(modelsUrl, {
+        headers: { 'Authorization': 'Bearer ' + provider.apiKey },
+        signal: ctrl.signal,
+      });
+      clearTimeout(t);
+      if (resp.ok) {
+        const data = await resp.json();
+        let models = [];
+        if (Array.isArray(data.data)) models = data.data.map(m => m.id || m.name || '').filter(Boolean);
+        else if (Array.isArray(data.models)) models = data.models.map(m => m.id || m.name || '').filter(Boolean);
+        else if (Array.isArray(data)) models = data.map(m => (typeof m === 'string' ? m : m.id || m.name || '')).filter(Boolean);
+        if (models.length) {
+          provider.models = models;
+          provider.defaultModel = models[0];
+          state.activeModel = models[0];
+          saveState();
+          renderModelSelect(provider);
+          el.modelSelect.value = state.activeModel;
+          updateStatus();
+          showToast('Detectados ' + models.length + ' modelos');
+        } else {
+          showToast('No se detectaron modelos — revise la API Key');
+        }
+      } else {
+        const errText = await resp.text().catch(() => '');
+        if (resp.status === 401 || resp.status === 403) {
+          showToast('API Key inválida o sin permisos');
+        } else {
+          showToast('Error ' + resp.status + ': ' + (errText.substring(0, 60) || 'sin respuesta'));
+        }
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') showToast('Timeout — endpoint no responde');
+      else showToast('Error de red: ' + err.message);
+    }
+    el.detectModelsBtn.textContent = 'Detectar';
+    el.detectModelsBtn.disabled = false;
+    updateStatus();
+  }
+
   function syncProviders() {
     const localProviders = state.autoDetectedLocal.map(l => ({
       id: 'local_' + l.name.toLowerCase().replace(/\s+/g, '_'),
@@ -124,12 +178,13 @@ const AIChat = (() => {
     }));
 
     const customProviders = state.providers.filter(p => p.type === 'custom');
-    const cloudPresets = state.providers.filter(p => p.type === 'cloud' && p.id !== 'openai' && p.id !== 'anthropic' && p.id !== 'groq' && p.id !== 'deepseek' && p.id !== 'openrouter');
+    const cloudPresets = state.providers.filter(p => p.type === 'cloud' && !['openai', 'anthropic', 'groq', 'deepseek', 'openrouter', 'alibaba'].includes(p.id));
     const hasOpenAI = state.providers.some(p => p.id === 'openai');
     const hasAnthropic = state.providers.some(p => p.id === 'anthropic');
     const hasGroq = state.providers.some(p => p.id === 'groq');
     const hasDeepSeek = state.providers.some(p => p.id === 'deepseek');
     const hasOpenRouter = state.providers.some(p => p.id === 'openrouter');
+    const hasAlibaba = state.providers.some(p => p.id === 'alibaba');
 
     const merged = [...localProviders];
 
@@ -138,6 +193,7 @@ const AIChat = (() => {
     if (!hasGroq) merged.push({ ...DEFAULT_PROVIDERS[2] });
     if (!hasDeepSeek) merged.push({ ...DEFAULT_PROVIDERS[3] });
     if (!hasOpenRouter) merged.push({ ...DEFAULT_PROVIDERS[4] });
+    if (!hasAlibaba) merged.push({ ...DEFAULT_PROVIDERS[5] });
 
     merged.push(...cloudPresets, ...customProviders);
 
@@ -343,6 +399,8 @@ const AIChat = (() => {
     el.convList = document.getElementById('aiConvList');
     el.saveFilesBtn = document.getElementById('aiSaveFiles');
     el.convDelAll = document.getElementById('aiConvDelAll');
+    el.apiKeyInput = document.getElementById('aiApiKey');
+    el.detectModelsBtn = document.getElementById('aiDetectModels');
   }
 
   function bindEvents() {
@@ -360,6 +418,14 @@ const AIChat = (() => {
     el.newConvBtn.addEventListener('click', () => newConversation());
     el.saveFilesBtn.addEventListener('click', () => saveCurrentFiles());
     if (el.convDelAll) el.convDelAll.addEventListener('click', () => deleteAllConversations());
+    el.apiKeyInput.addEventListener('input', () => {
+      const provider = state.providers.find(p => p.id === state.activeProvider);
+      if (provider && provider.type === 'cloud') {
+        provider.apiKey = el.apiKeyInput.value;
+        saveState();
+      }
+    });
+    el.detectModelsBtn.addEventListener('click', () => detectModels());
     el.configPanel.addEventListener('click', e => {
       if (e.target.closest('.ai-cfg-remove')) {
         const id = e.target.closest('.ai-cfg-remove').dataset.id;
@@ -398,6 +464,12 @@ const AIChat = (() => {
       renderModelSelect(provider);
       state.activeModel = provider.defaultModel || provider.models[0] || '';
       el.modelSelect.value = state.activeModel;
+      if (provider.type === 'cloud') {
+        el.apiKeyInput.value = provider.apiKey || '';
+        el.apiKeyInput.parentElement.style.display = '';
+      } else {
+        el.apiKeyInput.parentElement.style.display = 'none';
+      }
     }
     saveState();
     updateStatus();
@@ -630,9 +702,9 @@ const AIChat = (() => {
   function renderConfigList() {
     if (!el.configList) return;
     el.configList.innerHTML = '';
-    const cloudPresets = state.providers.filter(p => p.type === 'cloud' && ['openai', 'anthropic', 'groq', 'deepseek', 'openrouter'].includes(p.id));
+    const cloudPresets = state.providers.filter(p => p.type === 'cloud' && ['openai', 'anthropic', 'groq', 'deepseek', 'openrouter', 'alibaba'].includes(p.id));
     const custom = state.providers.filter(p => p.type === 'custom');
-    const otherCloud = state.providers.filter(p => p.type === 'cloud' && !['openai', 'anthropic', 'groq', 'deepseek', 'openrouter'].includes(p.id));
+    const otherCloud = state.providers.filter(p => p.type === 'cloud' && !['openai', 'anthropic', 'groq', 'deepseek', 'openrouter', 'alibaba'].includes(p.id));
     const all = [...cloudPresets, ...otherCloud, ...custom];
     if (!all.length) {
       el.configList.innerHTML = '<div class="ai-cfg-empty">Agregue proveedores personalizados con el botón +</div>';
