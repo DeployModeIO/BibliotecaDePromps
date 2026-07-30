@@ -34,6 +34,7 @@ const AIChat = (() => {
     detecting: false,
     saveDir: null,
     autoDetectedLocal: [],
+    maxTokens: 16384,
   };
 
   const el = {};
@@ -61,6 +62,7 @@ const AIChat = (() => {
     state.conversations = safeGet('conversations', {});
     state.activeConvId = safeGet('activeConvId', null);
     state.autoDetectedLocal = safeGet('autoDetectedLocal', []);
+    state.maxTokens = safeGet('maxTokens', 16384);
   }
 
   function saveState() {
@@ -70,6 +72,7 @@ const AIChat = (() => {
     safeSet('conversations', state.conversations);
     safeSet('activeConvId', state.activeConvId);
     safeSet('autoDetectedLocal', state.autoDetectedLocal);
+    safeSet('maxTokens', state.maxTokens);
   }
 
   function getActiveConv() {
@@ -270,7 +273,11 @@ const AIChat = (() => {
     const resp = await fetch(provider.endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: state.activeModel || provider.defaultModel, messages, stream: false }),
+      body: JSON.stringify({
+        model: state.activeModel || provider.defaultModel,
+        messages, stream: false,
+        options: { num_predict: state.maxTokens || 16384 },
+      }),
     });
     if (!resp.ok) throw new Error(await resp.text());
     const data = await resp.json();
@@ -303,7 +310,8 @@ const AIChat = (() => {
     const body = {
       model: state.activeModel || provider.defaultModel,
       messages,
-      max_tokens: 4096,
+      max_tokens: state.maxTokens || 16384,
+      temperature: 0.7,
     };
 
     const resp = await fetch(provider.endpoint, {
@@ -332,41 +340,29 @@ const AIChat = (() => {
   }
 
   async function saveGeneratedFiles(files) {
-    if (!state.saveDir) {
-      const handle = await selectSaveDir();
-      if (!handle) return fallbackDownload(files);
-    }
-
-    try {
-      const perm = await state.saveDir.queryPermission({ mode: 'readwrite' });
-      if (perm !== 'granted') {
-        const req = await state.saveDir.requestPermission({ mode: 'readwrite' });
-        if (req !== 'granted') return fallbackDownload(files);
-      }
-
-      for (const file of files) {
-        const parts = file.name.split('/');
-        let currentDir = state.saveDir;
-        for (let i = 0; i < parts.length - 1; i++) {
-          currentDir = await currentDir.getDirectoryHandle(parts[i], { create: true });
+    if (state.saveDir) {
+      try {
+        const perm = await state.saveDir.queryPermission({ mode: 'readwrite' });
+        if (perm !== 'granted') {
+          const req = await state.saveDir.requestPermission({ mode: 'readwrite' });
+          if (req !== 'granted') { downloadAsZip(files); return; }
         }
-        const fileHandle = await currentDir.getFileHandle(parts[parts.length - 1], { create: true });
-        const writable = await fileHandle.createWritable();
-        await writable.write(file.content);
-        await writable.close();
-      }
-      showToast('Guardado en: ' + state.saveDir.name + ' (' + files.length + ' archivos)');
-    } catch (err) {
-      fallbackDownload(files);
+        for (const file of files) {
+          const parts = file.name.split('/');
+          let currentDir = state.saveDir;
+          for (let i = 0; i < parts.length - 1; i++) {
+            currentDir = await currentDir.getDirectoryHandle(parts[i], { create: true });
+          }
+          const fileHandle = await currentDir.getFileHandle(parts[parts.length - 1], { create: true });
+          const writable = await fileHandle.createWritable();
+          await writable.write(file.content);
+          await writable.close();
+        }
+        showToast('Guardado en: ' + state.saveDir.name + ' (' + files.length + ' archivos)');
+        return;
+      } catch { downloadAsZip(files); return; }
     }
-  }
-
-  function fallbackDownload(files) {
-    if (files.length === 1) {
-      downloadFile(files[0].name, files[0].content);
-    } else {
-      downloadAsZip(files);
-    }
+    downloadAsZip(files);
   }
 
   function downloadFile(name, content) {
@@ -418,6 +414,7 @@ const AIChat = (() => {
     renderProviderSelect();
     renderMessages();
     renderConfigList();
+    if (el.maxTokensSelect) el.maxTokensSelect.value = String(state.maxTokens || 16384);
     bindEvents();
     if (!state.providers.length || state.autoDetectedLocal.length === 0) detectLocal();
     initialized = true;
@@ -446,6 +443,7 @@ const AIChat = (() => {
     el.apiKeyInput = document.getElementById('aiApiKey');
     el.detectModelsBtn = document.getElementById('aiDetectModels');
     el.rescanLocalBtn = document.getElementById('aiRescanLocal');
+    el.maxTokensSelect = document.getElementById('aiMaxTokens');
   }
 
   function bindEvents() {
@@ -472,6 +470,11 @@ const AIChat = (() => {
     });
     el.detectModelsBtn.addEventListener('click', () => detectModels());
     el.rescanLocalBtn.addEventListener('click', () => detectLocal());
+    el.maxTokensSelect.addEventListener('change', () => {
+      state.maxTokens = parseInt(el.maxTokensSelect.value, 10);
+      saveState();
+      showToast('Max tokens: ' + state.maxTokens.toLocaleString());
+    });
     el.configPanel.addEventListener('click', e => {
       if (e.target.closest('.ai-cfg-remove')) {
         const id = e.target.closest('.ai-cfg-remove').dataset.id;
