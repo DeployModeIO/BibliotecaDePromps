@@ -7,15 +7,18 @@ const AIChat = (() => {
   const LS_PREFIX = 'aichat_';
 
   const LOCAL_PROBES = [
-    { name: 'Ollama', url: 'http://localhost:11434/api/tags', modelsUrl: 'http://localhost:11434/api/tags', type: 'ollama' },
-    { name: 'LM Studio', url: 'http://localhost:1234/v1/models', modelsUrl: 'http://localhost:1234/v1/models', type: 'openai' },
-    { name: 'vLLM', url: 'http://localhost:8000/v1/models', modelsUrl: 'http://localhost:8000/v1/models', type: 'openai' },
-    { name: 'LocalAI', url: 'http://localhost:8080/v1/models', modelsUrl: 'http://localhost:8080/v1/models', type: 'openai' },
+    { name: 'Ollama', url: 'http://localhost:11434/api/tags', type: 'ollama', chatEndpoint: 'http://localhost:11434/api/chat' },
+    { name: 'LM Studio', url: 'http://localhost:1234/v1/models', type: 'openai', chatEndpoint: 'http://localhost:1234/v1/chat/completions' },
+    { name: 'vLLM', url: 'http://localhost:8000/v1/models', type: 'openai', chatEndpoint: 'http://localhost:8000/v1/chat/completions' },
+    { name: 'LocalAI', url: 'http://localhost:8080/v1/models', type: 'openai', chatEndpoint: 'http://localhost:8080/v1/chat/completions' },
+    { name: 'KoboldCpp', url: 'http://localhost:5001/api/v1/model', type: 'kobold', chatEndpoint: 'http://localhost:5001/api/v1/generate' },
+    { name: 'Text-Gen-WebUI', url: 'http://localhost:5000/v1/models', type: 'openai', chatEndpoint: 'http://localhost:5000/v1/chat/completions' },
+    { name: 'GPT4All', url: 'http://localhost:4891/v1/models', type: 'openai', chatEndpoint: 'http://localhost:4891/v1/chat/completions' },
   ];
 
   const DEFAULT_PROVIDERS = [
     { id: 'openai', name: 'OpenAI', endpoint: 'https://api.openai.com/v1/chat/completions', type: 'cloud', apiKey: '', models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'], defaultModel: 'gpt-4o-mini', modelsEndpoint: 'https://api.openai.com/v1/models' },
-    { id: 'anthropic', name: 'Anthropic', endpoint: 'https://api.anthropic.com/v1/messages', type: 'cloud', apiKey: '', models: ['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229', 'claude-3-haiku-20240307'], defaultModel: 'claude-3-5-sonnet-20241022', headers: { 'anthropic-version': '2023-06-01' } },
+    { id: 'anthropic', name: 'Anthropic', endpoint: 'https://api.anthropic.com/v1/messages', type: 'cloud', apiKey: '', models: ['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229', 'claude-3-haiku-20240307'], defaultModel: 'claude-3-5-sonnet-20241022', headers: { 'anthropic-version': '2023-06-01' }, modelsEndpoint: 'https://api.anthropic.com/v1/models', authType: 'x-api-key' },
     { id: 'groq', name: 'Groq', endpoint: 'https://api.groq.com/openai/v1/chat/completions', type: 'cloud', apiKey: '', models: ['llama-3.1-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'], defaultModel: 'llama-3.1-70b-versatile', modelsEndpoint: 'https://api.groq.com/openai/v1/models' },
     { id: 'deepseek', name: 'DeepSeek', endpoint: 'https://api.deepseek.com/v1/chat/completions', type: 'cloud', apiKey: '', models: ['deepseek-chat', 'deepseek-reasoner'], defaultModel: 'deepseek-chat', modelsEndpoint: 'https://api.deepseek.com/v1/models' },
     { id: 'openrouter', name: 'OpenRouter', endpoint: 'https://openrouter.ai/api/v1/chat/completions', type: 'cloud', apiKey: '', models: ['openai/gpt-4o', 'anthropic/claude-3.5-sonnet', 'google/gemini-2.0-flash'], defaultModel: 'openai/gpt-4o', modelsEndpoint: 'https://openrouter.ai/api/v1/models' },
@@ -81,12 +84,12 @@ const AIChat = (() => {
 
   async function detectLocal() {
     state.detecting = true;
-    updateStatus('detectando...');
+    updateStatus('escaneando locales...');
     const results = [];
     for (const probe of LOCAL_PROBES) {
       try {
         const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), 3000);
+        const t = setTimeout(() => ctrl.abort(), 5000);
         const resp = await fetch(probe.url, { signal: ctrl.signal });
         clearTimeout(t);
         if (resp.ok) {
@@ -95,39 +98,60 @@ const AIChat = (() => {
             const data = await resp.json();
             if (probe.type === 'ollama') {
               models = (data.models || data || []).map(m => m.name || m.model || m);
+            } else if (probe.type === 'kobold') {
+              models = [data.result || data.model || 'kobold-model'];
             } else {
               models = (data.data || data.models || data || []).map(m => m.id || m.name || m);
             }
-          } catch { /* ignore */ }
+          } catch { /* ignore parse errors */ }
           results.push({ ...probe, models, status: 'online' });
         }
-      } catch { /* offline */ }
+      } catch { /* offline or CORS */ }
     }
     state.autoDetectedLocal = results;
     state.detecting = false;
     syncProviders();
     saveState();
+    renderProviderSelect();
     updateStatus();
+    if (results.length) {
+      showToast('Locales detectados: ' + results.map(r => r.name).join(', '));
+    } else {
+      showToast('No se detectaron servidores locales');
+    }
     return results;
   }
 
   async function detectModels() {
     const provider = state.providers.find(p => p.id === state.activeProvider);
-    if (!provider || !provider.apiKey) {
+    if (!provider) {
+      showToast('Seleccione un proveedor primero');
+      return;
+    }
+    if (provider.isLocal) {
+      showToast('Proveedor local — modelos ya detectados automáticamente');
+      return;
+    }
+    if (!provider.apiKey) {
       showToast('Ingrese una API Key primero');
       return;
     }
-    const modelsUrl = provider.modelsEndpoint || provider.endpoint.replace('/chat/completions', '/models');
+    const modelsUrl = provider.modelsEndpoint || provider.endpoint.replace('/chat/completions', '/models').replace('/messages', '/models');
     el.detectModelsBtn.textContent = '...';
     el.detectModelsBtn.disabled = true;
     updateStatus('detectando modelos...');
     try {
+      const headers = {};
+      if (provider.authType === 'x-api-key') {
+        headers['x-api-key'] = provider.apiKey;
+      } else {
+        headers['Authorization'] = 'Bearer ' + provider.apiKey;
+      }
+      if (provider.headers) Object.assign(headers, provider.headers);
+
       const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 8000);
-      const resp = await fetch(modelsUrl, {
-        headers: { 'Authorization': 'Bearer ' + provider.apiKey },
-        signal: ctrl.signal,
-      });
+      const t = setTimeout(() => ctrl.abort(), 10000);
+      const resp = await fetch(modelsUrl, { headers, signal: ctrl.signal });
       clearTimeout(t);
       if (resp.ok) {
         const data = await resp.json();
@@ -143,21 +167,26 @@ const AIChat = (() => {
           renderModelSelect(provider);
           el.modelSelect.value = state.activeModel;
           updateStatus();
-          showToast('Detectados ' + models.length + ' modelos');
+          showToast('Detectados ' + models.length + ' modelos en ' + provider.name);
         } else {
-          showToast('No se detectaron modelos — revise la API Key');
+          showToast('Respuesta OK pero sin modelos — formato no reconocido');
         }
       } else {
         const errText = await resp.text().catch(() => '');
         if (resp.status === 401 || resp.status === 403) {
-          showToast('API Key inválida o sin permisos');
+          showToast('API Key inválida o sin permisos (' + resp.status + ')');
         } else {
-          showToast('Error ' + resp.status + ': ' + (errText.substring(0, 60) || 'sin respuesta'));
+          showToast('Error ' + resp.status + ': ' + (errText.substring(0, 80) || 'sin detalle'));
         }
       }
     } catch (err) {
-      if (err.name === 'AbortError') showToast('Timeout — endpoint no responde');
-      else showToast('Error de red: ' + err.message);
+      if (err.name === 'AbortError') {
+        showToast('Timeout (10s) — endpoint no responde');
+      } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        showToast('CORS bloqueado o sin red — use un proxy o API que permita browser');
+      } else {
+        showToast('Error: ' + err.message);
+      }
     }
     el.detectModelsBtn.textContent = 'Detectar';
     el.detectModelsBtn.disabled = false;
@@ -168,7 +197,7 @@ const AIChat = (() => {
     const localProviders = state.autoDetectedLocal.map(l => ({
       id: 'local_' + l.name.toLowerCase().replace(/\s+/g, '_'),
       name: l.name + ' (Local)',
-      endpoint: l.type === 'ollama' ? l.url.replace('/api/tags', '/api/chat') : l.url.replace('/models', '/chat/completions'),
+      endpoint: l.chatEndpoint,
       type: 'local',
       apiKey: 'local',
       models: l.models.length ? l.models : ['default'],
@@ -221,6 +250,8 @@ const AIChat = (() => {
       let response;
       if (provider.isLocal && provider.localType === 'ollama') {
         response = await callOllama(provider, conv);
+      } else if (provider.isLocal && provider.localType === 'kobold') {
+        response = await callKobold(provider, conv);
       } else {
         response = await callOpenAICompatible(provider, conv);
       }
@@ -249,12 +280,27 @@ const AIChat = (() => {
     return data.message?.content || data.response || JSON.stringify(data);
   }
 
+  async function callKobold(provider, conv) {
+    const lastUser = [...conv.messages].reverse().find(m => m.role === 'user');
+    const prompt = lastUser ? lastUser.content : '';
+    const resp = await fetch(provider.endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, max_length: 2048, temperature: 0.7 }),
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    const data = await resp.json();
+    return data.results?.[0]?.text || data.text || JSON.stringify(data);
+  }
+
   async function callOpenAICompatible(provider, conv) {
     const messages = conv.messages.filter(m => m.role !== 'assistant' || !m.content.startsWith('ERROR:')).map(m => ({ role: m.role, content: m.content }));
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + provider.apiKey,
-    };
+    const headers = { 'Content-Type': 'application/json' };
+    if (provider.authType === 'x-api-key') {
+      headers['x-api-key'] = provider.apiKey;
+    } else {
+      headers['Authorization'] = 'Bearer ' + provider.apiKey;
+    }
     if (provider.headers) Object.assign(headers, provider.headers);
 
     const body = {
@@ -401,6 +447,7 @@ const AIChat = (() => {
     el.convDelAll = document.getElementById('aiConvDelAll');
     el.apiKeyInput = document.getElementById('aiApiKey');
     el.detectModelsBtn = document.getElementById('aiDetectModels');
+    el.rescanLocalBtn = document.getElementById('aiRescanLocal');
   }
 
   function bindEvents() {
@@ -426,6 +473,7 @@ const AIChat = (() => {
       }
     });
     el.detectModelsBtn.addEventListener('click', () => detectModels());
+    el.rescanLocalBtn.addEventListener('click', () => detectLocal());
     el.configPanel.addEventListener('click', e => {
       if (e.target.closest('.ai-cfg-remove')) {
         const id = e.target.closest('.ai-cfg-remove').dataset.id;
