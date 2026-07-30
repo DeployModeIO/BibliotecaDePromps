@@ -1384,24 +1384,68 @@ footer .hazard-line { opacity: .35; }
   margin-bottom: .4rem;
 }
 .ai-cfg-item {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; flex-direction: column; gap: .35rem;
   font-family: var(--f-mono);
   font-size: .6rem;
-  padding: .3rem .5rem;
+  padding: .4rem .5rem;
   background: var(--bg-2);
   border: 1px solid var(--line);
   color: var(--txt-2);
 }
-.ai-cfg-remove {
-  background: none; border: none;
-  color: var(--red); cursor: pointer;
-  font-size: .7rem;
+.ai-cfg-info {
+  display: flex; flex-direction: column; gap: .1rem;
 }
+.ai-cfg-name { font-weight: 700; color: var(--txt); }
+.ai-cfg-endpoint { color: var(--txt-3); font-size: .56rem; }
+.ai-cfg-key-row {
+  display: flex; gap: .3rem; align-items: center;
+}
+.ai-cfg-key {
+  flex: 1;
+  font-family: var(--f-mono);
+  font-size: .6rem;
+  padding: .25rem .35rem;
+  background: var(--bg-1);
+  color: var(--txt);
+  border: 1px solid var(--line);
+}
+.ai-cfg-key:focus { outline: 1px solid var(--amber); }
+.ai-cfg-remove {
+  background: none; border: 1px solid var(--line);
+  color: var(--red); cursor: pointer;
+  font-size: .65rem; padding: .2rem .4rem;
+  flex-shrink: 0;
+}
+.ai-cfg-remove:hover { background: var(--red-dim); }
 .ai-cfg-empty {
   font-family: var(--f-mono);
   font-size: .6rem;
   color: var(--txt-3);
 }
+.ai-conv-del-all {
+  width: 100%;
+  font-family: var(--f-mono);
+  font-size: .58rem;
+  letter-spacing: .04em;
+  padding: .3rem .5rem;
+  background: none;
+  border: 1px dashed var(--red);
+  color: var(--red);
+  cursor: pointer;
+  margin-top: .2rem;
+  text-align: center;
+}
+.ai-conv-del-all:hover { background: var(--red-dim); }
+.ai-conv-del {
+  background: none; border: none;
+  color: var(--txt-3); cursor: pointer;
+  font-size: .6rem; padding: 0 .2rem;
+  flex-shrink: 0; opacity: 0;
+  transition: opacity .15s;
+}
+.ai-conv-item:hover .ai-conv-del { opacity: 1; }
+.ai-conv-del:hover { color: var(--red); }
+.ai-conv-label { cursor: pointer; overflow: hidden; text-overflow: ellipsis; }
 
 #chatScrim {
   position: fixed; inset: 0;

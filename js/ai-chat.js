@@ -342,6 +342,7 @@ const AIChat = (() => {
     el.newConvBtn = document.getElementById('aiNewConv');
     el.convList = document.getElementById('aiConvList');
     el.saveFilesBtn = document.getElementById('aiSaveFiles');
+    el.convDelAll = document.getElementById('aiConvDelAll');
   }
 
   function bindEvents() {
@@ -358,6 +359,7 @@ const AIChat = (() => {
     el.saveDirBtn.addEventListener('click', () => selectSaveDir());
     el.newConvBtn.addEventListener('click', () => newConversation());
     el.saveFilesBtn.addEventListener('click', () => saveCurrentFiles());
+    if (el.convDelAll) el.convDelAll.addEventListener('click', () => deleteAllConversations());
     el.configPanel.addEventListener('click', e => {
       if (e.target.closest('.ai-cfg-remove')) {
         const id = e.target.closest('.ai-cfg-remove').dataset.id;
@@ -514,16 +516,48 @@ const AIChat = (() => {
     renderConversations();
   }
 
+  function deleteConversation(id) {
+    delete state.conversations[id];
+    if (state.activeConvId === id) {
+      const remaining = Object.keys(state.conversations);
+      state.activeConvId = remaining.length ? remaining[remaining.length - 1] : null;
+    }
+    saveState();
+    renderMessages();
+    renderConversations();
+  }
+
+  function deleteAllConversations() {
+    if (!Object.keys(state.conversations).length) return;
+    state.conversations = {};
+    state.activeConvId = null;
+    saveState();
+    renderMessages();
+    renderConversations();
+    showToast('Todas las conversaciones eliminadas');
+  }
+
   function renderConversations() {
     if (!el.convList) return;
     el.convList.innerHTML = '';
-    Object.keys(state.conversations).sort((a, b) => state.conversations[b].createdAt - state.conversations[a].createdAt).forEach(id => {
+    const ids = Object.keys(state.conversations).sort((a, b) => state.conversations[b].createdAt - state.conversations[a].createdAt);
+    if (ids.length && el.convDelAll) el.convDelAll.style.display = 'flex';
+    else if (el.convDelAll) el.convDelAll.style.display = 'none';
+
+    ids.forEach(id => {
       const conv = state.conversations[id];
       const div = document.createElement('div');
       div.className = 'ai-conv-item' + (id === state.activeConvId ? ' active' : '');
       div.dataset.id = id;
-      div.innerHTML = '<span>' + escapeHtml(conv.title || 'Sin título') + '</span><span class="ai-conv-time">' + new Date(conv.createdAt).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + '</span>';
-      div.addEventListener('click', () => {
+      div.innerHTML = '<span class="ai-conv-label">' + escapeHtml(conv.title || 'Sin título') + '</span><span class="ai-conv-time">' + new Date(conv.createdAt).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + '</span><button class="ai-conv-del" data-id="' + id + '" title="Eliminar conversación">✕</button>';
+      div.querySelector('.ai-conv-label').addEventListener('click', () => {
+        state.activeConvId = id;
+        saveState();
+        renderMessages();
+        renderConversations();
+        scrollChat();
+      });
+      div.querySelector('.ai-conv-time').addEventListener('click', () => {
         state.activeConvId = id;
         saveState();
         renderMessages();
@@ -531,6 +565,13 @@ const AIChat = (() => {
         scrollChat();
       });
       el.convList.appendChild(div);
+    });
+
+    el.convList.querySelectorAll('.ai-conv-del').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteConversation(btn.dataset.id);
+      });
     });
   }
 
@@ -589,9 +630,10 @@ const AIChat = (() => {
   function renderConfigList() {
     if (!el.configList) return;
     el.configList.innerHTML = '';
+    const cloudPresets = state.providers.filter(p => p.type === 'cloud' && ['openai', 'anthropic', 'groq', 'deepseek', 'openrouter'].includes(p.id));
     const custom = state.providers.filter(p => p.type === 'custom');
-    const cloud = state.providers.filter(p => p.type === 'cloud' && !['openai', 'anthropic', 'groq', 'deepseek', 'openrouter'].includes(p.id));
-    const all = [...custom, ...cloud];
+    const otherCloud = state.providers.filter(p => p.type === 'cloud' && !['openai', 'anthropic', 'groq', 'deepseek', 'openrouter'].includes(p.id));
+    const all = [...cloudPresets, ...otherCloud, ...custom];
     if (!all.length) {
       el.configList.innerHTML = '<div class="ai-cfg-empty">Agregue proveedores personalizados con el botón +</div>';
       return;
@@ -599,8 +641,27 @@ const AIChat = (() => {
     all.forEach(p => {
       const div = document.createElement('div');
       div.className = 'ai-cfg-item';
-      div.innerHTML = '<span><b>' + escapeHtml(p.name) + '</b> · ' + escapeHtml(p.endpoint.substring(0, 40)) + '...</span><button class="ai-cfg-remove" data-id="' + p.id + '">✕</button>';
+      div.innerHTML =
+        '<div class="ai-cfg-info">' +
+        '<span class="ai-cfg-name">' + escapeHtml(p.name) + '</span>' +
+        '<span class="ai-cfg-endpoint">' + escapeHtml(p.endpoint.substring(0, 35)) + '...</span>' +
+        '</div>' +
+        '<div class="ai-cfg-key-row">' +
+        '<input type="password" class="ai-cfg-key" data-id="' + p.id + '" placeholder="API Key..." value="' + escapeHtml(p.apiKey || '') + '" autocomplete="off">' +
+        '<button class="ai-cfg-remove" data-id="' + p.id + '" title="Eliminar proveedor">✕</button>' +
+        '</div>';
       el.configList.appendChild(div);
+    });
+
+    el.configList.querySelectorAll('.ai-cfg-key').forEach(input => {
+      input.addEventListener('input', () => {
+        const id = input.dataset.id;
+        const provider = state.providers.find(p => p.id === id);
+        if (provider) {
+          provider.apiKey = input.value;
+          saveState();
+        }
+      });
     });
   }
 
