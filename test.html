@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test - Biblioteca de Promps</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #0c1220; color: #e9f0fa; }
+    .ok { color: #35d69a; }
+    .error { color: #ff5757; }
+    .info { color: #4cc3ff; }
+    pre { background: #111a2b; padding: 10px; border: 1px solid #22314b; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>Test de Carga de Datos</h1>
+  <div id="log"></div>
+
+  <script>
+    const log = document.getElementById('log');
+    function addLog(msg, type = 'info') {
+      const div = document.createElement('div');
+      div.className = type;
+      div.textContent = msg;
+      log.appendChild(div);
+    }
+
+    window.addEventListener('error', (e) => {
+      addLog('ERROR: ' + e.message, 'error');
+      addLog('  File: ' + e.filename + ':' + e.lineno, 'error');
+      console.error(e);
+    });
+
+    addLog('Iniciando carga de scripts...');
+  </script>
+
+  <script src="js/prompts-data.js"></script>
+  <script>
+    if (typeof PROMPTS_DB !== 'undefined') {
+      addLog('✓ PROMPTS_DB cargado: ' + PROMPTS_DB.categorias.length + ' categorías', 'ok');
+      let total = 0;
+      PROMPTS_DB.categorias.forEach(cat => {
+        cat.subcategorias.forEach(sub => {
+          total += sub.prompts.length;
+        });
+      });
+      addLog('  Total de prompts: ' + total, 'info');
+    } else {
+      addLog('✗ PROMPTS_DB no se cargó', 'error');
+    }
+  </script>
+
+  <script src="js/prompts-data-extra.js"></script>
+  <script>
+    if (typeof PROMPTS_DB_EXTRA !== 'undefined') {
+      addLog('✓ PROMPTS_DB_EXTRA cargado: ' + PROMPTS_DB_EXTRA.categorias.length + ' categorías', 'ok');
+      let total = 0;
+      PROMPTS_DB_EXTRA.categorias.forEach(cat => {
+        cat.subcategorias.forEach(sub => {
+          total += sub.prompts.length;
+        });
+      });
+      addLog('  Total de prompts extra: ' + total, 'info');
+    } else {
+      addLog('✗ PROMPTS_DB_EXTRA no se cargó', 'error');
+    }
+  </script>
+
+  <script src="js/app.js"></script>
+  <script>
+    if (typeof PromptLibrary !== 'undefined') {
+      addLog('✓ PromptLibrary class cargada', 'ok');
+    } else {
+      addLog('✗ PromptLibrary class no se cargó', 'error');
+    }
+
+    if (window.promptLibrary) {
+      addLog('✓ promptLibrary instance creada', 'ok');
+      addLog('  Categorías: ' + window.promptLibrary.data.categorias.length, 'info');
+      addLog('  Index size: ' + window.promptLibrary.index.size, 'info');
+    } else {
+      addLog('✗ promptLibrary instance no se creó', 'error');
+    }
+
+    addLog('\n=== Estructura de Categorías ===', 'info');
+    if (window.promptLibrary) {
+      window.promptLibrary.data.categorias.forEach(cat => {
+        const count = cat.subcategorias.reduce((sum, sub) => sum + sub.prompts.length, 0);
+        addLog(`  ${cat.icono} ${cat.nombre}: ${cat.subcategorias.length} subcategorías, ${count} prompts`, 'info');
+      });
+    }
+
+    addLog('\n✓ Test completado', 'ok');
+  </script>
+</body>
+</html>
