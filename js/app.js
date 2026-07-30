@@ -163,11 +163,11 @@ class PromptLibrary {
       statWords: $('statWords'), statStandards: $('statStandards'),
       clock: $('clock'), connStatus: $('connStatus'), connLabel: $('connLabel'),
       favToggle: $('favToggle'), histToggle: $('histToggle'), favCount: $('favCount'),
-      themeToggle: $('themeToggle'), installBtn: $('installBtn'),
+      themeToggle: $('themeToggle'), installBtn: $('installBtn'), chatBtn: $('chatToggle'),
       modal: $('promptModal'), modalStripe: $('modalStripe'), modalId: $('modalId'),
       modalPriority: $('modalPriority'), modalTitle: $('modalTitle'),
       modalMeta: $('modalMeta'), modalPromptText: $('modalPromptText'), modalClose: $('modalClose'),
-      copyBtn: $('copyBtn'), gptBtn: $('gptBtn'), claudeBtn: $('claudeBtn'),
+      copyBtn: $('copyBtn'), gptBtn: $('gptBtn'), claudeBtn: $('claudeBtn'), sendToChatBtn: $('sendToChatBtn'),
       favoriteBtn: $('favoriteBtn'), emailBtn: $('emailBtn'), pdfBtn: $('pdfBtn'), excelBtn: $('excelBtn'),
       platformChips: $('platformChips'),
       favDrawer: $('favDrawer'), histDrawer: $('histDrawer'),
@@ -186,6 +186,7 @@ class PromptLibrary {
     this.setupTheme();
     this.setupSW();
     this.updateFavBadge();
+    if (window.AIChat) window.AIChat.init();
     if (!SafeStore.available()) {
       setTimeout(() => this.showToast('⚠ Navegador bloquea almacenamiento — favoritos/historial no persistirán (baje los Shields de Brave)', ''), 800);
     }
@@ -250,6 +251,15 @@ class PromptLibrary {
     });
     this.el.gptBtn.addEventListener('click', () => this.openInAI('https://chatgpt.com/', 'ChatGPT'));
     this.el.claudeBtn.addEventListener('click', () => this.openInAI('https://claude.ai/new', 'Claude'));
+    this.el.sendToChatBtn.addEventListener('click', () => {
+      if (this.currentPrompt) {
+        this.closeModal();
+        if (window.AIChat) window.AIChat.sendPrompt(this.getFullPrompt());
+      }
+    });
+    this.el.chatBtn.addEventListener('click', () => {
+      if (window.AIChat) window.AIChat.openDrawer();
+    });
     this.el.favoriteBtn.addEventListener('click', () => {
       if (this.currentPrompt) this.toggleFavorite(this.currentPrompt);
     });

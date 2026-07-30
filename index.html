@@ -49,6 +49,7 @@
         <button class="icon-btn" id="histToggle" title="Historial de uso" aria-label="Ver historial">⏱</button>
         <button class="icon-btn" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema">◐</button>
         <button class="icon-btn" id="installBtn" title="Instalar aplicación" aria-label="Instalar aplicación" hidden>⬇</button>
+        <button class="icon-btn" id="chatToggle" title="Chat IA" aria-label="Abrir chat IA">💬</button>
       </div>
     </div>
     <div class="hazard-line hazard-amber"></div>
@@ -156,6 +157,7 @@
         <button class="btn btn-primary" id="copyBtn">⧉ Copiar Prompt</button>
         <button class="btn btn-ai" id="gptBtn" title="Copia el prompt y abre ChatGPT">↗ ChatGPT</button>
         <button class="btn btn-ai" id="claudeBtn" title="Copia el prompt y abre Claude">↗ Claude</button>
+        <button class="btn btn-chat" id="sendToChatBtn" title="Envía el prompt al chat IA lateral">💬 Enviar a Chat</button>
         <button class="btn btn-fav" id="favoriteBtn">☆ Favorito</button>
         <button class="btn" id="emailBtn">✉ Email</button>
         <button class="btn" id="pdfBtn">▤ PDF</button>
@@ -183,12 +185,69 @@
     <div class="drawer-list" id="histList"></div>
   </aside>
 
+  <div class="drawer-scrim" id="chatScrim"></div>
+
+  <aside class="chat-drawer" id="chatDrawer" aria-label="Chat IA">
+    <div class="chat-head">
+      <div class="chat-head-left">
+        <h3><span>💬</span> Chat IA</h3>
+        <span class="chat-status" id="chatStatus">Sin proveedor</span>
+      </div>
+      <div class="chat-head-right">
+        <button class="chat-head-btn" id="aiNewConv" title="Nueva conversación">+</button>
+        <button class="chat-head-btn" id="aiSaveFiles" title="Guardar archivos generados">💾</button>
+        <button class="drawer-close" id="chatClose" aria-label="Cerrar chat">✕</button>
+      </div>
+    </div>
+
+    <div class="chat-select-row">
+      <select id="aiProviderSelect" class="chat-select" aria-label="Proveedor IA">
+        <option value="">-- Detectar IA --</option>
+      </select>
+      <select id="aiModelSelect" class="chat-select" aria-label="Modelo">
+        <option value="">-- Modelo --</option>
+      </select>
+    </div>
+
+    <div class="chat-conv-list" id="aiConvList"></div>
+
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-empty">Envía un mensaje o pega un mega-prompt para comenzar</div>
+    </div>
+
+    <div class="chat-input-row">
+      <textarea id="chatInput" class="chat-input" placeholder="Escribe un mensaje o pega un mega-prompt..." rows="2" aria-label="Mensaje"></textarea>
+      <button class="chat-send" id="chatSend" aria-label="Enviar">➤</button>
+    </div>
+
+    <details class="chat-config" id="aiConfigPanel">
+      <summary>⚙ Configuración avanzada</summary>
+      <div class="chat-config-body">
+        <div class="ai-cfg-section">
+          <label>Carpeta de guardado</label>
+          <div class="ai-cfg-row">
+            <span class="ai-cfg-label" id="aiSaveDirLabel">No seleccionada</span>
+            <button class="ai-cfg-btn" id="aiSaveDirBtn">Seleccionar carpeta</button>
+          </div>
+        </div>
+        <div class="ai-cfg-section">
+          <label>Proveedores personalizados</label>
+          <div class="ai-cfg-list" id="aiConfigList"></div>
+          <button class="ai-cfg-btn" id="aiConfigAdd">+ Agregar proveedor</button>
+        </div>
+      </div>
+    </details>
+  </aside>
+
   <div class="toast" id="toast" role="status"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
   <script src="js/prompts-data.js"></script>
   <script src="js/prompts-data-extra.js"></script>
   <script src="js/prompts-data-v2.js"></script>
   <script src="js/platform-tests.js"></script>
+  <script src="js/ai-chat.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
