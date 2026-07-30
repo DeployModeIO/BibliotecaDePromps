@@ -206,25 +206,22 @@ const AIChat = (() => {
       localType: l.type,
     }));
 
+    const presetIds = DEFAULT_PROVIDERS.map(p => p.id);
     const customProviders = state.providers.filter(p => p.type === 'custom');
-    const cloudPresets = state.providers.filter(p => p.type === 'cloud' && !['openai', 'anthropic', 'groq', 'deepseek', 'openrouter', 'alibaba'].includes(p.id));
-    const hasOpenAI = state.providers.some(p => p.id === 'openai');
-    const hasAnthropic = state.providers.some(p => p.id === 'anthropic');
-    const hasGroq = state.providers.some(p => p.id === 'groq');
-    const hasDeepSeek = state.providers.some(p => p.id === 'deepseek');
-    const hasOpenRouter = state.providers.some(p => p.id === 'openrouter');
-    const hasAlibaba = state.providers.some(p => p.id === 'alibaba');
+    const otherCloud = state.providers.filter(p => p.type === 'cloud' && !presetIds.includes(p.id));
 
     const merged = [...localProviders];
 
-    if (!hasOpenAI) merged.push({ ...DEFAULT_PROVIDERS[0] });
-    if (!hasAnthropic) merged.push({ ...DEFAULT_PROVIDERS[1] });
-    if (!hasGroq) merged.push({ ...DEFAULT_PROVIDERS[2] });
-    if (!hasDeepSeek) merged.push({ ...DEFAULT_PROVIDERS[3] });
-    if (!hasOpenRouter) merged.push({ ...DEFAULT_PROVIDERS[4] });
-    if (!hasAlibaba) merged.push({ ...DEFAULT_PROVIDERS[5] });
+    DEFAULT_PROVIDERS.forEach(def => {
+      const saved = state.providers.find(p => p.id === def.id);
+      if (saved) {
+        merged.push({ ...def, apiKey: saved.apiKey || '', models: saved.models && saved.models.length > 1 ? saved.models : def.models });
+      } else {
+        merged.push({ ...def });
+      }
+    });
 
-    merged.push(...cloudPresets, ...customProviders);
+    merged.push(...otherCloud, ...customProviders);
 
     state.providers = merged;
   }
@@ -420,6 +417,7 @@ const AIChat = (() => {
     syncProviders();
     renderProviderSelect();
     renderMessages();
+    renderConfigList();
     bindEvents();
     if (!state.providers.length || state.autoDetectedLocal.length === 0) detectLocal();
     initialized = true;
