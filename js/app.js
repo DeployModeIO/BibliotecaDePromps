@@ -1,6 +1,7 @@
 /* ============================================================
    BIBLIOTECA DE PROMPS INDUSTRIALES — APP CORE v3.2
    ============================================================ */
+/* global PROMPTS_DB, PROMPTS_DB_EXTRA, PROMPTS_DB_V2 */
 
 const PLATFORM_SPECS = {
   web: {
@@ -535,7 +536,6 @@ class PromptLibrary {
     this.addToHistory(prompt);
 
     const words = this.wordCount(prompt.prompt);
-    const chars = prompt.prompt.length;
     const genTime = Math.max(2, Math.round(words / 180));
 
     this.el.modalStripe.className = 'modal-stripe p-' + prompt.prioridad;
@@ -624,15 +624,15 @@ class PromptLibrary {
     const meta = this.currentMeta;
     const subject = `Mega-Prompt Industrial: ${prompt.titulo}`;
     const header =
-      `MEGA-PROMPT INDUSTRIAL\n` +
-      `=====================================\n` +
+      'MEGA-PROMPT INDUSTRIAL\n' +
+      '=====================================\n' +
       `Título: ${prompt.titulo}\n` +
       `Sistema: ${meta ? meta.cat.nombre : ''}\n` +
       `Módulo: ${meta ? meta.sub.nombre : ''}\n` +
       `Prioridad: ${prompt.prioridad}\n` +
       `Uso: ${prompt.uso}\n` +
       `Tags: ${prompt.tags.join(', ')}\n` +
-      `=====================================\n\n`;
+      '=====================================\n\n';
 
     let body = header + this.getFullPrompt() + '\n\n---\nEnviado desde Biblioteca de Promps Industriales v3.2';
     const full = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -672,7 +672,7 @@ class PromptLibrary {
   </table>
   <div class="prompt">${this.esc(this.getFullPrompt())}</div>
   <div class="foot"><span>BIBLIOTECA DE PROMPS INDUSTRIALES · REV 3.2</span><span>${new Date().toLocaleString('es-CL')}</span></div>
-  <script>window.onload=function(){setTimeout(function(){window.print()},350)}<\/script>
+  <script>window.onload=function(){setTimeout(function(){window.print()},350)}</script>
 </body></html>`;
     this.printViaIframe(doc);
     this.showToast('✓ Generando PDF — use "Guardar como PDF" en el diálogo', 'ok');
@@ -707,8 +707,8 @@ class PromptLibrary {
     const rows = [
       ['ID', 'Título', 'Sistema', 'Módulo', 'Categoría', 'Prioridad', 'Frecuencia de Uso', 'Plataformas', 'Tags', 'Palabras', 'Prompt'],
       [prompt.id, prompt.titulo, meta ? meta.cat.nombre : '', meta ? meta.sub.nombre : '',
-       prompt.categoria, prompt.prioridad, prompt.uso, platforms, prompt.tags.join('; '),
-       this.wordCount(full), full]
+        prompt.categoria, prompt.prioridad, prompt.uso, platforms, prompt.tags.join('; '),
+        this.wordCount(full), full]
     ];
     const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -911,7 +911,9 @@ class PromptLibrary {
   setupSW() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
+        /* eslint-disable-next-line no-console */
         .then(() => console.log('[SW] registrado — modo offline listo'))
+        /* eslint-disable-next-line no-console */
         .catch(err => console.warn('[SW] fallo:', err));
     }
   }
