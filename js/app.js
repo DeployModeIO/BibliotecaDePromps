@@ -1,7 +1,7 @@
 /* ============================================================
    BIBLIOTECA DE PROMPS INDUSTRIALES — APP CORE v3.2
    ============================================================ */
-/* global PROMPTS_DB, PROMPTS_DB_EXTRA, PROMPTS_DB_V2 */
+/* global PROMPTS_DB, PROMPTS_DB_EXTRA, PROMPTS_DB_V2, PROMPTS_DB_FULLSTACK */
 
 const PLATFORM_SPECS = {
   web: {
@@ -114,6 +114,22 @@ class PromptLibrary {
           });
         } else {
           merged.categorias.push(v2Cat);
+        }
+      });
+    }
+    
+    // Fusionar PROMPTS_DB_FULLSTACK
+    if (typeof PROMPTS_DB_FULLSTACK !== 'undefined') {
+      PROMPTS_DB_FULLSTACK.categorias.forEach(fsCat => {
+        const existing = merged.categorias.find(c => c.id === fsCat.id);
+        if (existing) {
+          fsCat.subcategorias.forEach(sub => {
+            const existingSub = existing.subcategorias.find(s => s.id === sub.id);
+            if (existingSub) existingSub.prompts.push(...sub.prompts);
+            else existing.subcategorias.push(sub);
+          });
+        } else {
+          merged.categorias.push(fsCat);
         }
       });
     }
