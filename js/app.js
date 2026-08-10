@@ -398,10 +398,12 @@ class PromptLibrary {
 
   observeReveals(scope) {
     const els = scope.querySelectorAll('.reveal:not(.in)');
-    els.forEach(el => {
-      this.revealObserver.observe(el);
-      el.classList.add('in');
-    });
+    els.forEach(el => this.revealObserver.observe(el));
+    /* Safety net: if IntersectionObserver never fires (rare), force-reveal
+       after a short delay so content is never stuck invisible. */
+    setTimeout(() => {
+      scope.querySelectorAll('.reveal:not(.in)').forEach(el => el.classList.add('in'));
+    }, 600);
   }
 
   renderStats() {
@@ -968,5 +970,9 @@ class PromptLibrary {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  /* Only boot the full UI when its root element is present. This lets pages
+     like test.html load app.js just to verify the data/class without crashing
+     on the missing UI DOM. */
+  if (!document.getElementById('searchInput')) return;
   window.promptLibrary = new PromptLibrary();
 });
