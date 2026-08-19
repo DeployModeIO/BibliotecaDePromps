@@ -1576,7 +1576,7 @@ footer .hazard-line {
   max-width: 92vw;
   background: var(--bg-1);
   border-left: 1px solid var(--line);
-  z-index: 210;
+  z-index: 410;
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
@@ -2055,7 +2055,8 @@ footer .hazard-line {
 /* ============================================================
    SANDBOX PANEL — Live code preview
    ============================================================ */
-.sandbox-drawer {
+.sandbox-drawer,
+.sandbox-panel {
   position: fixed;
   top: 0;
   right: 0;
@@ -2065,7 +2066,7 @@ footer .hazard-line {
   height: 100vh;
   background: var(--bg-1);
   border-left: 1px solid var(--line);
-  z-index: 200;
+  z-index: 410;
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
