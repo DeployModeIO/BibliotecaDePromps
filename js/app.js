@@ -6,24 +6,24 @@
 const PLATFORM_SPECS = {
   web: {
     label: 'WEB',
-    spec: 'Aplicación web en un único archivo HTML/CSS/JavaScript. Responsive mobile-first. Compatible con Chrome, Firefox, Edge y Safari (últimas 2 versiones). Sin dependencias de backend; librerías solo vía CDN con fallback. Debe funcionar al abrir el archivo directamente (file://) o desde cualquier hosting estático.'
+    spec: 'Aplicación web en un único archivo HTML/CSS/JavaScript. Responsive mobile-first. Compatible con Chrome, Firefox, Edge y Safari (últimas 2 versiones). Sin dependencias de backend; librerías solo vía CDN con fallback. Debe funcionar al abrir el archivo directamente (file://) o desde cualquier hosting estático.',
   },
   android: {
     label: 'ANDROID',
-    spec: 'Instalable como PWA desde Chrome ("Agregar a pantalla de inicio") con manifest.json y service worker para funcionamiento offline. Como alternativa nativa, indicar cómo envolver con Capacitor (@capacitor/cli) para generar un APK. Diseño mobile-first, touch targets mínimos 48x48dp, soporte para notch y navegación por gestos.'
+    spec: 'Instalable como PWA desde Chrome ("Agregar a pantalla de inicio") con manifest.json y service worker para funcionamiento offline. Como alternativa nativa, indicar cómo envolver con Capacitor (@capacitor/cli) para generar un APK. Diseño mobile-first, touch targets mínimos 48x48dp, soporte para notch y navegación por gestos.',
   },
   ios: {
     label: 'IOS',
-    spec: 'Instalable como PWA desde Safari ("Agregar a pantalla de inicio"). Incluir meta tags apple-mobile-web-app-capable=yes, apple-mobile-web-app-status-bar-style=black-translucent y viewport-fit=cover para respetar safe-areas. Como alternativa nativa, indicar empaquetado con Capacitor para IPA. Soporte para iPhone y iPad.'
+    spec: 'Instalable como PWA desde Safari ("Agregar a pantalla de inicio"). Incluir meta tags apple-mobile-web-app-capable=yes, apple-mobile-web-app-status-bar-style=black-translucent y viewport-fit=cover para respetar safe-areas. Como alternativa nativa, indicar empaquetado con Capacitor para IPA. Soporte para iPhone y iPad.',
   },
   tablet: {
     label: 'TABLET',
-    spec: 'Layout responsive con breakpoints dedicados para tablets (768px–1280px). Interfaz optimizada para uso en campo: botones grandes (mínimo 56px), alto contraste, operable con guantes. Aprovechar pantalla ancha con layouts de 2-3 columnas. Compatible con iPad (Safari) y tablets Android (Chrome).'
+    spec: 'Layout responsive con breakpoints dedicados para tablets (768px–1280px). Interfaz optimizada para uso en campo: botones grandes (mínimo 56px), alto contraste, operable con guantes. Aprovechar pantalla ancha con layouts de 2-3 columnas. Compatible con iPad (Safari) y tablets Android (Chrome).',
   },
   windows: {
     label: 'WINDOWS',
-    spec: 'Instalable como PWA desde Edge o Chrome (botón "Instalar" en la barra de direcciones) con acceso offline vía service worker. Como alternativa de escritorio, indicar cómo empaquetar con Electron para generar un ejecutable .exe instalable. Optimizado para resoluciones 1366x768 y superiores, con soporte de teclado y atajos.'
-  }
+    spec: 'Instalable como PWA desde Edge o Chrome (botón "Instalar" en la barra de direcciones) con acceso offline vía service worker. Como alternativa de escritorio, indicar cómo empaquetar con Electron para generar un ejecutable .exe instalable. Optimizado para resoluciones 1366x768 y superiores, con soporte de teclado y atajos.',
+  },
 };
 const PLATFORM_KEYS = Object.keys(PLATFORM_SPECS);
 
@@ -46,16 +46,25 @@ const SafeStore = {
   },
   get(key) {
     if (this.available()) {
-      try { return localStorage.getItem(key); } catch (e) { /* ignore */ }
+      try {
+        return localStorage.getItem(key);
+      } catch (e) {
+        /* ignore */
+      }
     }
     return key in this._mem ? this._mem[key] : null;
   },
   set(key, val) {
     if (this.available()) {
-      try { localStorage.setItem(key, val); return; } catch (e) { /* ignore */ }
+      try {
+        localStorage.setItem(key, val);
+        return;
+      } catch (e) {
+        /* ignore */
+      }
     }
     this._mem[key] = val;
-  }
+  },
 };
 
 class PromptLibrary {
@@ -65,8 +74,10 @@ class PromptLibrary {
     this.buildIndex();
 
     this.state = {
-      q: '', priority: null, type: null,
-      platforms: new Set(this.load('platforms', ['web']))
+      q: '',
+      priority: null,
+      type: null,
+      platforms: new Set(this.load('platforms', ['web'])),
     };
     this.currentCategory = null;
     this.currentPrompt = null;
@@ -85,14 +96,14 @@ class PromptLibrary {
 
   mergeData() {
     const merged = JSON.parse(JSON.stringify(PROMPTS_DB));
-    
+
     // Fusionar PROMPTS_DB_EXTRA
     if (typeof PROMPTS_DB_EXTRA !== 'undefined') {
-      PROMPTS_DB_EXTRA.categorias.forEach(extraCat => {
-        const existing = merged.categorias.find(c => c.id === extraCat.id);
+      PROMPTS_DB_EXTRA.categorias.forEach((extraCat) => {
+        const existing = merged.categorias.find((c) => c.id === extraCat.id);
         if (existing) {
-          extraCat.subcategorias.forEach(sub => {
-            const existingSub = existing.subcategorias.find(s => s.id === sub.id);
+          extraCat.subcategorias.forEach((sub) => {
+            const existingSub = existing.subcategorias.find((s) => s.id === sub.id);
             if (existingSub) existingSub.prompts.push(...sub.prompts);
             else existing.subcategorias.push(sub);
           });
@@ -101,14 +112,14 @@ class PromptLibrary {
         }
       });
     }
-    
+
     // Fusionar PROMPTS_DB_V2
     if (typeof PROMPTS_DB_V2 !== 'undefined') {
-      PROMPTS_DB_V2.categorias.forEach(v2Cat => {
-        const existing = merged.categorias.find(c => c.id === v2Cat.id);
+      PROMPTS_DB_V2.categorias.forEach((v2Cat) => {
+        const existing = merged.categorias.find((c) => c.id === v2Cat.id);
         if (existing) {
-          v2Cat.subcategorias.forEach(sub => {
-            const existingSub = existing.subcategorias.find(s => s.id === sub.id);
+          v2Cat.subcategorias.forEach((sub) => {
+            const existingSub = existing.subcategorias.find((s) => s.id === sub.id);
             if (existingSub) existingSub.prompts.push(...sub.prompts);
             else existing.subcategorias.push(sub);
           });
@@ -117,14 +128,14 @@ class PromptLibrary {
         }
       });
     }
-    
+
     // Fusionar PROMPTS_DB_FULLSTACK
     if (typeof PROMPTS_DB_FULLSTACK !== 'undefined') {
-      PROMPTS_DB_FULLSTACK.categorias.forEach(fsCat => {
-        const existing = merged.categorias.find(c => c.id === fsCat.id);
+      PROMPTS_DB_FULLSTACK.categorias.forEach((fsCat) => {
+        const existing = merged.categorias.find((c) => c.id === fsCat.id);
         if (existing) {
-          fsCat.subcategorias.forEach(sub => {
-            const existingSub = existing.subcategorias.find(s => s.id === sub.id);
+          fsCat.subcategorias.forEach((sub) => {
+            const existingSub = existing.subcategorias.find((s) => s.id === sub.id);
             if (existingSub) existingSub.prompts.push(...sub.prompts);
             else existing.subcategorias.push(sub);
           });
@@ -133,14 +144,14 @@ class PromptLibrary {
         }
       });
     }
-    
+
     return merged;
   }
 
   buildIndex() {
-    this.data.categorias.forEach(cat => {
-      cat.subcategorias.forEach(sub => {
-        sub.prompts.forEach(p => {
+    this.data.categorias.forEach((cat) => {
+      cat.subcategorias.forEach((sub) => {
+        sub.prompts.forEach((p) => {
           this.index.set(p.id, { prompt: p, cat, sub });
         });
       });
@@ -149,9 +160,7 @@ class PromptLibrary {
 
   allPrompts() {
     const out = [];
-    this.data.categorias.forEach(cat =>
-      cat.subcategorias.forEach(sub =>
-        sub.prompts.forEach(p => out.push({ p, cat, sub }))));
+    this.data.categorias.forEach((cat) => cat.subcategorias.forEach((sub) => sub.prompts.forEach((p) => out.push({ p, cat, sub }))));
     return out;
   }
 
@@ -159,36 +168,71 @@ class PromptLibrary {
     try {
       const raw = SafeStore.get(key);
       return raw ? JSON.parse(raw) : fallback;
-    } catch (e) { return fallback; }
+    } catch (e) {
+      return fallback;
+    }
   }
 
   save(key, val) {
-    try { SafeStore.set(key, JSON.stringify(val)); } catch (e) { /* ignore */ }
+    try {
+      SafeStore.set(key, JSON.stringify(val));
+    } catch (e) {
+      /* ignore */
+    }
   }
 
   /* ---------- dom ---------- */
 
   cacheDom() {
-    const $ = id => document.getElementById(id);
+    const $ = (id) => document.getElementById(id);
     this.el = {
-      searchInput: $('searchInput'), filterBar: $('filterBar'),
-      homeView: $('homeView'), categoriesGrid: $('categoriesGrid'), catCount: $('catCount'),
-      categoryView: $('categoryView'), catBanner: $('catBanner'), promptsList: $('promptsList'),
-      resultsView: $('resultsView'), resultsList: $('resultsList'), resultsCount: $('resultsCount'),
-      statPrompts: $('statPrompts'), statIndustries: $('statIndustries'),
-      statWords: $('statWords'), statStandards: $('statStandards'),
-      clock: $('clock'), connStatus: $('connStatus'), connLabel: $('connLabel'),
-      favToggle: $('favToggle'), histToggle: $('histToggle'), favCount: $('favCount'),
-      themeToggle: $('themeToggle'), installBtn: $('installBtn'), chatBtn: $('chatToggle'),
-      modal: $('promptModal'), modalStripe: $('modalStripe'), modalId: $('modalId'),
-      modalPriority: $('modalPriority'), modalTitle: $('modalTitle'),
-      modalMeta: $('modalMeta'), modalPromptText: $('modalPromptText'), modalClose: $('modalClose'),
-      copyBtn: $('copyBtn'), gptBtn: $('gptBtn'), claudeBtn: $('claudeBtn'), sendToChatBtn: $('sendToChatBtn'),
-      favoriteBtn: $('favoriteBtn'), emailBtn: $('emailBtn'), pdfBtn: $('pdfBtn'), excelBtn: $('excelBtn'),
+      searchInput: $('searchInput'),
+      filterBar: $('filterBar'),
+      homeView: $('homeView'),
+      categoriesGrid: $('categoriesGrid'),
+      catCount: $('catCount'),
+      categoryView: $('categoryView'),
+      catBanner: $('catBanner'),
+      promptsList: $('promptsList'),
+      resultsView: $('resultsView'),
+      resultsList: $('resultsList'),
+      resultsCount: $('resultsCount'),
+      statPrompts: $('statPrompts'),
+      statIndustries: $('statIndustries'),
+      statWords: $('statWords'),
+      statStandards: $('statStandards'),
+      clock: $('clock'),
+      connStatus: $('connStatus'),
+      connLabel: $('connLabel'),
+      favToggle: $('favToggle'),
+      histToggle: $('histToggle'),
+      favCount: $('favCount'),
+      themeToggle: $('themeToggle'),
+      installBtn: $('installBtn'),
+      chatBtn: $('chatToggle'),
+      modal: $('promptModal'),
+      modalStripe: $('modalStripe'),
+      modalId: $('modalId'),
+      modalPriority: $('modalPriority'),
+      modalTitle: $('modalTitle'),
+      modalMeta: $('modalMeta'),
+      modalPromptText: $('modalPromptText'),
+      modalClose: $('modalClose'),
+      copyBtn: $('copyBtn'),
+      gptBtn: $('gptBtn'),
+      claudeBtn: $('claudeBtn'),
+      sendToChatBtn: $('sendToChatBtn'),
+      favoriteBtn: $('favoriteBtn'),
+      emailBtn: $('emailBtn'),
+      pdfBtn: $('pdfBtn'),
+      excelBtn: $('excelBtn'),
       platformChips: $('platformChips'),
-      favDrawer: $('favDrawer'), histDrawer: $('histDrawer'),
-      favList: $('favList'), histList: $('histList'), drawerScrim: $('drawerScrim'),
-      toast: $('toast')
+      favDrawer: $('favDrawer'),
+      histDrawer: $('histDrawer'),
+      favList: $('favList'),
+      histList: $('histList'),
+      drawerScrim: $('drawerScrim'),
+      toast: $('toast'),
     };
   }
 
@@ -204,44 +248,55 @@ class PromptLibrary {
     this.updateFavBadge();
     if (window.AIChat) window.AIChat.init();
     if (!SafeStore.available()) {
-      setTimeout(() => this.showToast('⚠ Navegador bloquea almacenamiento — favoritos/historial no persistirán (baje los Shields de Brave)', ''), 800);
+      setTimeout(
+        () => this.showToast('⚠ Navegador bloquea almacenamiento — favoritos/historial no persistirán (baje los Shields de Brave)', ''),
+        800
+      );
     }
   }
 
   /* ---------- events ---------- */
 
   bindEvents() {
-    this.el.searchInput.addEventListener('input', e => {
+    this.el.searchInput.addEventListener('input', (e) => {
       this.state.q = e.target.value.trim().toLowerCase();
       this.applyState();
     });
 
-    this.el.filterBar.addEventListener('click', e => this.onFilterClick(e));
+    this.el.filterBar.addEventListener('click', (e) => this.onFilterClick(e));
 
-    this.el.categoriesGrid.addEventListener('click', e => {
+    this.el.categoriesGrid.addEventListener('click', (e) => {
       const panel = e.target.closest('.cat-panel');
       if (panel) this.openCategory(panel.dataset.id);
     });
 
-    this.el.categoryView.addEventListener('click', e => {
-      if (e.target.closest('#backBtn')) { this.goHome(); return; }
+    this.el.categoryView.addEventListener('click', (e) => {
+      if (e.target.closest('#backBtn')) {
+        this.goHome();
+        return;
+      }
       const card = e.target.closest('.pcard');
       if (card) this.openPromptById(card.dataset.id);
     });
 
-    this.el.resultsList.addEventListener('click', e => {
+    this.el.resultsList.addEventListener('click', (e) => {
       const card = e.target.closest('.pcard');
       if (card) this.openPromptById(card.dataset.id);
     });
 
-    this.el.favToggle.addEventListener('click', () => { this.renderFavList(); this.openDrawer('fav'); });
-    this.el.histToggle.addEventListener('click', () => { this.renderHistList(); this.openDrawer('hist'); });
+    this.el.favToggle.addEventListener('click', () => {
+      this.renderFavList();
+      this.openDrawer('fav');
+    });
+    this.el.histToggle.addEventListener('click', () => {
+      this.renderHistList();
+      this.openDrawer('hist');
+    });
     this.el.drawerScrim.addEventListener('click', () => this.closeDrawers());
-    document.querySelectorAll('[data-close-drawer]').forEach(b =>
-      b.addEventListener('click', () => this.closeDrawers()));
+    document.querySelectorAll('[data-close-drawer]').forEach((b) => b.addEventListener('click', () => this.closeDrawers()));
 
-    [this.el.favList, this.el.histList].forEach(list => {
-      list.addEventListener('click', e => {
+    [this.el.favList, this.el.histList].forEach((list) => {
+      list.addEventListener('click', (e) => {
         const x = e.target.closest('.di-x');
         const item = e.target.closest('.drawer-item');
         if (!item) return;
@@ -259,7 +314,9 @@ class PromptLibrary {
     this.el.installBtn.addEventListener('click', () => this.install());
 
     this.el.modalClose.addEventListener('click', () => this.closeModal());
-    this.el.modal.addEventListener('click', e => { if (e.target === this.el.modal) this.closeModal(); });
+    this.el.modal.addEventListener('click', (e) => {
+      if (e.target === this.el.modal) this.closeModal();
+    });
 
     this.el.copyBtn.addEventListener('click', () => {
       if (!this.currentPrompt) return;
@@ -279,22 +336,28 @@ class PromptLibrary {
     this.el.favoriteBtn.addEventListener('click', () => {
       if (this.currentPrompt) this.toggleFavorite(this.currentPrompt);
     });
-    this.el.emailBtn.addEventListener('click', () => { if (this.currentPrompt) this.sendByEmail(this.currentPrompt); });
-    this.el.pdfBtn.addEventListener('click', () => { if (this.currentPrompt) this.exportToPDF(this.currentPrompt); });
-    this.el.excelBtn.addEventListener('click', () => { if (this.currentPrompt) this.exportToExcel(this.currentPrompt); });
+    this.el.emailBtn.addEventListener('click', () => {
+      if (this.currentPrompt) this.sendByEmail(this.currentPrompt);
+    });
+    this.el.pdfBtn.addEventListener('click', () => {
+      if (this.currentPrompt) this.exportToPDF(this.currentPrompt);
+    });
+    this.el.excelBtn.addEventListener('click', () => {
+      if (this.currentPrompt) this.exportToExcel(this.currentPrompt);
+    });
 
-    this.el.platformChips.addEventListener('click', e => this.onPlatformClick(e));
+    this.el.platformChips.addEventListener('click', (e) => this.onPlatformClick(e));
 
     window.addEventListener('online', () => this.updateConn());
     window.addEventListener('offline', () => this.updateConn());
 
-    window.addEventListener('beforeinstallprompt', e => {
+    window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       this.deferredPrompt = e;
       this.el.installBtn.hidden = false;
     });
 
-    document.addEventListener('keydown', e => this.onKeydown(e));
+    document.addEventListener('keydown', (e) => this.onKeydown(e));
   }
 
   onKeydown(e) {
@@ -306,9 +369,13 @@ class PromptLibrary {
       return;
     }
     if (e.key === 'Escape') {
-      if (this.el.modal.classList.contains('active')) { this.closeModal(); return; }
+      if (this.el.modal.classList.contains('active')) {
+        this.closeModal();
+        return;
+      }
       if (this.el.favDrawer.classList.contains('active') || this.el.histDrawer.classList.contains('active')) {
-        this.closeDrawers(); return;
+        this.closeDrawers();
+        return;
       }
       if (this.el.searchInput.value) {
         this.el.searchInput.value = '';
@@ -336,7 +403,7 @@ class PromptLibrary {
   }
 
   syncChips() {
-    this.el.filterBar.querySelectorAll('.chip').forEach(chip => {
+    this.el.filterBar.querySelectorAll('.chip').forEach((chip) => {
       let on = false;
       if (chip.hasAttribute('data-reset')) on = !this.state.priority && !this.state.type;
       else if (chip.dataset.priority) on = this.state.priority === chip.dataset.priority;
@@ -377,32 +444,38 @@ class PromptLibrary {
   /* ---------- rendering ---------- */
 
   esc(s) {
-    return String(s).replace(/[&<>"']/g, m =>
-      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    return String(s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
   }
 
-  fmt(n) { return n.toLocaleString('es-CL'); }
+  fmt(n) {
+    return n.toLocaleString('es-CL');
+  }
 
-  wordCount(text) { return text.split(/\s+/).filter(Boolean).length; }
+  wordCount(text) {
+    return text.split(/\s+/).filter(Boolean).length;
+  }
 
   setupReveal() {
-    this.revealObserver = new IntersectionObserver(entries => {
-      entries.forEach(en => {
-        if (en.isIntersecting) {
-          en.target.classList.add('in');
-          this.revealObserver.unobserve(en.target);
-        }
-      });
-    }, { threshold: 0.08 });
+    this.revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            en.target.classList.add('in');
+            this.revealObserver.unobserve(en.target);
+          }
+        });
+      },
+      { threshold: 0.08 }
+    );
   }
 
   observeReveals(scope) {
     const els = scope.querySelectorAll('.reveal:not(.in)');
-    els.forEach(el => this.revealObserver.observe(el));
+    els.forEach((el) => this.revealObserver.observe(el));
     /* Safety net: if IntersectionObserver never fires (rare), force-reveal
        after a short delay so content is never stuck invisible. */
     setTimeout(() => {
-      scope.querySelectorAll('.reveal:not(.in)').forEach(el => el.classList.add('in'));
+      scope.querySelectorAll('.reveal:not(.in)').forEach((el) => el.classList.add('in'));
     }, 600);
   }
 
@@ -419,7 +492,7 @@ class PromptLibrary {
 
   animateCount(el, target, dur = 1000) {
     const start = performance.now();
-    const step = now => {
+    const step = (now) => {
       const t = Math.min((now - start) / dur, 1);
       const eased = 1 - Math.pow(1 - t, 3);
       el.textContent = this.fmt(Math.round(target * eased));
@@ -455,7 +528,7 @@ class PromptLibrary {
   }
 
   openCategory(id) {
-    this.currentCategory = this.data.categorias.find(c => c.id === id) || null;
+    this.currentCategory = this.data.categorias.find((c) => c.id === id) || null;
     if (!this.currentCategory) return;
     this.applyState();
     requestAnimationFrame(() => {
@@ -488,7 +561,7 @@ class PromptLibrary {
       </div>`;
 
     this.el.promptsList.innerHTML = '';
-    cat.subcategorias.forEach(sub => {
+    cat.subcategorias.forEach((sub) => {
       const head = document.createElement('div');
       head.className = 'sub-head';
       head.innerHTML = `${this.esc(sub.nombre)} <span class="n">(${sub.prompts.length})</span>`;
@@ -505,7 +578,7 @@ class PromptLibrary {
   }
 
   renderResults() {
-    const matches = this.allPrompts().filter(e => this.matches(e));
+    const matches = this.allPrompts().filter((e) => this.matches(e));
     this.el.resultsCount.textContent = matches.length + ' COINCIDENCIAS';
     this.el.resultsList.innerHTML = '';
 
@@ -543,7 +616,10 @@ class PromptLibrary {
           <span>≡ <b>${this.fmt(words)}</b> PALABRAS</span>
         </div>
         <div class="pcard-tags">
-          ${p.tags.slice(0, 4).map(t => `<span class="tag">${this.esc(t)}</span>`).join('')}
+          ${p.tags
+    .slice(0, 4)
+    .map((t) => `<span class="tag">${this.esc(t)}</span>`)
+    .join('')}
         </div>
       </div>
       <div class="pcard-cta">VER PROMPT →</div>`;
@@ -596,7 +672,11 @@ class PromptLibrary {
     this.currentPrompt = null;
     this.currentMeta = null;
     if (this._lastFocused && this._lastFocused.focus) {
-      try { this._lastFocused.focus(); } catch (e) { /* ignore */ }
+      try {
+        this._lastFocused.focus();
+      } catch (e) {
+        /* ignore */
+      }
     }
     this._lastFocused = null;
   }
@@ -608,8 +688,13 @@ class PromptLibrary {
     const last = focusable[focusable.length - 1];
     el.addEventListener('keydown', (e) => {
       if (e.key !== 'Tab') return;
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
   }
 
@@ -626,14 +711,21 @@ class PromptLibrary {
       ta.style.cssText = 'position:fixed;opacity:0';
       document.body.appendChild(ta);
       ta.select();
-      try { ok = document.execCommand('copy'); } catch { ok = false; }
+      try {
+        ok = document.execCommand('copy');
+      } catch {
+        ok = false;
+      }
       ta.remove();
     }
     if (ok && btn) {
       const original = btn.innerHTML;
       btn.classList.add('copied');
       btn.innerHTML = '✓ COPIADO';
-      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1600);
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = original;
+      }, 1600);
     }
     this.showToast(ok ? '✓ Mega-prompt copiado al portapapeles' : '✕ No se pudo copiar', ok ? 'ok' : 'error');
     return ok;
@@ -643,9 +735,10 @@ class PromptLibrary {
     if (!this.currentPrompt) return;
     const ok = await this.copyText(this.getFullPrompt(), null);
     window.open(url, '_blank', 'noopener');
-    this.showToast(ok
-      ? `✓ Prompt copiado — péguelo en ${name} (pestaña abierta)`
-      : `↗ ${name} abierto — copie el prompt manualmente`, ok ? 'ok' : '');
+    this.showToast(
+      ok ? `✓ Prompt copiado — péguelo en ${name} (pestaña abierta)` : `↗ ${name} abierto — copie el prompt manualmente`,
+      ok ? 'ok' : ''
+    );
   }
 
   sendByEmail(prompt) {
@@ -667,7 +760,8 @@ class PromptLibrary {
 
     if (full.length > 8000) {
       this.copyText(this.getFullPrompt(), null);
-      body = header + '[PROMPT COMPLETO COPIADO AL PORTAPAPELES — PÉGUELO AQUÍ]\n\n---\nEnviado desde Biblioteca de Promps Industriales v3.2';
+      body =
+        header + '[PROMPT COMPLETO COPIADO AL PORTAPAPELES — PÉGUELO AQUÍ]\n\n---\nEnviado desde Biblioteca de Promps Industriales v3.2';
       this.showToast('✓ Prompt copiado — péguelo en el correo (demasiado largo para mailto)', 'ok');
     } else {
       this.showToast('✓ Abriendo cliente de correo…', 'ok');
@@ -731,14 +825,26 @@ class PromptLibrary {
   exportToExcel(prompt) {
     const meta = this.currentMeta;
     const full = this.getFullPrompt();
-    const platforms = PLATFORM_KEYS.filter(k => this.state.platforms.has(k)).map(k => PLATFORM_SPECS[k].label).join('; ');
+    const platforms = PLATFORM_KEYS.filter((k) => this.state.platforms.has(k))
+      .map((k) => PLATFORM_SPECS[k].label)
+      .join('; ');
     const rows = [
       ['ID', 'Título', 'Sistema', 'Módulo', 'Categoría', 'Prioridad', 'Frecuencia de Uso', 'Plataformas', 'Tags', 'Palabras', 'Prompt'],
-      [prompt.id, prompt.titulo, meta ? meta.cat.nombre : '', meta ? meta.sub.nombre : '',
-        prompt.categoria, prompt.prioridad, prompt.uso, platforms, prompt.tags.join('; '),
-        this.wordCount(full), full]
+      [
+        prompt.id,
+        prompt.titulo,
+        meta ? meta.cat.nombre : '',
+        meta ? meta.sub.nombre : '',
+        prompt.categoria,
+        prompt.prioridad,
+        prompt.uso,
+        platforms,
+        prompt.tags.join('; '),
+        this.wordCount(full),
+        full,
+      ],
     ];
-    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -758,28 +864,28 @@ class PromptLibrary {
   }
 
   platformDirective() {
-    const sel = PLATFORM_KEYS.filter(k => this.state.platforms.has(k));
+    const sel = PLATFORM_KEYS.filter((k) => this.state.platforms.has(k));
     if (!sel.length) return '';
-    const lines = sel.map(k => `• ${PLATFORM_SPECS[k].label}: ${PLATFORM_SPECS[k].spec}`);
+    const lines = sel.map((k) => `• ${PLATFORM_SPECS[k].label}: ${PLATFORM_SPECS[k].spec}`);
     return [
       '=====================================',
       'REQUERIMIENTO DE COMPATIBILIDAD MULTIPLATAFORMA',
       '=====================================',
-      `La aplicación generada DEBE ser 100% funcional en: ${sel.map(k => PLATFORM_SPECS[k].label).join(', ')}.`,
+      `La aplicación generada DEBE ser 100% funcional en: ${sel.map((k) => PLATFORM_SPECS[k].label).join(', ')}.`,
       '',
       'ESPECIFICACIONES POR PLATAFORMA:',
       ...lines,
       '',
       'ENTREGABLE ADICIONAL:',
       'Además del código completo, incluye al final una sección "GUÍA DE INSTALACIÓN MULTIPLATAFORMA" con los pasos exactos para desplegar y ejecutar la aplicación en cada una de las plataformas listadas arriba.',
-      'Si una plataforma requiere empaquetado nativo (APK / IPA / EXE), proporciona los comandos y la configuración necesaria (Capacitor / Electron) lista para ejecutar.'
+      'Si una plataforma requiere empaquetado nativo (APK / IPA / EXE), proporciona los comandos y la configuración necesaria (Capacitor / Electron) lista para ejecutar.',
     ].join('\n');
   }
 
   renderPlatformChips() {
     if (!this.el.platformChips) return;
-    const allSelected = PLATFORM_KEYS.every(k => this.state.platforms.has(k));
-    this.el.platformChips.querySelectorAll('.pchip').forEach(chip => {
+    const allSelected = PLATFORM_KEYS.every((k) => this.state.platforms.has(k));
+    this.el.platformChips.querySelectorAll('.pchip').forEach((chip) => {
       const p = chip.dataset.platform;
       const on = p === 'all' ? allSelected : this.state.platforms.has(p);
       chip.classList.toggle('is-on', on);
@@ -791,9 +897,9 @@ class PromptLibrary {
     if (!chip) return;
     const p = chip.dataset.platform;
     if (p === 'all') {
-      const allSelected = PLATFORM_KEYS.every(k => this.state.platforms.has(k));
+      const allSelected = PLATFORM_KEYS.every((k) => this.state.platforms.has(k));
       if (allSelected) this.state.platforms.clear();
-      else PLATFORM_KEYS.forEach(k => this.state.platforms.add(k));
+      else PLATFORM_KEYS.forEach((k) => this.state.platforms.add(k));
     } else {
       if (this.state.platforms.has(p)) this.state.platforms.delete(p);
       else this.state.platforms.add(p);
@@ -801,7 +907,7 @@ class PromptLibrary {
     this.save('platforms', [...this.state.platforms]);
     this.renderPlatformChips();
     if (this.state.platforms.size) {
-      const names = PLATFORM_KEYS.filter(k => this.state.platforms.has(k)).map(k => PLATFORM_SPECS[k].label);
+      const names = PLATFORM_KEYS.filter((k) => this.state.platforms.has(k)).map((k) => PLATFORM_SPECS[k].label);
       this.showToast('Plataforma de salida: ' + names.join(' · '), 'ok');
     } else {
       this.showToast('Sin plataforma seleccionada — se usará el prompt original');
@@ -815,7 +921,9 @@ class PromptLibrary {
     this.el.favCount.toggleAttribute('data-zero', !this.favorites.length);
   }
 
-  isFavorite(id) { return this.favorites.some(f => f.id === id); }
+  isFavorite(id) {
+    return this.favorites.some((f) => f.id === id);
+  }
 
   toggleFavorite(prompt) {
     if (this.isFavorite(prompt.id)) this.removeFavoriteById(prompt.id);
@@ -830,7 +938,7 @@ class PromptLibrary {
   }
 
   removeFavoriteById(id) {
-    this.favorites = this.favorites.filter(f => f.id !== id);
+    this.favorites = this.favorites.filter((f) => f.id !== id);
     this.save('favorites', this.favorites);
     this.updateFavBadge();
     if (this.currentPrompt && this.currentPrompt.id === id) this.updateFavoriteButton(id);
@@ -845,14 +953,14 @@ class PromptLibrary {
   }
 
   addToHistory(prompt) {
-    this.history = this.history.filter(h => h.id !== prompt.id);
+    this.history = this.history.filter((h) => h.id !== prompt.id);
     this.history.unshift({ id: prompt.id, titulo: prompt.titulo, timestamp: Date.now() });
     this.history = this.history.slice(0, 50);
     this.save('promptHistory', this.history);
   }
 
   removeHistoryById(id) {
-    this.history = this.history.filter(h => h.id !== id);
+    this.history = this.history.filter((h) => h.id !== id);
     this.save('promptHistory', this.history);
     if (this.el.histDrawer.classList.contains('active')) this.renderHistList();
     this.showToast('Eliminado del historial');
@@ -874,7 +982,7 @@ class PromptLibrary {
       listEl.innerHTML = `<div class="drawer-empty">${emptyMsg}</div>`;
       return;
     }
-    items.forEach(it => {
+    items.forEach((it) => {
       const entry = this.index.get(it.id);
       const btn = document.createElement('button');
       btn.className = 'drawer-item';
@@ -889,8 +997,12 @@ class PromptLibrary {
     });
   }
 
-  renderFavList() { this.renderDrawerList(this.el.favList, this.favorites, 'SIN FAVORITOS AÚN<br><br>MARQUE PROMPTS CON ☆'); }
-  renderHistList() { this.renderDrawerList(this.el.histList, this.history, 'SIN ACTIVIDAD AÚN'); }
+  renderFavList() {
+    this.renderDrawerList(this.el.favList, this.favorites, 'SIN FAVORITOS AÚN<br><br>MARQUE PROMPTS CON ☆');
+  }
+  renderHistList() {
+    this.renderDrawerList(this.el.histList, this.history, 'SIN ACTIVIDAD AÚN');
+  }
 
   /* ---------- drawers ---------- */
 
@@ -938,11 +1050,12 @@ class PromptLibrary {
 
   setupSW() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
+      navigator.serviceWorker
+        .register('sw.js')
         /* eslint-disable-next-line no-console */
         .then(() => console.log('[SW] registrado — modo offline listo'))
         /* eslint-disable-next-line no-console */
-        .catch(err => console.warn('[SW] fallo:', err));
+        .catch((err) => console.warn('[SW] fallo:', err));
     }
   }
 
@@ -965,7 +1078,9 @@ class PromptLibrary {
     t.textContent = message;
     t.className = 'toast show' + (type ? ' ' + type : '');
     clearTimeout(this._toastTimer);
-    this._toastTimer = setTimeout(() => { t.className = 'toast'; }, 3200);
+    this._toastTimer = setTimeout(() => {
+      t.className = 'toast';
+    }, 3200);
   }
 }
 

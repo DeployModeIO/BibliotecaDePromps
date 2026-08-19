@@ -1,154 +1,279 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" data-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diagnóstico · Biblioteca de Promps</title>
-  <meta name="theme-color" content="#0c1220">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-1:#0c1220; --bg-2:#111a2b; --bg-3:#182338;
-      --line:#22314b; --line-2:#2f4266;
-      --txt:#e9f0fa; --txt-2:#a9bad2; --txt-3:#5f7396;
-      --amber:#ffb020; --green:#35d69a; --red:#ff5757; --cyan:#4cc3ff;
-      --grid-line:rgba(120,165,230,.045); --scan:rgba(255,255,255,.014);
-      --f-display:'Chakra Petch','Segoe UI',system-ui,sans-serif;
-      --f-mono:'IBM Plex Mono','Cascadia Mono',Consolas,monospace;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family:var(--f-mono); color:var(--txt); line-height:1.6;
-      min-height:100vh; padding:0;
-      background:
-        linear-gradient(var(--grid-line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
-        var(--bg-1);
-      background-size:46px 46px, 46px 46px, auto;
-      background-attachment:fixed;
-    }
-    body::before {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:1;
-      background:repeating-linear-gradient(0deg, var(--scan) 0 1px, transparent 1px 3px);
-    }
-    ::selection { background:var(--amber); color:#14100a; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diagnóstico · Biblioteca de Promps</title>
+    <meta name="theme-color" content="#0c1220" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-1: #0c1220;
+        --bg-2: #111a2b;
+        --bg-3: #182338;
+        --line: #22314b;
+        --line-2: #2f4266;
+        --txt: #e9f0fa;
+        --txt-2: #a9bad2;
+        --txt-3: #5f7396;
+        --amber: #ffb020;
+        --green: #35d69a;
+        --red: #ff5757;
+        --cyan: #4cc3ff;
+        --grid-line: rgba(120, 165, 230, 0.045);
+        --scan: rgba(255, 255, 255, 0.014);
+        --f-display: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+        --f-mono: 'IBM Plex Mono', 'Cascadia Mono', Consolas, monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: var(--f-mono);
+        color: var(--txt);
+        line-height: 1.6;
+        min-height: 100vh;
+        padding: 0;
+        background:
+          linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px), var(--bg-1);
+        background-size:
+          46px 46px,
+          46px 46px,
+          auto;
+        background-attachment: fixed;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+        background: repeating-linear-gradient(0deg, var(--scan) 0 1px, transparent 1px 3px);
+      }
+      ::selection {
+        background: var(--amber);
+        color: #14100a;
+      }
 
-    .hazard-amber { background:repeating-linear-gradient(-45deg, var(--amber) 0 9px, transparent 9px 18px); }
-    .hazard-line { height:4px; opacity:.5; }
+      .hazard-amber {
+        background: repeating-linear-gradient(-45deg, var(--amber) 0 9px, transparent 9px 18px);
+      }
+      .hazard-line {
+        height: 4px;
+        opacity: 0.5;
+      }
 
-    header { position:sticky; top:0; z-index:10; background:linear-gradient(180deg,var(--bg-2),var(--bg-1)); border-bottom:1px solid var(--line); }
-    .head-inner { max-width:900px; margin:0 auto; padding:.9rem 1.4rem; display:flex; align-items:center; gap:.8rem; }
-    .head-inner h1 { font-family:var(--f-display); font-size:1rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
-    .head-inner h1 span { color:var(--amber); }
-    .head-tag { margin-left:auto; font-size:.6rem; letter-spacing:.16em; color:var(--txt-3); text-transform:uppercase; border:1px solid var(--line); padding:.3rem .55rem; }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+        border-bottom: 1px solid var(--line);
+      }
+      .head-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0.9rem 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+      .head-inner h1 {
+        font-family: var(--f-display);
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .head-inner h1 span {
+        color: var(--amber);
+      }
+      .head-tag {
+        margin-left: auto;
+        font-size: 0.6rem;
+        letter-spacing: 0.16em;
+        color: var(--txt-3);
+        text-transform: uppercase;
+        border: 1px solid var(--line);
+        padding: 0.3rem 0.55rem;
+      }
 
-    main { max-width:900px; margin:0 auto; padding:1.6rem 1.4rem 3rem; position:relative; z-index:2; }
-    .sub { font-size:.66rem; letter-spacing:.16em; color:var(--txt-3); text-transform:uppercase; margin:.6rem 0 1rem; display:flex; align-items:center; gap:.6rem; }
-    .sub::before { content:'▸'; color:var(--amber); }
-    .sub::after { content:''; flex:1; height:1px; background:var(--line); }
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1.6rem 1.4rem 3rem;
+        position: relative;
+        z-index: 2;
+      }
+      .sub {
+        font-size: 0.66rem;
+        letter-spacing: 0.16em;
+        color: var(--txt-3);
+        text-transform: uppercase;
+        margin: 0.6rem 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .sub::before {
+        content: '▸';
+        color: var(--amber);
+      }
+      .sub::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--line);
+      }
 
-    #log { background:var(--bg-2); border:1px solid var(--line); border-left:3px solid var(--amber); padding:1rem 1.2rem; font-size:.78rem; }
-    #log > div { padding:.18rem 0; border-bottom:1px dashed transparent; }
-    #log > div:last-child { color:var(--green); font-weight:600; }
-    .ok { color:var(--green); }
-    .error { color:var(--red); }
-    .info { color:var(--cyan); }
+      #log {
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--amber);
+        padding: 1rem 1.2rem;
+        font-size: 0.78rem;
+      }
+      #log > div {
+        padding: 0.18rem 0;
+        border-bottom: 1px dashed transparent;
+      }
+      #log > div:last-child {
+        color: var(--green);
+        font-weight: 600;
+      }
+      .ok {
+        color: var(--green);
+      }
+      .error {
+        color: var(--red);
+      }
+      .info {
+        color: var(--cyan);
+      }
 
-    footer { border-top:1px solid var(--line); background:var(--bg-2); position:relative; z-index:2; }
-    .foot-inner { max-width:900px; margin:0 auto; padding:1rem 1.4rem; font-size:.6rem; letter-spacing:.14em; color:var(--txt-3); text-transform:uppercase; text-align:center; }
-    .foot-inner b { color:var(--amber); font-weight:600; }
+      footer {
+        border-top: 1px solid var(--line);
+        background: var(--bg-2);
+        position: relative;
+        z-index: 2;
+      }
+      .foot-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem 1.4rem;
+        font-size: 0.6rem;
+        letter-spacing: 0.14em;
+        color: var(--txt-3);
+        text-transform: uppercase;
+        text-align: center;
+      }
+      .foot-inner b {
+        color: var(--amber);
+        font-weight: 600;
+      }
 
-    @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="head-inner">
-      <h1>Diagnóstico de <span>Carga</span></h1>
-      <span class="head-tag">Biblioteca de Promps</span>
-    </div>
-    <div class="hazard-line hazard-amber"></div>
-  </header>
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="head-inner">
+        <h1>Diagnóstico de <span>Carga</span></h1>
+        <span class="head-tag">Biblioteca de Promps</span>
+      </div>
+      <div class="hazard-line hazard-amber"></div>
+    </header>
 
-  <main>
-    <div class="sub">Verificación de módulos y base de datos</div>
-    <div id="log"></div>
-  </main>
+    <main>
+      <div class="sub">Verificación de módulos y base de datos</div>
+      <div id="log"></div>
+    </main>
 
-  <footer>
-    <div class="foot-inner"><span><b>Biblioteca de Promps Industriales</b> · Página de diagnóstico</span></div>
-  </footer>
+    <footer>
+      <div class="foot-inner">
+        <span><b>Biblioteca de Promps Industriales</b> · Página de diagnóstico</span>
+      </div>
+    </footer>
 
-  <script>
-    const log = document.getElementById('log');
-    function addLog(msg, type = 'info') {
-      const div = document.createElement('div');
-      div.className = type;
-      div.textContent = msg;
-      log.appendChild(div);
-    }
+    <script>
+      const log = document.getElementById('log');
+      function addLog(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = type;
+        div.textContent = msg;
+        log.appendChild(div);
+      }
 
-    window.addEventListener('error', (e) => {
-      addLog('ERROR: ' + e.message, 'error');
-      addLog('  File: ' + e.filename + ':' + e.lineno, 'error');
-      console.error(e);
-    });
+      window.addEventListener('error', (e) => {
+        addLog('ERROR: ' + e.message, 'error');
+        addLog('  File: ' + e.filename + ':' + e.lineno, 'error');
+        console.error(e);
+      });
 
-    addLog('Iniciando carga de scripts...');
-  </script>
+      addLog('Iniciando carga de scripts...');
+    </script>
 
-  <script src="js/prompts-data.js"></script>
-  <script>
-    if (typeof PROMPTS_DB !== 'undefined') {
-      addLog('✓ PROMPTS_DB cargado: ' + PROMPTS_DB.categorias.length + ' categorías', 'ok');
-      let total = 0;
-      PROMPTS_DB.categorias.forEach(cat => {
-        cat.subcategorias.forEach(sub => {
-          total += sub.prompts.length;
+    <script src="js/prompts-data.js"></script>
+    <script>
+      if (typeof PROMPTS_DB !== 'undefined') {
+        addLog('✓ PROMPTS_DB cargado: ' + PROMPTS_DB.categorias.length + ' categorías', 'ok');
+        let total = 0;
+        PROMPTS_DB.categorias.forEach((cat) => {
+          cat.subcategorias.forEach((sub) => {
+            total += sub.prompts.length;
+          });
         });
-      });
-      addLog('  Total de prompts: ' + total, 'info');
-    } else {
-      addLog('✗ PROMPTS_DB no se cargó', 'error');
-    }
-  </script>
+        addLog('  Total de prompts: ' + total, 'info');
+      } else {
+        addLog('✗ PROMPTS_DB no se cargó', 'error');
+      }
+    </script>
 
-  <script src="js/prompts-data-extra.js"></script>
-  <script>
-    if (typeof PROMPTS_DB_EXTRA !== 'undefined') {
-      addLog('✓ PROMPTS_DB_EXTRA cargado: ' + PROMPTS_DB_EXTRA.categorias.length + ' categorías', 'ok');
-      let total = 0;
-      PROMPTS_DB_EXTRA.categorias.forEach(cat => {
-        cat.subcategorias.forEach(sub => {
-          total += sub.prompts.length;
+    <script src="js/prompts-data-extra.js"></script>
+    <script>
+      if (typeof PROMPTS_DB_EXTRA !== 'undefined') {
+        addLog('✓ PROMPTS_DB_EXTRA cargado: ' + PROMPTS_DB_EXTRA.categorias.length + ' categorías', 'ok');
+        let total = 0;
+        PROMPTS_DB_EXTRA.categorias.forEach((cat) => {
+          cat.subcategorias.forEach((sub) => {
+            total += sub.prompts.length;
+          });
         });
-      });
-      addLog('  Total de prompts extra: ' + total, 'info');
-    } else {
-      addLog('✗ PROMPTS_DB_EXTRA no se cargó', 'error');
-    }
-  </script>
+        addLog('  Total de prompts extra: ' + total, 'info');
+      } else {
+        addLog('✗ PROMPTS_DB_EXTRA no se cargó', 'error');
+      }
+    </script>
 
-  <script src="js/app.js"></script>
-  <script>
-    if (typeof PromptLibrary !== 'undefined') {
-      addLog('✓ PromptLibrary class cargada', 'ok');
-      addLog('  Instancia omitida en página de diagnóstico (sin UI principal)', 'info');
-    } else {
-      addLog('✗ PromptLibrary class no se cargó', 'error');
-    }
+    <script src="js/app.js"></script>
+    <script>
+      if (typeof PromptLibrary !== 'undefined') {
+        addLog('✓ PromptLibrary class cargada', 'ok');
+        addLog('  Instancia omitida en página de diagnóstico (sin UI principal)', 'info');
+      } else {
+        addLog('✗ PromptLibrary class no se cargó', 'error');
+      }
 
-    addLog('\n=== Estructura de Categorías (PROMPTS_DB) ===', 'info');
-    if (typeof PROMPTS_DB !== 'undefined') {
-      PROMPTS_DB.categorias.forEach(cat => {
-        const count = cat.subcategorias.reduce((sum, sub) => sum + sub.prompts.length, 0);
-        addLog(`  ${cat.icono} ${cat.nombre}: ${cat.subcategorias.length} subcategorías, ${count} prompts`, 'info');
-      });
-    }
+      addLog('\n=== Estructura de Categorías (PROMPTS_DB) ===', 'info');
+      if (typeof PROMPTS_DB !== 'undefined') {
+        PROMPTS_DB.categorias.forEach((cat) => {
+          const count = cat.subcategorias.reduce((sum, sub) => sum + sub.prompts.length, 0);
+          addLog(`  ${cat.icono} ${cat.nombre}: ${cat.subcategorias.length} subcategorías, ${count} prompts`, 'info');
+        });
+      }
 
-    addLog('\n✓ Test completado', 'ok');
-  </script>
-</body>
+      addLog('\n✓ Test completado', 'ok');
+    </script>
+  </body>
 </html>

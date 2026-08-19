@@ -7,6 +7,7 @@ Aplicación web profesional (PWA) con **mega-prompts de ingeniería** especializ
 ## 🎯 ¿Qué son los Mega-Prompts?
 
 Los mega-prompts son **prompts de ingeniería estructurados** que contienen:
+
 - **ROL**: Definición del experto que la IA debe asumir
 - **CONTEXTO TÉCNICO**: Información detallada de la industria, normas y estándares
 - **TAREA**: Especificación completa de lo que se debe desarrollar
@@ -32,30 +33,35 @@ Los mega-prompts son **prompts de ingeniería estructurados** que contienen:
 ## 📋 Categorías de Prompts
 
 ### 🔧 Inspección de Equipos
+
 - Checklists pre-operacionales
 - Protocolos de mantenimiento
 - Inspecciones de integridad
 - Control de calidad
 
 ### 📝 Bitácoras Operacionales
+
 - Registros de producción
 - Bitácoras de turno
 - Parámetros operacionales
 - Seguimiento de mantenimiento
 
 ### ⛑️ Seguridad y HSE
+
 - Permisos de trabajo
 - Análisis de riesgo (JSA)
 - Reportes de incidentes
 - Procedimientos de emergencia
 
 ### ✉️ Correos Profesionales
+
 - Reportes a gerencia
 - Solicitudes de autorización
 - Comunicaciones regulatorias
 - Coordinación con proveedores
 
 ### 🔄 Gestión de Turnos
+
 - Handover operacional
 - Programación de turnos
 - Pase de guardia
@@ -70,20 +76,23 @@ Los mega-prompts son **prompts de ingeniería estructurados** que contienen:
 ✅ **Historial** - Registro de prompts utilizados  
 ✅ **Modo Oscuro/Claro** - Adaptable a preferencias  
 ✅ **Responsive** - Diseño adaptativo para cualquier dispositivo  
-✅ **Instalable** - Se instala como app nativa  
+✅ **Instalable** - Se instala como app nativa
 
 ## 📦 Instalación
 
 ### Opción 1: Servidor Web Local (Recomendado)
 
 1. **Usando Python:**
+
    ```bash
    cd D:\Proyectos\BibliotecaDePromps
    python -m http.server 8000
    ```
+
    Abre: `http://localhost:8000`
 
 2. **Usando Node.js:**
+
    ```bash
    npx serve D:\Proyectos\BibliotecaDePromps
    ```
@@ -100,6 +109,7 @@ Simplemente abre `index.html` en tu navegador. Algunas funcionalidades PWA requi
 ### Opción 3: Despliegue en la Nube
 
 Sube los archivos a cualquier servicio de hosting estático:
+
 - **GitHub Pages**
 - **Netlify**
 - **Vercel**
@@ -108,16 +118,19 @@ Sube los archivos a cualquier servicio de hosting estático:
 ## 📱 Instalación como App
 
 ### En Android (Chrome):
+
 1. Abre la app en Chrome
 2. Toca el menú (⋮) → "Agregar a pantalla principal"
 3. Confirma la instalación
 
 ### En iOS (Safari):
+
 1. Abre la app en Safari
 2. Toca el botón Compartir (cuadrado con flecha)
 3. Selecciona "Agregar a pantalla de inicio"
 
 ### En Desktop (Chrome/Edge):
+
 1. Abre la app en el navegador
 2. Busca el icono de instalación en la barra de direcciones
 3. Confirma la instalación
@@ -134,15 +147,18 @@ Para generar los iconos PNG de la PWA:
 ## 📖 Uso
 
 ### Buscar Prompts
+
 - Usa la barra de búsqueda para encontrar por título, tag o palabra clave
 - Los filtros rápidos permiten filtrar por prioridad o categoría
 
 ### Explorar por Industria
+
 1. Haz clic en cualquier tarjeta de industria
 2. Navega por las subcategorías
 3. Selecciona un prompt para ver el detalle
 
 ### Acciones Disponibles
+
 - **📋 Copiar** - Copia el prompt al portapapeles
 - **⭐ Favoritos** - Guarda el prompt para acceso rápido
 - **✉️ Email** - Envía el prompt por correo electrónico
@@ -209,13 +225,13 @@ Edita las variables CSS en `css/styles.css`:
 
 ## 🌐 Compatibilidad
 
-| Plataforma | Navegador | Estado |
-|------------|-----------|--------|
-| Android | Chrome, Firefox, Edge | ✅ Completo |
-| iOS | Safari | ✅ Completo |
-| Windows | Chrome, Edge, Firefox | ✅ Completo |
-| macOS | Safari, Chrome | ✅ Completo |
-| Tablets | Todos | ✅ Completo |
+| Plataforma | Navegador             | Estado      |
+| ---------- | --------------------- | ----------- |
+| Android    | Chrome, Firefox, Edge | ✅ Completo |
+| iOS        | Safari                | ✅ Completo |
+| Windows    | Chrome, Edge, Firefox | ✅ Completo |
+| macOS      | Safari, Chrome        | ✅ Completo |
+| Tablets    | Todos                 | ✅ Completo |
 
 ## 📝 Notas Técnicas
 
@@ -241,6 +257,7 @@ Este proyecto es de uso libre para fines profesionales y educativos.
 ## 🤝 Contribuciones
 
 Las contribuciones son bienvenidas. Para agregar nuevos prompts:
+
 1. Sigue la estructura de `prompts-data.js`
 2. Mantén el tono profesional y técnico
 3. Incluye tags relevantes
@@ -254,5 +271,5 @@ Para reportar problemas o sugerencias, contacta al equipo de desarrollo.
 
 **Desarrollado con estándares industriales de alta calidad** ⚙️
 
-*Versión 3.0.0 | Última actualización: Julio 2026*
-*Mega-Prompts de Ingeniería para Generación de Aplicaciones Completas*
+_Versión 3.0.0 | Última actualización: Julio 2026_
+_Mega-Prompts de Ingeniería para Generación de Aplicaciones Completas_

@@ -19,8 +19,8 @@ const PlatformTests = {
         minViewport: { width: 360, height: 640 },
         touchTargets: 48, // dp mínimo según Material Design
         offlineRequired: true,
-        installable: true
-      }
+        installable: true,
+      },
     },
     ios: {
       name: 'iOS',
@@ -31,8 +31,8 @@ const PlatformTests = {
         touchTargets: 44, // pt mínimo según Apple HIG
         offlineRequired: true,
         installable: true,
-        safeAreaInsets: true
-      }
+        safeAreaInsets: true,
+      },
     },
     web: {
       name: 'Web Desktop',
@@ -43,8 +43,8 @@ const PlatformTests = {
         touchTargets: null,
         offlineRequired: true,
         installable: true,
-        keyboardNavigation: true
-      }
+        keyboardNavigation: true,
+      },
     },
     tablet: {
       name: 'Tablet',
@@ -55,8 +55,8 @@ const PlatformTests = {
         touchTargets: 56, // Más grande para uso en campo con guantes
         offlineRequired: true,
         installable: true,
-        landscapeMode: true
-      }
+        landscapeMode: true,
+      },
     },
     windows: {
       name: 'Windows Desktop',
@@ -67,9 +67,9 @@ const PlatformTests = {
         touchTargets: null,
         offlineRequired: true,
         installable: true,
-        electronCompatible: true
-      }
-    }
+        electronCompatible: true,
+      },
+    },
   },
 
   // Validaciones de estructura de prompt
@@ -79,7 +79,7 @@ const PlatformTests = {
 
     // Validar campos requeridos
     const requiredFields = ['id', 'titulo', 'categoria', 'prioridad', 'prompt', 'tags', 'uso'];
-    requiredFields.forEach(field => {
+    requiredFields.forEach((field) => {
       if (!prompt[field]) {
         errors.push(`Campo requerido faltante: ${field}`);
       }
@@ -115,57 +115,67 @@ const PlatformTests = {
     const results = {};
     const promptText = prompt.prompt || '';
 
-    Object.keys(this.platforms).forEach(platformKey => {
+    Object.keys(this.platforms).forEach((platformKey) => {
       const platform = this.platforms[platformKey];
       const checks = {
         responsive: false,
         offline: false,
         touchFriendly: false,
         accessible: false,
-        installable: false
+        installable: false,
       };
 
       // Verificar menciones de responsive design
-      if (promptText.toLowerCase().includes('responsive') || 
-          promptText.toLowerCase().includes('mobile-first') ||
-          promptText.toLowerCase().includes('breakpoints')) {
+      if (
+        promptText.toLowerCase().includes('responsive') ||
+        promptText.toLowerCase().includes('mobile-first') ||
+        promptText.toLowerCase().includes('breakpoints')
+      ) {
         checks.responsive = true;
       }
 
       // Verificar menciones de offline/PWA
-      if (promptText.toLowerCase().includes('offline') ||
-          promptText.toLowerCase().includes('pwa') ||
-          promptText.toLowerCase().includes('service worker') ||
-          promptText.toLowerCase().includes('localstorage')) {
+      if (
+        promptText.toLowerCase().includes('offline') ||
+        promptText.toLowerCase().includes('pwa') ||
+        promptText.toLowerCase().includes('service worker') ||
+        promptText.toLowerCase().includes('localstorage')
+      ) {
         checks.offline = true;
       }
 
       // Verificar menciones de touch-friendly
-      if (promptText.toLowerCase().includes('touch') ||
-          promptText.toLowerCase().includes('móvil') ||
-          promptText.toLowerCase().includes('tablet')) {
+      if (
+        promptText.toLowerCase().includes('touch') ||
+        promptText.toLowerCase().includes('móvil') ||
+        promptText.toLowerCase().includes('tablet')
+      ) {
         checks.touchFriendly = true;
       }
 
       // Verificar menciones de accesibilidad
-      if (promptText.toLowerCase().includes('accesib') ||
-          promptText.toLowerCase().includes('aria') ||
-          promptText.toLowerCase().includes('semántic')) {
+      if (
+        promptText.toLowerCase().includes('accesib') ||
+        promptText.toLowerCase().includes('aria') ||
+        promptText.toLowerCase().includes('semántic')
+      ) {
         checks.accessible = true;
       }
 
       // Verificar menciones de instalabilidad
-      if (promptText.toLowerCase().includes('instalable') ||
-          promptText.toLowerCase().includes('manifest') ||
-          promptText.toLowerCase().includes('pwa')) {
+      if (
+        promptText.toLowerCase().includes('instalable') ||
+        promptText.toLowerCase().includes('manifest') ||
+        promptText.toLowerCase().includes('pwa')
+      ) {
         checks.installable = true;
       }
 
       results[platformKey] = {
         platform: platform.name,
         checks,
-        score: Object.values(checks).filter(v => v).length / Object.values(checks).length * 100,
-        compatible: Object.values(checks).filter(v => v).length >= 3 // Al menos 3 de 5 checks
+        score: (Object.values(checks).filter((v) => v).length / Object.values(checks).length) * 100,
+        compatible: Object.values(checks).filter((v) => v).length >= 3, // Al menos 3 de 5 checks
       };
     });
 
@@ -180,14 +190,17 @@ const PlatformTests = {
       css: promptText.toLowerCase().includes('css') || promptText.toLowerCase().includes('estilos'),
       javascript: promptText.toLowerCase().includes('javascript') || promptText.toLowerCase().includes('js'),
       singleFile: promptText.toLowerCase().includes('un solo archivo') || promptText.toLowerCase().includes('single file'),
-      noBackend: promptText.toLowerCase().includes('sin backend') || promptText.toLowerCase().includes('no backend') || promptText.toLowerCase().includes('localStorage'),
-      cdnLibraries: promptText.toLowerCase().includes('cdn') || promptText.toLowerCase().includes('librerías')
+      noBackend:
+        promptText.toLowerCase().includes('sin backend') ||
+        promptText.toLowerCase().includes('no backend') ||
+        promptText.toLowerCase().includes('localStorage'),
+      cdnLibraries: promptText.toLowerCase().includes('cdn') || promptText.toLowerCase().includes('librerías'),
     };
 
     return {
       checks,
-      score: Object.values(checks).filter(v => v).length / Object.values(checks).length * 100,
-      valid: Object.values(checks).filter(v => v).length >= 4 // Al menos 4 de 6 checks
+      score: (Object.values(checks).filter((v) => v).length / Object.values(checks).length) * 100,
+      valid: Object.values(checks).filter((v) => v).length >= 4, // Al menos 4 de 6 checks
     };
   },
 
@@ -197,12 +210,12 @@ const PlatformTests = {
     const multiplatform = this.validateMultiplatformCompatibility(prompt);
     const codeGen = this.validateCodeGeneration(prompt);
 
-    const allPlatformsCompatible = Object.values(multiplatform).every(p => p.compatible);
-    const overallScore = (
-      (structure.errors.length === 0 ? 100 : 50) +
-      Object.values(multiplatform).reduce((sum, p) => sum + p.score, 0) / Object.keys(multiplatform).length +
-      codeGen.score
-    ) / 3;
+    const allPlatformsCompatible = Object.values(multiplatform).every((p) => p.compatible);
+    const overallScore =
+      ((structure.errors.length === 0 ? 100 : 50) +
+        Object.values(multiplatform).reduce((sum, p) => sum + p.score, 0) / Object.keys(multiplatform).length +
+        codeGen.score) /
+      3;
 
     return {
       promptId: prompt.id,
@@ -212,24 +225,24 @@ const PlatformTests = {
       codeGen,
       allPlatformsCompatible,
       overallScore: Math.round(overallScore),
-      passed: structure.errors.length === 0 && allPlatformsCompatible && codeGen.valid
+      passed: structure.errors.length === 0 && allPlatformsCompatible && codeGen.valid,
     };
   },
 
   // Ejecutar pruebas para todos los prompts
   runAllTests(prompts) {
-    const results = prompts.map(p => this.runFullTest(p));
-    const passed = results.filter(r => r.passed).length;
+    const results = prompts.map((p) => this.runFullTest(p));
+    const passed = results.filter((r) => r.passed).length;
     const failed = results.length - passed;
 
     return {
       total: results.length,
       passed,
       failed,
-      passRate: (passed / results.length * 100).toFixed(1),
-      results
+      passRate: ((passed / results.length) * 100).toFixed(1),
+      results,
     };
-  }
+  },
 };
 
 // Exportar para uso en navegador

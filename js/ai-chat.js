@@ -8,21 +8,87 @@ const AIChat = (() => {
 
   const LOCAL_PROBES = [
     { name: 'Ollama', url: 'http://localhost:11434/api/tags', type: 'ollama', chatEndpoint: 'http://localhost:11434/api/chat' },
-    { name: 'LM Studio', url: 'http://localhost:1234/v1/models', type: 'openai', chatEndpoint: 'http://localhost:1234/v1/chat/completions' },
+    {
+      name: 'LM Studio',
+      url: 'http://localhost:1234/v1/models',
+      type: 'openai',
+      chatEndpoint: 'http://localhost:1234/v1/chat/completions',
+    },
     { name: 'vLLM', url: 'http://localhost:8000/v1/models', type: 'openai', chatEndpoint: 'http://localhost:8000/v1/chat/completions' },
     { name: 'LocalAI', url: 'http://localhost:8080/v1/models', type: 'openai', chatEndpoint: 'http://localhost:8080/v1/chat/completions' },
     { name: 'KoboldCpp', url: 'http://localhost:5001/api/v1/model', type: 'kobold', chatEndpoint: 'http://localhost:5001/api/v1/generate' },
-    { name: 'Text-Gen-WebUI', url: 'http://localhost:5000/v1/models', type: 'openai', chatEndpoint: 'http://localhost:5000/v1/chat/completions' },
+    {
+      name: 'Text-Gen-WebUI',
+      url: 'http://localhost:5000/v1/models',
+      type: 'openai',
+      chatEndpoint: 'http://localhost:5000/v1/chat/completions',
+    },
     { name: 'GPT4All', url: 'http://localhost:4891/v1/models', type: 'openai', chatEndpoint: 'http://localhost:4891/v1/chat/completions' },
   ];
 
   const DEFAULT_PROVIDERS = [
-    { id: 'openai', name: 'OpenAI', endpoint: 'https://api.openai.com/v1/chat/completions', type: 'cloud', apiKey: '', models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'], defaultModel: 'gpt-4o-mini', modelsEndpoint: 'https://api.openai.com/v1/models' },
-    { id: 'anthropic', name: 'Anthropic', endpoint: 'https://api.anthropic.com/v1/messages', type: 'cloud', apiKey: '', models: ['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229', 'claude-3-haiku-20240307'], defaultModel: 'claude-3-5-sonnet-20241022', headers: { 'anthropic-version': '2023-06-01' }, modelsEndpoint: 'https://api.anthropic.com/v1/models', authType: 'x-api-key' },
-    { id: 'groq', name: 'Groq', endpoint: 'https://api.groq.com/openai/v1/chat/completions', type: 'cloud', apiKey: '', models: ['llama-3.1-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'], defaultModel: 'llama-3.1-70b-versatile', modelsEndpoint: 'https://api.groq.com/openai/v1/models' },
-    { id: 'deepseek', name: 'DeepSeek', endpoint: 'https://api.deepseek.com/v1/chat/completions', type: 'cloud', apiKey: '', models: ['deepseek-chat', 'deepseek-reasoner'], defaultModel: 'deepseek-chat', modelsEndpoint: 'https://api.deepseek.com/v1/models' },
-    { id: 'openrouter', name: 'OpenRouter', endpoint: 'https://openrouter.ai/api/v1/chat/completions', type: 'cloud', apiKey: '', models: ['openai/gpt-4o', 'anthropic/claude-3.5-sonnet', 'google/gemini-2.0-flash'], defaultModel: 'openai/gpt-4o', modelsEndpoint: 'https://openrouter.ai/api/v1/models' },
-    { id: 'alibaba', name: 'Alibaba Token Plan', endpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions', type: 'cloud', apiKey: '', models: ['qwen-max', 'qwen-plus', 'qwen-turbo', 'deepseek-r1', 'deepseek-v3', 'llama3-70b', 'qwen2.5-72b'], defaultModel: 'qwen-plus', modelsEndpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/models' },
+    {
+      id: 'openai',
+      name: 'OpenAI',
+      endpoint: 'https://api.openai.com/v1/chat/completions',
+      type: 'cloud',
+      apiKey: '',
+      models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'],
+      defaultModel: 'gpt-4o-mini',
+      modelsEndpoint: 'https://api.openai.com/v1/models',
+    },
+    {
+      id: 'anthropic',
+      name: 'Anthropic',
+      endpoint: 'https://api.anthropic.com/v1/messages',
+      type: 'cloud',
+      apiKey: '',
+      models: ['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229', 'claude-3-haiku-20240307'],
+      defaultModel: 'claude-3-5-sonnet-20241022',
+      headers: { 'anthropic-version': '2023-06-01' },
+      modelsEndpoint: 'https://api.anthropic.com/v1/models',
+      authType: 'x-api-key',
+    },
+    {
+      id: 'groq',
+      name: 'Groq',
+      endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+      type: 'cloud',
+      apiKey: '',
+      models: ['llama-3.1-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'],
+      defaultModel: 'llama-3.1-70b-versatile',
+      modelsEndpoint: 'https://api.groq.com/openai/v1/models',
+    },
+    {
+      id: 'deepseek',
+      name: 'DeepSeek',
+      endpoint: 'https://api.deepseek.com/v1/chat/completions',
+      type: 'cloud',
+      apiKey: '',
+      models: ['deepseek-chat', 'deepseek-reasoner'],
+      defaultModel: 'deepseek-chat',
+      modelsEndpoint: 'https://api.deepseek.com/v1/models',
+    },
+    {
+      id: 'openrouter',
+      name: 'OpenRouter',
+      endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+      type: 'cloud',
+      apiKey: '',
+      models: ['openai/gpt-4o', 'anthropic/claude-3.5-sonnet', 'google/gemini-2.0-flash'],
+      defaultModel: 'openai/gpt-4o',
+      modelsEndpoint: 'https://openrouter.ai/api/v1/models',
+    },
+    {
+      id: 'alibaba',
+      name: 'Alibaba Token Plan',
+      endpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions',
+      type: 'cloud',
+      apiKey: '',
+      models: ['qwen-max', 'qwen-plus', 'qwen-turbo', 'deepseek-r1', 'deepseek-v3', 'llama3-70b', 'qwen2.5-72b'],
+      defaultModel: 'qwen-plus',
+      modelsEndpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/models',
+    },
   ];
 
   const state = {
@@ -44,7 +110,9 @@ const AIChat = (() => {
     try {
       const raw = window.SafeStore ? window.SafeStore.get(LS_PREFIX + key) : localStorage.getItem(LS_PREFIX + key);
       return raw ? JSON.parse(raw) : fallback;
-    } catch { return fallback; }
+    } catch {
+      return fallback;
+    }
   }
 
   function safeSet(key, val) {
@@ -52,7 +120,9 @@ const AIChat = (() => {
       const s = JSON.stringify(val);
       if (window.SafeStore) window.SafeStore.set(LS_PREFIX + key, s);
       else localStorage.setItem(LS_PREFIX + key, s);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
 
   function loadState() {
@@ -100,16 +170,20 @@ const AIChat = (() => {
           try {
             const data = await resp.json();
             if (probe.type === 'ollama') {
-              models = (data.models || data || []).map(m => m.name || m.model || m);
+              models = (data.models || data || []).map((m) => m.name || m.model || m);
             } else if (probe.type === 'kobold') {
               models = [data.result || data.model || 'kobold-model'];
             } else {
-              models = (data.data || data.models || data || []).map(m => m.id || m.name || m);
+              models = (data.data || data.models || data || []).map((m) => m.id || m.name || m);
             }
-          } catch { /* ignore parse errors */ }
+          } catch {
+            /* ignore parse errors */
+          }
           results.push({ ...probe, models, status: 'online' });
         }
-      } catch { /* offline or CORS */ }
+      } catch {
+        /* offline or CORS */
+      }
     }
     state.autoDetectedLocal = results;
     state.detecting = false;
@@ -118,7 +192,7 @@ const AIChat = (() => {
     renderProviderSelect();
     updateStatus();
     if (results.length) {
-      showToast('Locales detectados: ' + results.map(r => r.name).join(', '));
+      showToast('Locales detectados: ' + results.map((r) => r.name).join(', '));
     } else {
       showToast('No se detectaron servidores locales');
     }
@@ -126,7 +200,7 @@ const AIChat = (() => {
   }
 
   async function detectModels() {
-    const provider = state.providers.find(p => p.id === state.activeProvider);
+    const provider = state.providers.find((p) => p.id === state.activeProvider);
     if (!provider) {
       showToast('Seleccione un proveedor primero');
       return;
@@ -159,9 +233,9 @@ const AIChat = (() => {
       if (resp.ok) {
         const data = await resp.json();
         let models = [];
-        if (Array.isArray(data.data)) models = data.data.map(m => m.id || m.name || '').filter(Boolean);
-        else if (Array.isArray(data.models)) models = data.models.map(m => m.id || m.name || '').filter(Boolean);
-        else if (Array.isArray(data)) models = data.map(m => (typeof m === 'string' ? m : m.id || m.name || '')).filter(Boolean);
+        if (Array.isArray(data.data)) models = data.data.map((m) => m.id || m.name || '').filter(Boolean);
+        else if (Array.isArray(data.models)) models = data.models.map((m) => m.id || m.name || '').filter(Boolean);
+        else if (Array.isArray(data)) models = data.map((m) => (typeof m === 'string' ? m : m.id || m.name || '')).filter(Boolean);
         if (models.length) {
           provider.models = models;
           provider.defaultModel = models[0];
@@ -197,7 +271,7 @@ const AIChat = (() => {
   }
 
   function syncProviders() {
-    const localProviders = state.autoDetectedLocal.map(l => ({
+    const localProviders = state.autoDetectedLocal.map((l) => ({
       id: 'local_' + l.name.toLowerCase().replace(/\s+/g, '_'),
       name: l.name + ' (Local)',
       endpoint: l.chatEndpoint,
@@ -209,14 +283,14 @@ const AIChat = (() => {
       localType: l.type,
     }));
 
-    const presetIds = DEFAULT_PROVIDERS.map(p => p.id);
-    const customProviders = state.providers.filter(p => p.type === 'custom');
-    const otherCloud = state.providers.filter(p => p.type === 'cloud' && !presetIds.includes(p.id));
+    const presetIds = DEFAULT_PROVIDERS.map((p) => p.id);
+    const customProviders = state.providers.filter((p) => p.type === 'custom');
+    const otherCloud = state.providers.filter((p) => p.type === 'cloud' && !presetIds.includes(p.id));
 
     const merged = [...localProviders];
 
-    DEFAULT_PROVIDERS.forEach(def => {
-      const saved = state.providers.find(p => p.id === def.id);
+    DEFAULT_PROVIDERS.forEach((def) => {
+      const saved = state.providers.find((p) => p.id === def.id);
       if (saved) {
         merged.push({ ...def, apiKey: saved.apiKey || '', models: saved.models && saved.models.length > 1 ? saved.models : def.models });
       } else {
@@ -237,7 +311,7 @@ const AIChat = (() => {
     saveState();
     renderMessages();
 
-    const provider = state.providers.find(p => p.id === state.activeProvider);
+    const provider = state.providers.find((p) => p.id === state.activeProvider);
     if (!provider) {
       appendSystemMsg('No hay proveedor activo. Seleccione uno en el panel de configuración.');
       return;
@@ -269,13 +343,16 @@ const AIChat = (() => {
   }
 
   async function callOllama(provider, conv) {
-    const messages = conv.messages.filter(m => m.role !== 'assistant' || !m.content.startsWith('ERROR:')).map(m => ({ role: m.role, content: m.content }));
+    const messages = conv.messages
+      .filter((m) => m.role !== 'assistant' || !m.content.startsWith('ERROR:'))
+      .map((m) => ({ role: m.role, content: m.content }));
     const resp = await fetch(provider.endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: state.activeModel || provider.defaultModel,
-        messages, stream: false,
+        messages,
+        stream: false,
         options: { num_predict: state.maxTokens || 16384 },
       }),
     });
@@ -285,7 +362,7 @@ const AIChat = (() => {
   }
 
   async function callKobold(provider, conv) {
-    const lastUser = [...conv.messages].reverse().find(m => m.role === 'user');
+    const lastUser = [...conv.messages].reverse().find((m) => m.role === 'user');
     const prompt = lastUser ? lastUser.content : '';
     const resp = await fetch(provider.endpoint, {
       method: 'POST',
@@ -298,7 +375,9 @@ const AIChat = (() => {
   }
 
   async function callOpenAICompatible(provider, conv) {
-    const messages = conv.messages.filter(m => m.role !== 'assistant' || !m.content.startsWith('ERROR:')).map(m => ({ role: m.role, content: m.content }));
+    const messages = conv.messages
+      .filter((m) => m.role !== 'assistant' || !m.content.startsWith('ERROR:'))
+      .map((m) => ({ role: m.role, content: m.content }));
     const headers = { 'Content-Type': 'application/json' };
     if (provider.authType === 'x-api-key') {
       headers['x-api-key'] = provider.apiKey;
@@ -345,7 +424,10 @@ const AIChat = (() => {
         const perm = await state.saveDir.queryPermission({ mode: 'readwrite' });
         if (perm !== 'granted') {
           const req = await state.saveDir.requestPermission({ mode: 'readwrite' });
-          if (req !== 'granted') { downloadAsZip(files); return; }
+          if (req !== 'granted') {
+            downloadAsZip(files);
+            return;
+          }
         }
         for (const file of files) {
           const parts = file.name.split('/');
@@ -360,7 +442,10 @@ const AIChat = (() => {
         }
         showToast('Guardado en: ' + state.saveDir.name + ' (' + files.length + ' archivos)');
         return;
-      } catch { downloadAsZip(files); return; }
+      } catch {
+        downloadAsZip(files);
+        return;
+      }
     }
     downloadAsZip(files);
   }
@@ -369,22 +454,26 @@ const AIChat = (() => {
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = name; a.click();
+    a.href = url;
+    a.download = name;
+    a.click();
     URL.revokeObjectURL(url);
   }
 
   async function downloadAsZip(files) {
     if (typeof JSZip === 'undefined') {
       showToast('JSZip no cargado — descargando archivos individuales');
-      files.forEach(f => downloadFile(f.name, f.content));
+      files.forEach((f) => downloadFile(f.name, f.content));
       return;
     }
     const zip = new JSZip();
-    files.forEach(f => zip.file(f.name, f.content));
+    files.forEach((f) => zip.file(f.name, f.content));
     const blob = await zip.generateAsync({ type: 'blob' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'proyecto_generado.zip'; a.click();
+    a.href = url;
+    a.download = 'proyecto_generado.zip';
+    a.click();
     URL.revokeObjectURL(url);
     showToast('Descargado como ZIP (' + files.length + ' archivos)');
   }
@@ -397,9 +486,21 @@ const AIChat = (() => {
     while ((match = codeBlockRegex.exec(response)) !== null) {
       const lang = (match[1] || 'txt').toLowerCase();
       const content = match[2].trim();
-      const extMap = { html: 'html', css: 'css', javascript: 'js', js: 'js', json: 'json', python: 'py', bash: 'sh', sh: 'sh', yaml: 'yml', xml: 'xml', md: 'md' };
+      const extMap = {
+        html: 'html',
+        css: 'css',
+        javascript: 'js',
+        js: 'js',
+        json: 'json',
+        python: 'py',
+        bash: 'sh',
+        sh: 'sh',
+        yaml: 'yml',
+        xml: 'xml',
+        md: 'md',
+      };
       const ext = extMap[lang] || 'txt';
-      files.push({ name: 'archivo_' + (++idx) + '.' + ext, content });
+      files.push({ name: 'archivo_' + ++idx + '.' + ext, content });
     }
     return files;
   }
@@ -453,8 +554,11 @@ const AIChat = (() => {
     el.providerSelect.addEventListener('change', onProviderChange);
     el.modelSelect.addEventListener('change', onModelChange);
     el.chatSend.addEventListener('click', () => sendCurrentMessage());
-    el.chatInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendCurrentMessage(); }
+    el.chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendCurrentMessage();
+      }
     });
     el.configAdd.addEventListener('click', () => addCustomProvider());
     el.saveDirBtn.addEventListener('click', () => selectSaveDir());
@@ -462,7 +566,7 @@ const AIChat = (() => {
     el.saveFilesBtn.addEventListener('click', () => saveCurrentFiles());
     if (el.convDelAll) el.convDelAll.addEventListener('click', () => deleteAllConversations());
     el.apiKeyInput.addEventListener('input', () => {
-      const provider = state.providers.find(p => p.id === state.activeProvider);
+      const provider = state.providers.find((p) => p.id === state.activeProvider);
       if (provider && provider.type === 'cloud') {
         provider.apiKey = el.apiKeyInput.value;
         saveState();
@@ -475,7 +579,7 @@ const AIChat = (() => {
       saveState();
       showToast('Max tokens: ' + state.maxTokens.toLocaleString());
     });
-    el.configPanel.addEventListener('click', e => {
+    el.configPanel.addEventListener('click', (e) => {
       if (e.target.closest('.ai-cfg-remove')) {
         const id = e.target.closest('.ai-cfg-remove').dataset.id;
         removeProvider(id);
@@ -508,7 +612,7 @@ const AIChat = (() => {
   function onProviderChange() {
     const id = el.providerSelect.value;
     state.activeProvider = id;
-    const provider = state.providers.find(p => p.id === id);
+    const provider = state.providers.find((p) => p.id === id);
     if (provider) {
       renderModelSelect(provider);
       state.activeModel = provider.defaultModel || provider.models[0] || '';
@@ -531,7 +635,7 @@ const AIChat = (() => {
 
   function renderProviderSelect() {
     el.providerSelect.innerHTML = '<option value="">-- Seleccionar IA --</option>';
-    state.providers.forEach(p => {
+    state.providers.forEach((p) => {
       const opt = document.createElement('option');
       opt.value = p.id;
       const icon = p.isLocal ? '🖥️' : '☁️';
@@ -540,16 +644,18 @@ const AIChat = (() => {
     });
     if (state.activeProvider) {
       el.providerSelect.value = state.activeProvider;
-      const provider = state.providers.find(p => p.id === state.activeProvider);
+      const provider = state.providers.find((p) => p.id === state.activeProvider);
       if (provider) renderModelSelect(provider);
     }
   }
 
   function renderModelSelect(provider) {
     el.modelSelect.innerHTML = '';
-    provider.models.forEach(m => {
+    provider.models.forEach((m) => {
       const opt = document.createElement('option');
-      opt.value = m; opt.textContent = m; el.modelSelect.appendChild(opt);
+      opt.value = m;
+      opt.textContent = m;
+      el.modelSelect.appendChild(opt);
     });
     if (state.activeModel && provider.models.includes(state.activeModel)) {
       el.modelSelect.value = state.activeModel;
@@ -565,7 +671,7 @@ const AIChat = (() => {
       el.chatMessages.innerHTML = '<div class="chat-empty">Envía un mensaje o pega un mega-prompt para comenzar</div>';
       return;
     }
-    conv.messages.forEach(m => {
+    conv.messages.forEach((m) => {
       if (m.role === 'user') {
         const div = document.createElement('div');
         div.className = 'chat-msg chat-user';
@@ -611,7 +717,7 @@ const AIChat = (() => {
   }
 
   function updateStatus(text) {
-    const provider = state.providers.find(p => p.id === state.activeProvider);
+    const provider = state.providers.find((p) => p.id === state.activeProvider);
     if (text) {
       el.chatStatus.textContent = text;
       el.chatStatus.className = 'chat-status detecting';
@@ -665,12 +771,19 @@ const AIChat = (() => {
     if (ids.length && el.convDelAll) el.convDelAll.style.display = 'flex';
     else if (el.convDelAll) el.convDelAll.style.display = 'none';
 
-    ids.forEach(id => {
+    ids.forEach((id) => {
       const conv = state.conversations[id];
       const div = document.createElement('div');
       div.className = 'ai-conv-item' + (id === state.activeConvId ? ' active' : '');
       div.dataset.id = id;
-      div.innerHTML = '<span class="ai-conv-label">' + escapeHtml(conv.title || 'Sin título') + '</span><span class="ai-conv-time">' + new Date(conv.createdAt).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + '</span><button class="ai-conv-del" data-id="' + id + '" title="Eliminar conversación">✕</button>';
+      div.innerHTML =
+        '<span class="ai-conv-label">' +
+        escapeHtml(conv.title || 'Sin título') +
+        '</span><span class="ai-conv-time">' +
+        new Date(conv.createdAt).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) +
+        '</span><button class="ai-conv-del" data-id="' +
+        id +
+        '" title="Eliminar conversación">✕</button>';
       div.querySelector('.ai-conv-label').addEventListener('click', () => {
         state.activeConvId = id;
         saveState();
@@ -688,7 +801,7 @@ const AIChat = (() => {
       el.convList.appendChild(div);
     });
 
-    el.convList.querySelectorAll('.ai-conv-del').forEach(btn => {
+    el.convList.querySelectorAll('.ai-conv-del').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         deleteConversation(btn.dataset.id);
@@ -698,7 +811,7 @@ const AIChat = (() => {
 
   function saveCurrentFiles() {
     const conv = getActiveConv();
-    const lastAssistant = [...conv.messages].reverse().find(m => m.role === 'assistant' && !m.content.startsWith('ERROR:'));
+    const lastAssistant = [...conv.messages].reverse().find((m) => m.role === 'assistant' && !m.content.startsWith('ERROR:'));
     if (!lastAssistant) {
       showToast('No hay respuesta de IA para guardar');
       return;
@@ -720,8 +833,12 @@ const AIChat = (() => {
     const models = prompt('Modelos (separados por coma):', 'default') || 'default';
     const id = 'custom_' + name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
     const provider = {
-      id, name, endpoint, type: 'custom', apiKey,
-      models: models.split(',').map(s => s.trim()),
+      id,
+      name,
+      endpoint,
+      type: 'custom',
+      apiKey,
+      models: models.split(',').map((s) => s.trim()),
       defaultModel: models.split(',')[0].trim(),
     };
     state.providers.push(provider);
@@ -736,7 +853,7 @@ const AIChat = (() => {
   }
 
   function removeProvider(id) {
-    state.providers = state.providers.filter(p => p.id !== id);
+    state.providers = state.providers.filter((p) => p.id !== id);
     if (state.activeProvider === id) {
       state.activeProvider = state.providers[0]?.id || null;
       state.activeModel = '';
@@ -751,33 +868,47 @@ const AIChat = (() => {
   function renderConfigList() {
     if (!el.configList) return;
     el.configList.innerHTML = '';
-    const cloudPresets = state.providers.filter(p => p.type === 'cloud' && ['openai', 'anthropic', 'groq', 'deepseek', 'openrouter', 'alibaba'].includes(p.id));
-    const custom = state.providers.filter(p => p.type === 'custom');
-    const otherCloud = state.providers.filter(p => p.type === 'cloud' && !['openai', 'anthropic', 'groq', 'deepseek', 'openrouter', 'alibaba'].includes(p.id));
+    const cloudPresets = state.providers.filter(
+      (p) => p.type === 'cloud' && ['openai', 'anthropic', 'groq', 'deepseek', 'openrouter', 'alibaba'].includes(p.id)
+    );
+    const custom = state.providers.filter((p) => p.type === 'custom');
+    const otherCloud = state.providers.filter(
+      (p) => p.type === 'cloud' && !['openai', 'anthropic', 'groq', 'deepseek', 'openrouter', 'alibaba'].includes(p.id)
+    );
     const all = [...cloudPresets, ...otherCloud, ...custom];
     if (!all.length) {
       el.configList.innerHTML = '<div class="ai-cfg-empty">Agregue proveedores personalizados con el botón +</div>';
       return;
     }
-    all.forEach(p => {
+    all.forEach((p) => {
       const div = document.createElement('div');
       div.className = 'ai-cfg-item';
       div.innerHTML =
         '<div class="ai-cfg-info">' +
-        '<span class="ai-cfg-name">' + escapeHtml(p.name) + '</span>' +
-        '<span class="ai-cfg-endpoint">' + escapeHtml(p.endpoint.substring(0, 35)) + '...</span>' +
+        '<span class="ai-cfg-name">' +
+        escapeHtml(p.name) +
+        '</span>' +
+        '<span class="ai-cfg-endpoint">' +
+        escapeHtml(p.endpoint.substring(0, 35)) +
+        '...</span>' +
         '</div>' +
         '<div class="ai-cfg-key-row">' +
-        '<input type="password" class="ai-cfg-key" data-id="' + p.id + '" placeholder="API Key..." value="' + escapeHtml(p.apiKey || '') + '" autocomplete="off">' +
-        '<button class="ai-cfg-remove" data-id="' + p.id + '" title="Eliminar proveedor">✕</button>' +
+        '<input type="password" class="ai-cfg-key" data-id="' +
+        p.id +
+        '" placeholder="API Key..." value="' +
+        escapeHtml(p.apiKey || '') +
+        '" autocomplete="off">' +
+        '<button class="ai-cfg-remove" data-id="' +
+        p.id +
+        '" title="Eliminar proveedor">✕</button>' +
         '</div>';
       el.configList.appendChild(div);
     });
 
-    el.configList.querySelectorAll('.ai-cfg-key').forEach(input => {
+    el.configList.querySelectorAll('.ai-cfg-key').forEach((input) => {
       input.addEventListener('input', () => {
         const id = input.dataset.id;
-        const provider = state.providers.find(p => p.id === id);
+        const provider = state.providers.find((p) => p.id === id);
         if (provider) {
           provider.apiKey = input.value;
           saveState();
@@ -787,7 +918,7 @@ const AIChat = (() => {
   }
 
   function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    return String(s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
   }
 
   function showToast(msg) {
@@ -796,7 +927,9 @@ const AIChat = (() => {
     t.textContent = msg;
     t.className = 'toast show';
     clearTimeout(t._timer);
-    t._timer = setTimeout(() => { t.className = 'toast'; }, 3000);
+    t._timer = setTimeout(() => {
+      t.className = 'toast';
+    }, 3000);
   }
 
   /* ---------- public API ---------- */
@@ -815,7 +948,9 @@ const AIChat = (() => {
       openDrawer();
       setTimeout(() => sendMessage(promptText), 400);
     },
-    getStatus() { return { provider: state.activeProvider, model: state.activeModel, saveDir: state.saveDir?.name }; },
+    getStatus() {
+      return { provider: state.activeProvider, model: state.activeModel, saveDir: state.saveDir?.name };
+    },
     selectSaveDir,
     saveGeneratedFiles,
     detectLocal,

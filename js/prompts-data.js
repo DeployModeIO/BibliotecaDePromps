@@ -1,2078 +1,509 @@
+/* ============================================================
+   BIBLIOTECA DE PROMPS INDUSTRIALES — PROMPTS DATA v3.3 (ULTRA PRO EXPANDIDO)
+   Módulo 1: Oil & Gas, Minería, Desalinización, Energía e Industria General
+   ============================================================ */
+
 const PROMPTS_DB = {
   categorias: [
     {
-      id: "oil_gas",
-      nombre: "Oil & Gas",
-      icono: "🛢️",
-      color: "#e65100",
-      descripcion: "Exploración, producción, refinación y transporte de hidrocarburos",
+      id: 'oil_gas',
+      nombre: 'Oil & Gas',
+      icono: '🛢️',
+      color: '#e65100',
+      descripcion: 'Exploración, producción, refinación y transporte de hidrocarburos',
       subcategorias: [
         {
-          id: "og_inspeccion",
-          nombre: "Inspección de Equipos",
+          id: 'og_inspeccion',
+          nombre: 'Inspección de Equipos',
           prompts: [
             {
-              id: "og_insp_001",
-              titulo: "Sistema Web de Inspección de Válvulas de Seguridad (PSV)",
-              categoria: "Aplicación Web",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Ingeniero Senior de Confiabilidad especializado en Oil & Gas con 20 años de experiencia en inspección de válvulas de seguridad, certificado API 510 y API 576.
-
-CONTEXTO TÉCNICO:
-- Industria: Planta de procesamiento de gas natural
-- Equipo: Válvulas de seguridad (PSV - Pressure Safety Valves)
-- Normas aplicables: API 576 (Inspection of Pressure-Relieving Systems), API 520/521 (Pressure-Relieving Systems), ASME Section VIII
-- Cantidad de válvulas: 150 PSVs en servicio
-- Criticalidad: Alta (protección contra sobrepresión)
-
-TAREA:
-Desarrolla una aplicación web completa en HTML/CSS/JavaScript (un solo archivo) para gestionar inspecciones pre-operacionales de válvulas de seguridad. La aplicación debe:
-
-1. FORMULARIO DE INSPECCIÓN con los siguientes campos:
-   - Datos de la válvula: Tag number, Ubicación, Tamaño (inches), Clase (ANSI), Set pressure (psig), Temperatura de diseño (°F), Tipo (spring-loaded/pilot-operated), Fabricante, Modelo, Año de instalación
-   - Inspección visual: Estado de sellos, Condición de disco/asiento, Corrosión externa, Fugas visibles, Condición de palanca
-   - Pruebas funcionales: Prueba de calibración (fecha última, próxima), Prueba de fugas (bubble test), Prueba de operación (pop test)
-   - Documentación: Certificado de calibración, Historial de mantenimiento, Cálculo de capacidad requerida
-
-2. SISTEMA DE EVALUACIÓN:
-   - Criterios de aceptación/rechazo basados en API 576
-   - Cálculo automático de desviación (% sobre set pressure)
-   - Clasificación de condición: Satisfactorio/Requiere atención/No satisfactorio
-   - Recomendaciones automáticas basadas en hallazgos
-
-3. BASE DE DATOS LOCAL (localStorage):
-   - Registro de todas las inspecciones
-   - Historial por válvula
-   - Tendencia de condiciones
-   - Alertas de vencimiento de calibración
-
-4. REPORTES:
-   - Dashboard con KPIs: % de válvulas en condición satisfactoria, próximas a vencer calibración, críticas
-   - Gráficos de tendencia (Chart.js)
-   - Exportación a Excel/CSV
-   - Generación de PDF con formato profesional
-
-5. FUNCIONALIDADES ADICIONALES:
-   - Modo offline (PWA)
-   - Escaneo de QR/Barcode para identificación rápida
-   - Firma digital del inspector
-   - Fotografías adjuntas (base64)
-   - Búsqueda y filtrado avanzado
-
-FORMATO DE SALIDA:
-- Código HTML completo en un solo archivo (inline CSS y JavaScript)
-- Interfaz profesional con diseño responsive (mobile-first)
-- Comentarios en el código explicando secciones críticas
-- Datos de ejemplo precargados para demostración
-- Instrucciones de uso al final del código
-
-RESTRICCIONES:
-- No uses frameworks externos (solo vanilla JS)
-- Librerías permitidas: Chart.js (CDN), jsPDF (CDN), SheetJS (CDN)
-- Todo debe funcionar offline después de la primera carga
-- Código limpio, modular y mantenible
-- Validación de datos en tiempo real
-
-CRITERIOS DE CALIDAD:
-- La aplicación debe ser inmediatamente funcional al abrir el archivo
-- Interfaz intuitiva que no requiera entrenamiento
-- Cálculos precisos según API 576
-- Manejo robusto de errores
-- Performance óptima incluso con 1000+ registros
-
-ENTREGABLE FINAL:
-Aplicación web completa lista para usar en campo, que un inspector pueda utilizar inmediatamente para registrar, evaluar y reportar inspecciones de PSVs cumpliendo con API 576.`,
-              tags: ["PSV", "API 576", "válvulas", "inspección", "aplicación web", "PWA"],
-              uso: "Diario / Pre-operacional"
+              id: 'og_insp_001',
+              titulo: 'Sistema Web de Inspección de Válvulas de Seguridad (PSV)',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Por turno',
+              tags: ['PSV', 'API 576', 'API 520', 'ASME VIII', 'Válvulas de Alivio', 'Confiabilidad', 'Inspección'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Principal de Integridad Mecánica y Confiabilidad en Oil & Gas con 25 años de experiencia en plantas de procesamiento de hidrocarburos y refinerías. Cuentas con certificaciones vigentes API 510 (Pressure Vessel Inspector), API 576 (Inspection of Pressure-Relieving Devices) y ASME Section VIII Div 1/2. Eres un desarrollador web experto en arquitecturas offline-first seguras e interfaces industriales de alta ergonomía.\n\nCONTEXTO TÉCNICO Y OPERACIONAL:\n- Entorno: Planta criogénica de procesamiento y fraccionamiento de gas natural y condensados.\n- Equipos críticos: 180 válvulas de seguridad y alivio de presión (PSV/PRV) de tipos resorte convencional, balanceadas por fuelle y operadas por piloto.\n- Marco Normativo Estricto:\n  * API RP 576: Frecuencias de inspección, causas de falla (fouling, corrosión, fatiga de resorte), inspección en taller vs. campo.\n  * API STD 520 Part I & II: Dimensionamiento, selección e instalación.\n  * ASME Boiler and Pressure Vessel Code Section VIII (Mandatory Appendix 11).\n  * OSHA 29 CFR 1910.119 (Process Safety Management - Mechanical Integrity).\n- Criticalidad de Seguridad: Nivel SIL-2/3 en lazos de sobrepresión. La falla por apertura tardía o fuga puede provocar sobrepresión catastrófica o emisiones fugitivas no controladas.\n\nTAREA:\nDesarrolla una aplicación web completa, autónoma y de grado industrial en un solo archivo HTML/CSS/JavaScript (Vanilla ES2024, sin frameworks ni dependencias externas de backend) para la gestión integral del ciclo de vida e inspección pre/post operacional de Válvulas de Seguridad (PSV).\n\nESPECIFICACIÓN FUNCIONAL Y MÓDULOS DEL SISTEMA:\n\n1. ESQUEMA DE DATOS Y CONTRATOS (Tipado estricto en JS / IndexedDB):\n   - Tag Number (ej. PSV-0412A), P&ID, Unidad de Proceso, Servicio (Gas Ácido, Condensado, Vapor, GLP).\n   - Datos de Placa: Fabricante (Crosby, Anderson Greenwood, Farris, Dresser), Modelo, Tamaño Entrada/Salida (in), Rating ANSI (150# a 2500# RF/RTJ), Orificio API (D hasta T), Set Pressure (psig / barg), CDTP (Cold Differential Test Pressure), Backpressure (Constante/Variable en psig), Temperatura de Diseño (°F/°C).\n   - Registro de Inspección: Inspector, N° Certificado API, Fecha, Tipo de Prueba (As-Received Pop Test, Pre-instalación, En Servicio).\n   - Hallazgos Visuales: Condición de sellos de plomo, bloqueo de bonete, corrosión en tobera/disco, coquización/polimerización, estado de fuelle (test neumático de fuelle), condición de palanca de desahogo manual.\n   - Mediciones de Prueba de Banco: Set Pressure medido en 3 disparos consecutivos (CDTP), Presión de Cierre (Reseat Pressure), % Blowdown calculado, Prueba de Fugas de Asiento (API 527 Bubble Test: conteo de burbujas/minuto a 90% del set pressure o leakage rate en SCFH).\n\n2. MOTOR DE CÁLCULO Y EVALUACIÓN NORMATIVA API 576 / API 527:\n   - Cálculo automático de desviación:\n     * % Desviación = ((Presión_Pop_Medida - CDTP) / CDTP) * 100\n   - Criterios de Aceptación/Rechazo automáticos:\n     * Si Set <= 70 psig: Tolerancia ±2 psig.\n     * Si Set > 70 psig: Tolerancia ±3%.\n     * Blowdown aceptable: Típicamente 7% a 10% según diseño ASME VIII.\n     * Hermeticidad API 527: Cero burbujas en 1 min para sellos elásticos (O-ring) o según tabla API 527 para asiento metal-metal.\n   - Algoritmo de Diagnóstico de Fallas: Si la desviación es > 10% (Stuck pop), clasificar automáticamente como "Falla Crítica de Integridad", disparando flujo de Investigación Causa Raíz (RCA).\n\n3. ARQUITECTURA OFFLINE-FIRST CON INDEXEDDB:\n   - Almacenamiento local persistente en IndexedDB (esquema versionado v1) con capacidad para miles de registros sin degradación.\n   - Mecanismo de exportación e importación completa de base de datos en JSON con compresión y checksum de integridad.\n   - Sincronización transparente ante reconexión.\n\n4. DASHBOARD ANALÍTICO Y KPIs DE CONFIABILIDAD:\n   - KPIs en tiempo real: Cumplimiento de Programa de Calibración (% Overdue), Tasa de Éxito en As-Received Pop Test (% Passed First Pop), Distribución por Criticidad de Planta, Válvulas con Fugas Críticas.\n   - Matriz de Salud de PSVs con visualización por colores (Verde = Conforme, Ámbar = Próxima a Vencer <30 días, Rojo = Rechazada / Vencida).\n   - Gráficos integrados interactivos usando HTML5 Canvas nativo (sin CDNs bloqueables): Histograma de dispersión de Set Pressure y Curva de Weibull / Confiabilidad acumulada.\n\n5. GENERADOR DE CERTIFICADOS OFICIALES Y AUDITORÍA:\n   - Generación de Hoja de Inspección y Certificado de Calibración formal en formato imprimible/PDF vía CSS @media print (diseño vectorial A4 industrial).\n   - Firma digital táctil en Canvas (Signature Pad) para Inspector y Supervisor HSE.\n   - Generación de Hash Criptográfico SHA-256 inmutable de cada inspección para garantizar trazabilidad e integridad frente a auditorías regulatorias.\n   - Soporte para escaneo y generación de QR Code para identificar el Tag en campo.\n\nDISEÑO Y ERGONOMÍA INDUSTRIAL (UX DE CAMPO):\n- Paleta Dark Mode táctica de alto contraste (fondo #0B0F19, acentos en #FF9800 y #00E676) optimizada para luz solar intensa y visibilidad nocturna.\n- Botones de acción rápida con touch target mínimo de 56x56px para uso con guantes en campo.\n- Acceso directo por atajos de teclado (/, Alt+N para nueva inspección, Alt+S para guardar, Esc para cerrar modales).\n\nRESTRICCIONES TÉCNICAS Y DE CÓDIGO:\n- Cero dependencias externas requeridas para el funcionamiento core.\n- Código limpio, modular, documentado en español técnico y 100% completo (PROHIBIDO usar "// TODO", "// implementar aquí" o código truncado).\n- Incluye 5 registros completos de válvulas de ejemplo precargadas con datos realistas de refinería.',
             },
             {
-              id: "og_insp_002",
-              titulo: "Sistema de Gestión de Integridad de Tuberías (Piping)",
-              categoria: "Aplicación Web",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Ingeniero de Integridad de Activos especializado en piping con certificación API 570 y NACE Level 2, con experiencia en ductos de Oil & Gas.
-
-CONTEXTO TÉCNICO:
-- Aplicación: Ducto de crudo de 24 pulgadas, 50 km de longitud
-- Material: API 5L X60
-- Presión de operación: 1200 psig
-- Temperatura: 180°F
-- Servicio: Crudo pesado con alto contenido de azufre (H2S: 2.5%)
-- Normas: API 570 (Piping Inspection Code), API 1160 (Pipeline Integrity Management), ASME B31.4 (Liquid Pipelines)
-- Edad del ducto: 15 años
-- Historial: 3 fallas por corrosión interna en últimos 5 años
-
-TAREA:
-Desarrolla un sistema web completo de gestión de integridad de tuberías que incluya:
-
-1. MÓDULO DE INVENTARIO DE TUBERÍAS:
-   - Registro de tramos (ID, longitud, diámetro, espesor nominal, material, año instalación)
-   - Mapa interactivo (Leaflet.js) con trazado del ducto
-   - Clasificación por criticalidad (consecuencia de falla)
-   - Historial de inspecciones y reparaciones por tramo
-
-2. MÓDULO DE INSPECCIÓN Y MONITOREO:
-   - Registro de inspecciones visuales (formato checklist)
-   - Mediciones de espesor por ultrasonido (UT) con tendencias
-   - Datos de inspección inteligente (ILI - smart pig)
-   - Monitoreo de corrosión (coupons, probes)
-   - Inspección de soldaduras (RT/UT/MT/PT)
-   - Evaluación de soportes y anclajes
-
-3. MÓDULO DE ANÁLISIS Y EVALUACIÓN:
-   - Cálculo de MAWP (Maximum Allowable Working Pressure) según ASME B31G
-   - Evaluación de defectos (corrosión, gouges, dents)
-   - Tasa de corrosión calculada y predicción de vida remanente
-   - Análisis de riesgo (probabilidad x consecuencia)
-   - Matriz de criticalidad dinámica
-
-4. MÓDULO DE GESTIÓN DE DEFECTOS:
-   - Registro de anomalías encontradas
-   - Clasificación por severidad (leve/moderada/severa/crítica)
-   - Acciones correctivas (reparación/monitoreo/reemplazo)
-   - Seguimiento de reparaciones (tipo: sleeve, cut-out, composite wrap)
-   - Validación de reparaciones
-
-5. MÓDULO DE REPORTES Y DASHBOARD:
-   - Dashboard ejecutivo con KPIs:
-     * Integrity Operating Window (IOW) compliance
-     * % de tramos inspeccionados vs. plan
-     * Tasa de corrosión promedio
-     * Vida remanente estimada
-     * Risk score por tramo
-   - Gráficos de tendencia de espesores
-   - Mapas de calor de criticalidad
-   - Reportes automáticos (PDF/Excel)
-   - Alertas y notificaciones
-
-6. MÓDULO DE PLANIFICACIÓN:
-   - Plan de inspección basado en riesgo (RBI)
-   - Programación de actividades de integridad
-   - Gestión de presupuestos
-   - Tracking de acciones y compromisos
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo dashboard industrial
-- Diseño responsive para tablets y desktop
-- Código modular y bien documentado
-- Datos de ejemplo realistas para demostración
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Leaflet.js, Chart.js, jsPDF, SheetJS (todas vía CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia de datos
-- No requiere backend
-
-CRITERIOS DE CALIDAD:
-- Cálculos de integridad precisos según ASME B31G
-- Interfaz intuitiva para ingenieros de integridad
-- Manejo de grandes volúmenes de datos
-- Exportación de datos en formatos estándar
-- Trazabilidad completa de acciones
-
-ENTREGABLE FINAL:
-Sistema integral de gestión de integridad de tuberías que permita a un ingeniero de integridad gestionar todo el ciclo de vida del ducto, desde inspección hasta planificación de reparaciones, cumpliendo con API 570 y API 1160.`,
-              tags: ["tuberías", "API 570", "API 1160", "integridad", "corrosión", "ASME B31G"],
-              uso: "Continuo / Gestión de activos"
+              id: 'og_insp_002',
+              titulo: 'Sistema de Gestión de Integridad de Tuberías (Piping)',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Semanal',
+              tags: ['Piping', 'API 570', 'ASME B31.3', 'CML', 'Espesores', 'Corrosión', 'RBI'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Senior de Integridad de Ductos y Tuberías de Proceso con 20 años de experiencia en la industria de hidrocarburos. Posees certificación API 570 (Authorized Piping Inspector) y amplio dominio de las normas ASME B31.3 (Process Piping), ASME B31.8 (Gas Transmission), NACE SP0169 y API 580/581 (Risk-Based Inspection). Eres desarrollador de software industrial enfocado en análisis predictivo de degradación de materiales.\n\nCONTEXTO TÉCNICO Y OPERACIONAL:\n- Entorno: Complejo petroquímico y red de tuberías de transporte de crudo pesado y gas amargo (H2S).\n- Circuitos de Tubería: 250 circuitos con más de 1,200 Puntos de Monitoreo de Condición (CML - Condition Monitoring Locations / TMLs).\n- Mecanismos de Daño: Corrosión generalizada, Corrosión Bajo Aislamiento (CUI), Erosión-Corrosión en codos/reducciones, Pitting y Microbially Influenced Corrosion (MIC).\n- Normativa Mandatoria: API 570 (Piping Inspection Code: In-service Inspection, Rating, Repair, and Alteration of Piping Systems).\n\nTAREA:\nDesarrolla una aplicación web profesional completa e interactiva en un solo archivo HTML/CSS/JavaScript para el cálculo de velocidades de corrosión, vida remanente, fechas de retiro y programación de inspecciones según API 570 y ASME B31.3.\n\nMÓDULOS Y ESPECIFICACIONES MATEMÁTICAS EXACTAS:\n\n1. ESQUEMA DE DATOS POR CIRCUITO Y CML:\n   - Tag de Circuito (ej. 04-HC-201-12"-A1A), Fluido, Material (ASTM A106 Gr. B, A333 Gr. 6, A312 TP304L), Diámetro Nominal (NPS), Diámetro Exterior Real (D en mm/pulg), Espesor Nominal (tnom), Tolerancia de Fabricación (12.5%), Espesor de Diseño / Mínimo Requerido (tmin), Presión de Diseño (P), Temperatura de Diseño (T), Tensión Admisible del Material (S según ASME B31.3 Tabla A-1), Factor de Eficiencia de Junta (E), Coeficiente de Temperatura (Y).\n   - Matriz de CMLs: ID CML, Componente (Tubería recta, Codo 90°, Reducción concéntrica, Tee), Cuadrantes (Top, Bottom, East, West), Fecha de Instalación / Espesor Base (tbase), Historial de lecturas de ultrasonido (UT) con fecha e inspector.\n\n2. MOTOR DE CÁLCULO DE INTEGRIDAD MECÁNICA API 570 / ASME B31.3:\n   - Cálculo de Espesor Mínimo Requerido por Presión Interna ($t_{min}$):\n     $$t = \\frac{P \\cdot D}{2 \\cdot (S \\cdot E + P \\cdot Y)}$$\n     $$t_{min} = t + c_{mínimo\\_estructural}$$\n   - Velocidad de Corrosión a Corto Plazo (Short-Term Corrosion Rate - $CR_{ST}$):\n     $$CR_{ST} = \\frac{t_{previo} - t_{actual}}{\\text{Años entre mediciones}}$$\n   - Velocidad de Corrosión a Largo Plazo (Long-Term Corrosion Rate - $CR_{LT}$):\n     $$CR_{LT} = \\frac{t_{base} - t_{actual}}{\\text{Años desde instalación}}$$\n   - Determinación del Rate Gobernador ($CR_{gov}$): Mayor entre $CR_{ST}$ y $CR_{LT}$ o criterio de ingeniería justificado.\n   - Cálculo de Vida Remanente ($RL$ en años):\n     $$RL = \\frac{t_{actual} - t_{min}}{CR_{gov}}$$\n   - Determinación de Próxima Fecha de Inspección API 570:\n     * Intervalo Máximo = Menor entre ($RL / 2$) y el intervalo máximo por clase de fluido API (Clase 1: 5 años, Clase 2: 10 años, Clase 3: 10 años).\n\n3. MAPA VISUAL DE ESPESORES Y CROSSTABS:\n   - Matriz gráfica interactiva de CMLs por cuadrantes con semaforización en tiempo real:\n     * Verde: $RL > 10$ años y $t_{actual} > t_{min} + 2\\text{mm}$.\n     * Amarillo: $5 \\le RL \\le 10$ años.\n     * Naranja: $RL < 5$ años (Planificar reemplazo o encamisado).\n     * Rojo: $t_{actual} \\le t_{min}$ (CONDICIÓN CRÍTICA - Disparo inmediato de alerta por no-conformidad).\n   - Generación de gráfico de perfil de espesor longitudinal a lo largo del circuito con Canvas.\n\n4. GESTIÓN Y PERSISTENCIA:\n   - Motor IndexedDB para manejo de cientos de circuitos y miles de lecturas UT.\n   - Importador masivo de lecturas desde CSV/Excel estructurado con validación de tipos.\n   - Exportación de Informes de Integridad Ejecutivos con cálculo de MAWP (Maximum Allowable Working Pressure) recalculado al espesor actual:\n     $$MAWP = \\frac{2 \\cdot S \\cdot E \\cdot t_{actual}}{D - 2 \\cdot Y \\cdot t_{actual}}$$\n\nDISEÑO Y USABILIDAD:\n- Modo industrial Dark Navy (#0a1128, #001f54, #034078, acentos #1282a2, texto #fefcfb).\n- Responsive para tablets de campo resistentes (Toughbook/iPad en fundas industriales).\n- Código completo sin omisiones, con 4 circuitos y 16 CMLs de prueba precargados.',
             },
             {
-              id: "og_insp_003",
-              titulo: "Calculadora de Capacity de Válvulas de Alivio según API 520",
-              categoria: "Herramienta de Cálculo",
-              prioridad: "critica",
-              prompt: `ACTÚA COMO: Ingeniero de Procesos Senior especializado en diseño de sistemas de alivio de presión, con 15 años de experiencia en plantas de Oil & Gas y certificación como Professional Engineer (PE).
-
-CONTEXTO TÉCNICO:
-- Norma principal: API 520 Part I (Sizing and Selection) y API 520 Part II (Installation)
-- Aplicación: Cálculo de capacidad requerida y selección de válvulas de alivio de presión
-- Tipos de servicio: Gas/Vapor, Líquido, Two-phase flow
-- Industrias: Refinerías, plantas de gas, petroquímicas
-- Escenarios de alivio: Fire case, blocked outlet, control valve failure, power failure, etc.
-
-TAREA:
-Desarrolla una calculadora web profesional completa para dimensionamiento de válvulas de alivio de presión según API 520. La calculadora debe:
-
-1. MÓDULO DE CÁLCULO PARA GAS/VAPOR:
-   - Input: Presión de diseño (psig), temperatura de diseño (°F), presión de alivio (set pressure + overpressure), coeficiente Kd (0.975 para gas), coeficiente Kb (back pressure), coeficiente Kc (combination), peso molecular, relación de calores específicos (k = Cp/Cv), factor de compresibilidad (Z), flujo másico requerido (lb/hr) o calor de entrada (BTU/hr) para fire case
-   - Cálculo de área requerida usando fórmula API 520: A = W / (C * Kd * P1 * Kb * Kc) * sqrt(T*Z/MW)
-   - Cálculo de coeficiente C para gas ideal o real
-   - Selección de orificio estándar (D, E, F, G, H, J, K, M, N, P, Q, R, T) según API 526
-   - Verificación de flujo crítico vs. subcrítico
-   - Cálculo de back pressure afectado
-
-2. MÓDULO DE CÁLCULO PARA LÍQUIDO:
-   - Input: Presión de alivio (psig), presión de back (psig), densidad del líquido a condiciones de alivio (lb/ft³), viscosidad (cP), coeficiente Kv (viscosidad), flujo volumétrico requerido (GPM)
-   - Cálculo de área requerida usando fórmula API 520: A = Q / (Kd * Kw * Kc) * sqrt(G / (P1 - P2))
-   - Corrección por viscosidad
-   - Selección de orificio estándar
-   - Verificación de flujo turbulento vs. laminar
-
-3. MÓDULO DE ESCENARIOS DE ALIVIO:
-   - Fire case externo: Cálculo de calor de entrada Q = 43200 * F * A^0.82, donde F es factor de ambiente (1.0 para bare vessel, 0.3 para insulated) y A es área húmeda
-   - Blocked outlet: Cálculo basado en capacidad de bombeo o flujo máximo
-   - Control valve failure: Análisis de posición fail-open/fail-close
-   - Power failure: Análisis de equipos críticos
-   - Check valve failure: Análisis de reverse flow
-   - Internal source: Despresurización de equipos
-
-4. MÓDULO DE SELECCIÓN DE VÁLVULA:
-   - Base de datos de orificios estándar API 526 con áreas efectivas
-   - Selección automática del tamaño siguiente disponible
-   - Recomendación de tipo de válvula (conventional, balanced bellows, pilot-operated)
-   - Consideraciones de back pressure
-   - Cálculo de capacity real vs. requerida
-
-5. MÓDULO DE REPORTES:
-   - Hoja de datos (datasheet) profesional con todos los parámetros
-   - Memoria de cálculo detallada paso a paso
-   - Justificación de selección
-   - Referencias a normas aplicables
-   - Exportación a PDF con formato de ingeniería
-   - Exportación de datasheet a Excel
-
-6. FUNCIONALIDADES ADICIONALES:
-   - Guardar cálculos en localStorage
-   - Comparar múltiples escenarios
-   - Historial de cálculos
-   - Conversión de unidades (psig/bar, °F/°C, lb/hr/kg/hr)
-   - Validación de inputs con rangos típicos
-   - Ayuda contextual con explicaciones de cada parámetro
-
-FORMATO DE SALIDA:
-- Aplicación web completa en un solo archivo HTML
-- Interfaz profesional tipo herramienta de ingeniería
-- Cálculos en tiempo real (sin necesidad de submit)
-- Diseño responsive para desktop y tablets
-- Código bien comentado explicando las fórmulas
-- Datos de ejemplo precargados (caso de estudio real)
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML (inline CSS y JS)
-- Librerías permitidas: jsPDF (CDN), SheetJS (CDN)
-- Cálculos precisos según API 520 Part I Edition 11 (2020)
-- No requiere backend
-- Funcionalidad offline completa
-
-CRITERIOS DE CALIDAD:
-- Precisión de cálculos validada contra ejemplos de API 520
-- Interfaz intuitiva para ingenieros de procesos
-- Manejo robusto de errores de input
-- Reportes profesionales listos para revisión por pares
-- Documentación técnica completa
-
-ENTREGABLE FINAL:
-Calculadora profesional de dimensionamiento de PSVs que un ingeniero de procesos pueda usar para diseñar sistemas de alivio cumpliendo con API 520, generando memoria de cálculo y datasheets listos para aprobación.`,
-              tags: ["API 520", "PSV", "dimensionamiento", "cálculo", "alivio", "presión"],
-              uso: "Diseño de ingeniería"
+              id: 'og_insp_003',
+              titulo: 'Calculadora de Capacity de Válvulas de Alivio según API 520',
+              categoria: 'Herramienta',
+              prioridad: 'critica',
+              uso: 'Frecuente',
+              tags: ['API 520', 'Relief Sizing', 'Flujo Crítico', 'Gas', 'Vapor', 'Líquidos', 'Ingeniería de Procesos'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Principal de Procesos y Seguridad de Procesos (PSM) con PhD en Ingeniería Química y más de 20 años dimensionando sistemas de alivio y antorchas (flare networks) en plantas de gas y refinerías. Eres la máxima autoridad técnica en la aplicación de las normas API STD 520 Part I (Sizing and Selection of Pressure-relieving Devices) y API STD 521.\n\nCONTEXTO TÉCNICO:\n- Sistema: Cálculo riguroso de dimensionamiento y capacidad de descarga de dispositivos de alivio de presión para diferentes escenarios de contingencia: Bloqueo de Descarga, Fuego Externo (API 521 wetted/unwetted), Falla de Energía Eléctrica, Falla de Enfriamiento en Tubos de Intercambiador.\n- Estados de la Materia: Gases/Vapores (Flujo Crítico y Subcrítico), Vapor de Agua (ASME Steam), y Líquidos Incompresibles.\n\nTAREA:\nDesarrolla una aplicación web monolítica en un único archivo HTML/CSS/JS que funcione como una Calculadora de Ingeniería Rigurosa de Capacidad y Área de Orificio de Válvulas de Alivio cumpliendo matemáticamente con todas las ecuaciones estándar de API 520 Parte I (10ª Edición).\n\nFORMULACIÓN MATEMÁTICA Y ALGORITMOS EXIGIDOS:\n\n1. DIMENSIONAMIENTO PARA GASES Y VAPORES (FLUJO CRÍTICO):\n   - Determinación de Presión Crítica de Flujo ($P_{cf}$):\n     $$P_{cf} = P_1 \\cdot \\left( \\frac{2}{k+1} \\right)^{\\frac{k}{k-1}}$$\n   - Si la contrapresión acumulada/superimpuesta $P_2 \\le P_{cf}$, el flujo es Crítico.\n   - Cálculo del Coeficiente de Expansión Isentrópica $C$:\n     $$C = 520 \\cdot \\sqrt{k \\cdot \\left( \\frac{2}{k+1} \\right)^{\\frac{k+1}{k-1}}}$$\n   - Cálculo del Área Efectiva Requerida de Descarga ($A$ en $in^2$):\n     $$A = \\frac{W}{C \\cdot K_d \\cdot P_1 \\cdot K_b \\cdot K_c} \\cdot \\sqrt{\\frac{T \\cdot Z}{M}}$$\n     Donde:\n     * $W$ = Caudal de alivio requerido (lb/hr)\n     * $P_1$ = Presión de alivio aguas arriba (Set pressure + Sobrepresión admisible + Presión atmosférica, en psia)\n     * $K_d$ = Coeficiente de descarga efectivo (0.975 para PSV de gas)\n     * $K_b$ = Factor de corrección por contrapresión (calculado según curvas API para fuelle o 1.0 para convencional en flujo crítico)\n     * $K_c$ = Factor de combinación para disco de ruptura (1.0 o 0.9)\n     * $T$ = Temperatura absoluta de alivio (°R = °F + 459.67)\n     * $Z$ = Factor de compresibilidad del gas en condiciones de alivio\n     * $M$ = Peso molecular de la mezcla (lb/lbmol)\n     * $k$ = Relación de calores específicos ($C_p / C_v$)\n\n2. DIMENSIONAMIENTO PARA LÍQUIDOS (API 520 Secc. 5.7):\n   $$A = \\frac{Q}{38 \\cdot K_d \\cdot K_w \\cdot K_c \\cdot K_v} \\cdot \\sqrt{\\frac{G}{\\Delta P}}$$\n   Donde $Q$ = GPM, $G$ = Gravedad específica, $\\Delta P = P_1 - P_2$ (psid), $K_w$ = factor contrapresión líquida, $K_v$ = factor viscosidad Reynolds.\n\n3. SELECCIÓN DE ORIFICIO ESTÁNDAR API 526:\n   - Comparación automática del área calculada contra la tabla oficial de Orificios API 526:\n     * D (0.110 $in^2$), E (0.196 $in^2$), F (0.307 $in^2$), G (0.503 $in^2$), H (0.785 $in^2$), J (1.287 $in^2$), K (1.838 $in^2$), L (2.853 $in^2$), M (3.600 $in^2$), N (4.340 $in^2$), P (6.380 $in^2$), Q (11.05 $in^2$), R (16.00 $in^2$), T (26.00 $in^2$).\n   - Selección automática del orificio inmediatamente superior y cálculo de la capacidad real certificada de descarga ($W_{real}$).\n\n4. INTERFAZ Y HERRAMIENTAS ADICIONALES:\n   - Selector dinámico de fluidos típicos con propiedades pre-cargadas (Metano, Etano, Propano, Butano, Gas Natural Típico, Hidrógeno, Nitrógeno, Agua).\n   - Generación instantánea de Hoja de Especificación de Datos de Proceso (Datasheet API 520/ISA S20) con opción de exportación a PDF y copia al portapapeles.\n   - Gráfico interactivo en Canvas que muestra la curva de capacidad vs. sobrepresión (10%, 16%, 21%).\n   - Validación reactiva en tiempo real con detección de errores termodinámicos (ej. $Z \\le 0$, $k \\le 1.0$, $P_1 \\le P_2$).\n\nREQUISITOS DE IMPLEMENTACIÓN:\n- Interfaz moderna, precisa, con diseño técnico oscuro (#121824).\n- Código JavaScript sin frameworks, con funciones puras de cálculo matemático verificadas.',
             },
             {
-              id: "og_insp_004",
-              titulo: "Sistema de Gestión de Inspección de Tanques API 653",
-              categoria: "Aplicación Web",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Ingeniero Inspector de Tanques certificado API 653 con 25 años de experiencia en inspección, reparación y evaluación de tanques de almacenamiento atmosférico en terminales petroleros.
-
-CONTEXTO TÉCNICO:
-- Norma principal: API 653 (Tank Inspection, Repair, Alteration, and Reconstruction)
-- Norma complementaria: API 650 (Welded Tanks for Oil Storage), API 620 (Large Low-Pressure Tanks)
-- Tipo de tanques: Tanques de techo fijo y techo flotante para almacenamiento de crudo, productos refinados y agua
-- Capacidades: 5,000 a 150,000 barriles
-- Materiales: Acero al carbono, aceros inoxidables
-- Servicios: Crudo, gasolina, diesel, fuel oil, agua de producción
-- Edad promedio: 20-40 años
-- Ambiente: Costero (alta corrosividad)
-
-TAREA:
-Desarrolla un sistema web integral para gestión de inspección de tanques de almacenamiento según API 653. El sistema debe incluir:
-
-1. MÓDULO DE REGISTRO DE TANQUES:
-   - Datos de diseño: Diámetro, altura, capacidad, año de construcción, fabricante, código de diseño
-   - Materiales: Especificaciones de shell, bottom, roof, componentes internos
-   - Historial: Fecha de instalación, reparaciones mayores, alteraciones
-   - Diagramas: Vista general del tanque con identificación de componentes
-   - Documentos: Planos, datasheets, certificados de materiales
-
-2. MÓDULO DE INSPECCIÓN EXTERNA (IN-SERVICE):
-   - Checklist de inspección visual externa según API 653 Section 4.3:
-     * Shell: Deformaciones, corrosión, soldaduras, conexiones
-     * Bottom: Estado de fundación, anillo de borde, sistema de drenaje
-     * Roof: Condición estructural, sellos, sistemas de venteo
-     * Accesorios: Escaleras, plataformas, sistemas contra incendios
-     * Dique: Integridad, drenajes, contención
-   - Registro de mediciones de espesor (UT) en puntos específicos
-   - Fotografías georreferenciadas de hallazgos
-   - Evaluación de condiciones (bueno/regular/malo/crítico)
-
-3. MÓDULO DE INSPECCIÓN INTERNA (OUT-OF-SERVICE):
-   - Checklist completo según API 653 Section 4.4:
-     * Fondo: Inspección 100% por MFL (Magnetic Flux Leakage) o perfilrado
-     * Shell: Inspección por métodos NDE según servicio
-     * Techo: Inspección estructural y de sellos
-     * Componentes internos: Bombas, agitadores, calentadores
-   - Mapa de corrosión con ubicación de mediciones
-   - Análisis de tasas de corrosión
-   - Evaluación de reparaciones existentes
-
-4. MÓDULO DE EVALUACIÓN Y ANÁLISIS:
-   - Cálculo de espesor mínimo requerido según API 650: tmin = (2.6 * D * (H-1) * G) / (S * E)
-   - Evaluación de defectos (corrosión, deformaciones)
-   - Cálculo de vida remanente basada en tasa de corrosión
-   - Evaluación de asentamiento del fondo (settlement)
-   - Análisis de estabilidad del tanque
-   - Determinación de presión máxima de operación (MAWP)
-   - Evaluación de soldaduras (eficiencia de junta)
-
-5. MÓDULO DE REPARACIONES:
-   - Registro de reparaciones realizadas (tipo, ubicación, fecha)
-   - Tipos de reparación según API 653:
-     * Patch plates (insert plates)
-     * Weld buildup
-     * Bottom liners
-     * Shell replacement plates
-     * Nozzle replacements
-   - Procedimientos de reparación aprobados
-   - Inspección post-reparación
-   - Pruebas hidrostáticas
-
-6. MÓDULO DE GESTIÓN DE RIESGO:
-   - Matriz de criticalidad (consecuencia x probabilidad)
-   - Factores de riesgo: Corrosión, edad, servicio, ubicación, historial
-   - Priorización de inspecciones y reparaciones
-   - Análisis de modo de falla
-   - Plan de acción basado en riesgo
-
-7. MÓDULO DE DASHBOARD Y REPORTES:
-   - Dashboard ejecutivo con KPIs:
-     * % de tanques con inspección vigente
-     * Tanques con vida remanente < 5 años
-     * Tasa de corrosión promedio
-     * Costo de mantenimiento por tanque
-     * Risk score por instalación
-   - Gráficos de tendencia de espesores
-   - Mapas de calor de condición
-   - Reportes regulatorios
-   - Exportación a PDF/Excel
-   - Alertas de vencimiento de inspecciones
-
-8. MÓDULO DE PLANIFICACIÓN:
-   - Programa de inspección basado en API 653
-   - Cálculo de intervalos de inspección
-   - Planificación de paradas (out-of-service)
-   - Gestión de presupuestos
-   - Tracking de acciones
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo sistema de gestión de activos
-- Diseño responsive optimizado para tablets (uso en campo)
-- Código modular y bien documentado
-- Datos de ejemplo realistas (5-10 tanques)
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, Leaflet.js, jsPDF, SheetJS (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- No requiere backend
-
-CRITERIOS DE CALIDAD:
-- Cálculos precisos según API 653 y API 650
-- Interfaz intuitiva para inspectores de tanques
-- Manejo de grandes volúmenes de datos
-- Reportes profesionales listos para presentación
-- Trazabilidad completa de inspecciones y reparaciones
-
-ENTREGABLE FINAL:
-Sistema integral de gestión de integridad de tanques que un inspector API 653 pueda usar para gestionar todo el ciclo de vida de tanques de almacenamiento, desde inspección hasta planificación de reparaciones, cumpliendo con API 653.`,
-              tags: ["tanques", "API 653", "API 650", "inspección", "MFL", "integridad"],
-              uso: "Continuo / Gestión de activos"
-            }
-          ]
+              id: 'og_insp_004',
+              titulo: 'Sistema de Gestión de Inspección de Tanques API 653',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Mensual',
+              tags: ['Tanques', 'API 653', 'API 650', 'Fondos', 'Envolventes', 'Corrosión', 'NDT'],
+              prompt:
+                'ACTÚA COMO: Inspector Certificado API 653 (Aboveground Storage Tank Inspector) e Ingeniero de Integridad Estructural de Tanques de Almacenamiento con 20 años de experiencia en terminales marítimos, refinerías y parques de tanques. Conoces a fondo API Standard 653 (Tank Inspection, Repair, Alteration, and Reconstruction) y API Standard 650 (Welded Tanks for Oil Storage).\n\nCONTEXTO TÉCNICO Y OPERACIONAL:\n- Parque de 45 tanques atmosféricos verticales de almacenamiento de crudo, nafta, diésel y agua de formación (capacidades desde 10,000 hasta 250,000 barriles).\n- Tipos de techo: Cónico fijo con columnas, domo geodésico de aluminio y techo flotante externo/interno con sellos mecánicos y zapatas.\n- Inspecciones requeridas: Rutinaria en servicio (mensual), Externa por inspector certificado (cada 5 años) e Interna fuera de servicio con entrada a espacio confinado (cada 10-20 años según RBI).\n\nTAREA:\nDesarrolla una aplicación web completa y robusta en un único archivo HTML/CSS/JavaScript para la gestión y cálculo de integridad mecánica de tanques según API 653.\n\nMÓDULOS DEL SISTEMA Y CÁLCULOS NORMATIVOS:\n\n1. FICHA TÉCNICA DEL TANQUE Y REGISTRO ESTRUCTURAL:\n   - Tag (ej. TK-5001), Diámetro Nominal ($D$ en pies/metros), Altura Total ($H$ en pies/metros), Nivel Máximo de Llenado ($H_L$), Gravedad Específica del Producto ($G$).\n   - Datos por Anillo de la Envolvente (Cursos 1 a $N$): Altura del curso, Material (ASTM A36, A516 Gr 70, A283C), Tensión Admisible ($S$ en psi), Eficiencia de Junta ($E$), Espesor Nominal Original ($t_{nom}$), Espesor Actual Medido ($t_{act}$).\n\n2. MOTOR DE CÁLCULO DE ESPESORES MÍNIMOS DE ENVOLVENTE (API 653 Secc. 4.3.3):\n   - Cálculo del espesor mínimo admisible ($t_{min}$) para cada anillo:\n     $$t_{min} = \\frac{2.6 \\cdot D \\cdot (H - 1) \\cdot G}{S \\cdot E}$$\n   - Para el primer curso ($H$ desde fondo) y para cursos superiores ($H$ medido desde la parte inferior del curso en evaluación).\n   - Evaluación de Severidad de Pérdida de Espesor y cálculo de Altura Máxima de Líquido Admisible ($H_{max}$) si $t_{act} < t_{min}$:\n     $$H_{max} = \\frac{S \\cdot E \\cdot t_{act}}{2.6 \\cdot D \\cdot G} + 1$$\n\n3. EVALUACIÓN DE FONDO DE TANQUE Y ESPESOR MÍNIMO DE PLACA (API 653 Secc. 4.4):\n   - Cálculo de Espesor Mínimo Remanente en el Fondo ($MRT_i$ y $MRT_e$ por lado producto y suelo):\n     $$MRT = t_{act} - \\min(CR_i \\cdot O_r, \\; CR_e \\cdot O_r)$$\n   - Criterio de aceptación: $MRT \\ge 0.10\\text{ in}$ (2.5 mm) para fondos con drenaje a detección de fugas o $0.05\\text{ in}$ con liner no metálico.\n   - Evaluación del Anillo Anular (Anillos de fondo perimetrales): verificación de anchos mínimos y espesores de placa anular según Tabla 4.4 de API 653.\n\n4. MATRIZ DE DEFORMACIÓN, ASENTAMIENTOS Y TECHO:\n   - Registro de 16 a 32 puntos perimetrales de nivelación para cálculo de Asentamiento Diferencial (Out-of-plane settlement / Planar tilt) y detección de deformación cosenoidal.\n   - Checklist de componentes críticos: Sellos primarios/secundarios de techo flotante, pontones, sistema de drenaje de techo con junta articulada, puesta a tierra antiestática, venteos de emergencia y respiraderos de presión/vacío (PVRV).\n\n5. INTERFAZ Y DASHBOARD EJECUTIVO:\n   - Vista isométrica 2.5D interactiva del tanque generada con SVG/Canvas mostrando el estado de salud de cada anillo por colores.\n   - Tabla dinámica de cursos con alertas en tiempo real y cálculo de vida remanente.\n   - Almacenamiento local con IndexedDB y exportación de reportes de inspección formal en PDF/A4.\n\nRESTRICCIONES:\n- Código monolítico completo, sin librerías externas obligatorias, con 2 tanques completos de prueba precargados.',
+            },
+          ],
         },
         {
-          id: "og_bitacora",
-          nombre: "Bitácoras y Sistemas Operacionales",
+          id: 'og_bitacora',
+          nombre: 'Bitácoras y Sistemas Operacionales',
           prompts: [
             {
-              id: "og_bit_001",
-              titulo: "Sistema Digital de Bitácora Operacional para Compresores",
-              categoria: "Aplicación Web",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Ingeniero de Operaciones Senior con 20 años de experiencia en plantas de compresión de gas natural, especializado en operaciones de compresores centrífugos y reciprocantes, con conocimiento profundo de sistemas de control y monitoreo de condición.
-
-CONTEXTO TÉCNICO:
-- Industria: Estación de compresión de gas natural
-- Equipos: 6 compresores centrífugos (gas lift y transporte) + 2 compresores reciprocantes (boosters)
-- Potencia: 5,000 - 25,000 HP por unidad
-- Conductores: Turbinas de gas y motores eléctricos
-- Sistema de control: DCS (Distributed Control System)
-- Parámetros críticos: Presión de succión/descarga, temperatura, vibración, flujo, eficiencia
-- Turnos: 3 turnos rotativos (12 horas cada uno)
-- Normas: API 617 (Axial and Centrifugal Compressors), API 618 (Reciprocating Compressors), API 670 (Machinery Protection Systems)
-
-TAREA:
-Desarrolla un sistema web completo de bitácora operacional digital para reemplazar las bitácoras en papel de una estación de compresión. El sistema debe:
-
-1. MÓDULO DE REGISTRO POR TURNO:
-   - Datos generales: Fecha, turno (A/B/C/D), operador principal, operador secundario, supervisor
-   - Condiciones de operación al inicio del turno
-   - Eventos relevantes durante el turno
-   - Resumen del turno y pase al siguiente turno (handover)
-
-2. MÓDULO DE MONITOREO DE COMPRESORES:
-   Para cada compresor, registrar cada hora:
-   - Parámetros de proceso:
-     * Presión de succión (psig)
-     * Presión de descarga (psig)
-     * Temperatura de succión (°F)
-     * Temperatura de descarga (°F)
-     * Flujo de gas (MMSCFD)
-     * Velocidad (RPM)
-     * Potencia consumida (HP/kW)
-   - Parámetros mecánicos:
-     * Vibración radial DE (mils pk-pk)
-     * Vibración radial NDE (mils pk-pk)
-     * Vibración axial (mils pk-pk)
-     * Temperatura de cojinete DE (°F)
-     * Temperatura de cojinete NDE (°F)
-     * Temperatura de sello (°F)
-   - Sistema de lubricación:
-     * Presión de aceite (psig)
-     * Temperatura de aceite (°F)
-     * Nivel de tanque (%)
-     * Diferencia de presión de filtros (psid)
-   - Sistema de gas de sello:
-     * Presión de gas de sello (psig)
-     * Flujo de gas de sello (SCFM)
-     * Diferencia de presión (psid)
-
-3. MÓDULO DE CÁLCULOS AUTOMÁTICOS:
-   - Relación de compresión: Pd / Ps
-   - Eficiencia isentrópica calculada
-   - Potencia específica (HP/MMSCFD)
-   - Head poli trópico
-   - Desviación de condiciones de diseño (%)
-   - Factor de carga (% de capacidad máxima)
-   - Consumo específico de combustible (para turbinas)
-   - Disponibilidad del equipo (% uptime)
-
-4. MÓDULO DE ALERTAS Y ALARMAS:
-   - Sistema de alertas automáticas cuando parámetros exceden límites:
-     * Advertencia (Warning): 10% sobre valor normal
-     * Alarma (Alarm): 20% sobre valor normal
-     * Alarma crítica: Valor de disparo de protección
-   - Notificaciones visuales y sonoras
-   - Registro de alarmas con timestamp y acción tomada
-   - Escalamiento automático según severidad
-
-5. MÓDULO DE EVENTOS Y ANOMALÍAS:
-   - Registro de eventos no rutinarios:
-     * Arranques/paradas
-     * Cambios de carga significativos
-     * Alarmas activadas
-     * Condiciones anormales
-     * Mantenimiento de emergencia
-   - Descripción detallada del evento
-   - Acciones correctivas tomadas
-   - Impacto en producción
-   - Lecciones aprendidas
-
-6. MÓDULO DE MANTENIMIENTO:
-   - Registro de horas de operación por equipo (running hours)
-   - Alertas de mantenimiento preventivo basado en horas:
-     * Cambio de aceite (cada 2,000 horas)
-     * Inspección de cojinetes (cada 8,000 horas)
-     * Overhaul mayor (cada 25,000 horas)
-   - Tracking de órdenes de trabajo
-   - Registro de repuestos utilizados
-   - Costos de mantenimiento por equipo
-
-7. MÓDULO DE REPORTES Y DASHBOARD:
-   - Dashboard en tiempo real con:
-     * Estado de todos los compresores (corriendo/standby/mantenimiento)
-     * Producción total de la estación (MMSCFD)
-     * Consumo de combustible/power
-     * Eficiencia global
-     * KPIs de confiabilidad (MTBF, MTTR, disponibilidad)
-   - Gráficos de tendencia de parámetros críticos
-   - Reportes automáticos:
-     * Reporte diario de operaciones
-     * Reporte semanal de producción
-     * Reporte mensual de KPIs
-     * Reporte de eventos y alarmas
-   - Exportación a PDF/Excel
-   - Comparación vs. condiciones de diseño
-
-8. MÓDULO DE HANDOVER (PASE DE TURNO):
-   - Resumen automático del turno
-   - Equipos en condiciones anormales
-   - Mantenimiento en progreso
-   - Pendientes para siguiente turno
-   - Instrucciones especiales
-   - Firma digital de entrega y recepción
-
-9. MÓDULO DE ANÁLISIS DE PERFORMANCE:
-   - Curvas de performance vs. mapa del compresor
-   - Análisis de eficiencia energética
-   - Identificación de degradación de performance
-   - Recomendaciones de optimización
-   - Benchmarking entre unidades similares
-
-10. FUNCIONALIDADES ADICIONALES:
-    - Modo offline con sincronización automática
-    - Firma digital de operadores
-    - Adjuntar fotografías y documentos
-    - Búsqueda avanzada en historial
-    - Exportación de datos para análisis externo
-    - Integración con sistemas SCADA/DCS (API)
-    - Control de acceso por roles (operador, supervisor, ingeniero)
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo SCADA/DCS moderno
-- Diseño responsive optimizado para tablets en sala de control
-- Código modular y bien documentado
-- Datos de ejemplo realistas (24 horas de operación)
-- Gráficos interactivos y dashboards en tiempo real
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, jsPDF, SheetJS, moment.js (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- No requiere backend (pero prepararse para integración futura)
-
-CRITERIOS DE CALIDAD:
-- Interfaz intuitiva para operadores de campo
-- Cálculos precisos de termodinámica y mecánica
-- Manejo robusto de datos en tiempo real
-- Reportes profesionales listos para gerencia
-- Performance óptima con múltiples usuarios concurrentes
-
-ENTREGABLE FINAL:
-Sistema digital completo de bitácora operacional que reemplace las bitácoras en papel, permita monitoreo en tiempo real de compresores, genere reportes automáticos y mejore la toma de decisiones operativas en una estación de compresión de gas natural.`,
-              tags: ["compresores", "bitácora digital", "operaciones", "monitoreo", "API 617"],
-              uso: "Diario por turno"
+              id: 'og_bit_001',
+              titulo: 'Sistema Digital de Bitácora Operacional para Compresores',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Por turno',
+              tags: ['Compresores', 'Bitácora', 'Operaciones', 'Turbomaquinaria', 'Vibraciones', 'Temperatura', 'Presión'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Senior de Operaciones y Mantenimiento de Turbomaquinaria en Oil & Gas con 20 años de trayectoria en estaciones de compresión de gasoductos y plantas de inyección de gas a alta presión. Especialista en compresores centrífugos multietapa accionados por turbina de gas y compresores reciprocantes de alta potencia (API 617 y API 618). Eres un desarrollador front-end experto en interfaces operativas SCADA de alta velocidad.\n\nCONTEXTO TÉCNICO:\n- Estación de compresión de gas natural con 4 trenes principales (Compresores centrífugos de 15,000 HP acoplados a turbinas Solar Mars 100).\n- Régimen de operación: 24/7 en turnos rotativos de 12 horas (Día/Noche).\n- Parámetros críticos: Presiones y temperaturas de succión/descarga por etapa, temperaturas de cojinetes radiales y axiales (journal & thrust bearings), vibración global (overall) y espectro 1X/2X en mils/micrones, diferencial de presión en filtros de gas y aceite de lubricación (Lube Oil System), velocidad de giro (RPM) y consumo de combustible de turbina.\n\nTAREA:\nDesarrolla una aplicación web completa y profesional en un solo archivo HTML/CSS/JavaScript para la gestión de la Bitácora Digital Operacional de Turno (Shift Logbook) de Trenes de Compresión.\n\nMÓDULOS DEL SISTEMA Y LÓGICA DE NEGOCIO:\n\n1. REGISTRO DE PARÁMETROS OPERACIONALES POR HORA Y POR TREN:\n   - Selector de Tren (Tren A, B, C, D) y Turno (Día 07:00-19:00 / Noche 19:00-07:00).\n   - Succión: Presión (psig), Temperatura (°F), Flujo (MMSCFD).\n   - Descarga por Etapa: Presión (psig), Temperatura (°F), Ratio de Compresión ($r_c = P_d / P_s$).\n   - Sistema de Lubricación: Presión de Aceite (psig), Temperatura suministro/retorno (°F), Nivel de tanque (%), $\\Delta P$ en filtros dúplex (psid).\n   - Monitoreo de Cojinetes (RTDs Pt100): Temperatura cojinete lado acople / lado libre (Drive End / Non-Drive End) en °C/°F.\n   - Sistema de Monitoreo de Vibración (Transductores de proximidad Bently Nevada 3500): Vibración radial DE/NDE ($X$ e $Y$) en $\\mu m$ o mils pk-pk, Desplazamiento axial (mils).\n   - Sellos Secos de Gas (Dry Gas Seals): Presión de gas de sello, $\\Delta P$ gas de sello vs. proceso, Venteo primario (Primary Vent Flow en SCFM).\n\n2. MOTOR DE ALARMAS Y DETECCIÓN DE ANOMALÍAS EN TIEMPO REAL:\n   - Validación automática contra bandas de operación normal, alarma (High/Low) y disparo (Trip/High-High):\n     * Temp Cojinetes: Normal < 90°C, Alarma $\\ge 95$°C, Trip $\\ge 105$°C.\n     * Vibración Radial: Normal < 1.5 mils, Alarma $\\ge 2.5$ mils, Trip $\\ge 3.5$ mils.\n     * Flujo Venteo DGS: Normal < 5 SCFM, Alarma $\\ge 10$ SCFM (Fuga en sello primario), Trip $\\ge 20$ SCFM.\n   - Cálculo automático de Potencia Politrópica y Eficiencia Politrópica estimada ($E_p$):\n     $$E_p = \\frac{\\frac{k-1}{k} \\cdot \\ln(P_d / P_s)}{\\ln(T_d / T_s)}$$\n\n3. GESTIÓN DE EVENTOS, NOVEDADES Y PASES DE GUARDIA (HANDOVER):\n   - Muro cronológico de eventos operacionales (Start-up, Shutdown, Enclavamientos, Maniobras de Válvulas, Purgas).\n   - Módulo formal de Relevo de Turno (Shift Handover) conforme a lineamientos de seguridad PSM: Resumen de producción, trenes en servicio, permisos de trabajo abiertos en el área, consumibles y pendientes críticos.\n   - Firma digital obligatoria de Operador Saliente y Operador Entrante con sellado de tiempo.\n\n4. PERSISTENCIA, ANALÍTICA Y EXPORTACIÓN:\n   - Almacenamiento local mediante IndexedDB con filtrado por rango de fechas y tren.\n   - Gráficos de tendencias en Canvas interactivo para comparar evolución de vibraciones y temperaturas a lo largo del turno.\n   - Exportación de la Bitácora de Turno en formato Excel/CSV y reporte ejecutivo en PDF/A4 listo para impresión.\n\nREQUISITOS DE DISEÑO Y CÓDIGO:\n- Estilo visual tipo consola de sala de control moderna (Dark Industrial Theme: #0d131a, acentos cian #00f2fe y ámbar #ffb703).\n- Código limpio, modular y 100% completo, con datos de prueba de un turno completo pre-cargados.',
             },
             {
-              id: "og_bit_002",
-              titulo: "Sistema de Gestión de Producción de Pozos Petroleros",
-              categoria: "Aplicación Web",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Ingeniero de Producción Senior con 25 años de experiencia en producción de campos petroleros, especializado en análisis de comportamiento de pozos, optimización de producción y gestión de activos de yacimiento.
-
-CONTEXTO TÉCNICO:
-- Industria: Campo petrolero onshore con 150 pozos productores
-- Tipo de pozos: 80 pozos de aceite, 50 pozos de gas, 20 pozos de agua
-- Métodos de levantamiento artificial: 40 pozos con bombeo mecánico (beam pumps), 20 pozos con ESP (Electrical Submersible Pumps), 10 pozos con gas lift
-- Yacimiento: Arenisca, profundidad 8,000-12,000 ft, API gravity 28°, presión inicial 4,500 psig
-- Infraestructura: 5 baterías de separación, 2 plantas de tratamiento de agua, 1 planta de compresión
-- Sistemas: SCADA para monitoreo remoto, DCS en baterías
-- Personal: 30 operadores de campo, 5 ingenieros de producción, 2 geólogos
-
-TAREA:
-Desarrolla un sistema web integral de gestión de producción de pozos petroleros que incluya:
-
-1. MÓDULO DE INVENTARIO DE POZOS:
-   - Datos básicos: Tag, ubicación (GPS), tipo (aceite/gas/agua), fecha de completación, profundidad total, profundidad de completación
-   - Características del yacimiento: Zona productora, permeabilidad, porosidad, saturación de aceite
-   - Completación: Tipo (vertical/horizontal/direccional), número de zonas, tipo de estimulación (fracking/acid)
-   - Equipos de levantamiento artificial: Tipo, modelo, capacidad, fecha de instalación
-   - Conexión a superficie: Línea de flujo, batería asignada, distancia
-
-2. MÓDULO DE MONITOREO DIARIO DE PRODUCCIÓN:
-   Para cada pozo, registrar diariamente:
-   - Presiones:
-     * Presión de cabeza de pozo (THP - Tubing Head Pressure) en psig
-     * Presión de línea de flujo (FLP - Flowing Line Pressure) en psig
-     * Presión de anular (CHP - Casing Head Pressure) en psig
-     * Presión de fondo fluyendo (BHP - Bottom Hole Pressure) calculada
-   - Temperaturas:
-     * Temperatura de cabeza de pozo (°F)
-     * Temperatura de línea (°F)
-   - Flujos:
-     * Flujo de aceite (bbl/día)
-     * Flujo de agua (bbl/día)
-     * Flujo de gas total (Mscf/día)
-     * Flujo de gas de formación (Mscf/día)
-     * Flujo de gas de inyección (Mscf/día) para gas lift
-   - Calidad del fluido:
-     * BS&W (Basic Sediment & Water) %
-     * API gravity
-     * Corte de agua (Water Cut) %
-   - Horas de operación:
-     * Horas produciendo
-     * Horas inyectando (gas lift)
-     * Horas parado
-
-3. MÓDULO DE CÁLCULOS AUTOMÁTICOS:
-   - GOR (Gas-Oil Ratio): Gas total / Aceite total en scf/bbl
-   - WOR (Water-Oil Ratio): Agua / Aceite en bbl/bbl
-   - WOR injection (para gas lift): Gas inyectado / Aceite producido
-   - Productividad (PI): Tasa de aceite / Drawdown en bbl/día/psi
-   - Índice de productividad de aceite (OPI)
-   - Eficiencia de levantamiento artificial
-   - Factor de recobro estimado
-   - Declinación diaria/mensual/anual
-   - Volumen de yacimiento drenado
-
-4. MÓDULO DE ANÁLISIS DE COMPORTAMIENTO:
-   - Curvas de declinación (Arps, exponential, harmonic, hyperbolic)
-   - Análisis de tendencias (30, 60, 90 días)
-   - Identificación de problemas:
-     * Problemas de arena
-     * Problemas de agua (coning, channeling)
-     * Problemas de escala
-     * Problemas de parafina
-     * Problemas de H2S/CO2
-   - Análisis de eficiencia de estimulación
-   - Evaluación de potencial de workover
-
-5. MÓDULO DE EVENTOS Y ACCIONES:
-   - Registro de intervenciones:
-     * Workovers
-     * Estimulaciones
-     * Cambios de equipo de levantamiento
-     * Reparaciones menores
-     * Limpieza de pozos
-   - Registro de problemas operativos:
-     * Paradas no programadas
-     * Problemas de arena
-     * Problemas de emulsión
-     * Problemas de corrosión
-   - Costos de intervención
-   - Incremento de producción post-intervención
-
-6. MÓDULO DE OPTIMIZACIÓN:
-   - Optimización de gas lift (inyección óptima)
-   - Optimización de bombeo mecánico (SPM, stroke length)
-   - Optimización de ESP (frecuencia, HP)
-   - Análisis nodal simplificado
-   - Recomendaciones de choke size
-   - Balance de producción por batería
-
-7. MÓDULO DE REPORTES Y DASHBOARD:
-   - Dashboard ejecutivo con KPIs:
-     * Producción total de aceite (bopd)
-     * Producción total de gas (mmcfd)
-     * Producción total de agua (bwpd)
-     * Corte de agua promedio (%)
-     * Pozos activos vs. inactivos
-     * Factor de disponibilidad (%)
-     * Producción vs. plan vs. potencial
-   - Gráficos de producción por campo/área/pozo
-   - Mapas de ubicación con código de colores por producción
-   - Reportes automáticos:
-     * Reporte diario de producción
-     * Reporte semanal de tendencias
-     * Reporte mensual de KPIs
-     * Reporte de declinación por pozo
-   - Exportación a PDF/Excel
-   - Comparación vs. plan de producción
-
-8. MÓDULO DE PLANIFICACIÓN:
-   - Plan de producción mensual/anual
-   - Programación de intervenciones
-   - Presupuesto de producción
-   - Forecast de producción
-   - Análisis de economía de pozos
-
-9. MÓDULO DE INTEGRACIÓN:
-   - Importación de datos desde SCADA/DCS
-   - Exportación a sistemas corporativos (SAP, etc.)
-   - API para integración con otros sistemas
-   - Sincronización con bases de datos externas
-
-10. FUNCIONALIDADES ADICIONALES:
-    - Modo offline con sincronización
-    - Alertas automáticas por desviaciones
-    - Firma digital de operadores
-    - Adjuntar fotografías y documentos
-    - Búsqueda avanzada
-    - Control de acceso por roles
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo sistema de gestión de producción
-- Diseño responsive para desktop, tablets y móviles
-- Código modular y bien documentado
-- Datos de ejemplo realistas (150 pozos, 30 días de operación)
-- Dashboards interactivos y gráficos dinámicos
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, Leaflet.js, jsPDF, SheetJS, moment.js (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- Preparado para integración con backend futuro
-
-CRITERIOS DE CALIDAD:
-- Cálculos precisos de ingeniería de producción
-- Interfaz intuitiva para operadores e ingenieros
-- Manejo eficiente de grandes volúmenes de datos
-- Reportes profesionales listos para gerencia
-- Performance óptima
-
-ENTREGABLE FINAL:
-Sistema integral de gestión de producción que permita a ingenieros de producción monitorear, analizar y optimizar la producción de 150 pozos, generando reportes automáticos y mejorando la toma de decisiones operativas.`,
-              tags: ["producción", "pozos", "bombeo", "gas lift", "ESP", "declinación"],
-              uso: "Diario / Continuo"
-            }
-          ]
+              id: 'og_bit_002',
+              titulo: 'Sistema de Gestión de Producción de Pozos Petroleros',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Diario',
+              tags: ['Producción', 'Pozos', 'Petróleo', 'Gas', 'BS&W', 'GOR', 'Choke', 'Reservorios'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Senior de Producción y Yacimientos en Petróleo & Gas con más de 20 años de experiencia en campos maduros y offshore. Experto en optimización de levantamiento artificial (Gas Lift, Bombeo Electrosumergible ESP, Bombeo Mecánico y PCP), análisis Nodal y fiscalización de producción diaria de hidrocarburos.\n\nCONTEXTO TÉCNICO Y OPERACIONAL:\n- Batería de producción que recolecta fluido de 24 pozos productores con diferentes métodos de producción y líneas de flujo hacia manifolds de prueba y producción general.\n- Fluidos manejados: Petróleo crudo (22° a 38° API), agua congénita/asociada y gas natural asociado.\n- Rutina operativa: Control de presiones de cabeza (THP, CHP), línea de flujo (FLP), tamaño de estrangulador (choke en 64avos de pulgada), pruebas de pozo en separador de prueba (Well Testing) y fiscalización de tanques.\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Control Diario de Producción y Pruebas de Pozos Petroleros.\n\nMÓDULOS DEL SISTEMA Y CÁLCULOS PETROLEROS:\n\n1. BASE DE DATOS Y CARACTERIZACIÓN DE POZOS:\n   - Ficha de Pozo: ID Pozo (ej. POZO-X104), Batería/Pad, Método de Producción (Flujo Natural, ESP, Gas Lift, BM), Yacimiento/Formación, Profundidad (MD/TVD en ft).\n   - Parámetros de Operación Diaria: Tubing Head Pressure (THP en psi), Casing Head Pressure (CHP en psi), Flow Line Pressure (FLP en psi), Posición de Choque (/64"), Frecuencia VFD (Hz) o Amperaje para ESP, Inyección de Gas Lift (MSCFD).\n\n2. MOTOR DE CÁLCULO DE PRODUCCIÓN Y PRUEBAS DE POZO:\n   - Registro de Prueba de Separador: Horas de prueba, Volumen bruto fiscalizado (BBL), Factor de Encogimiento ($B_o$), Contenido de Agua y Sedimento (BS&W medido por centrífuga en %).\n   - Cálculo de Producción Neta:\n     * Petróleo Bruto Diario: $Q_{bruto} = \\frac{Volumen \\times 24}{Horas}$ (BPD)\n     * Petróleo Neto Diario: $Q_{neto} = Q_{bruto} \\times \\left(1 - \\frac{BS\\&W}{100}\\right)$ (BOPD)\n     * Producción de Agua: $Q_{agua} = Q_{bruto} - Q_{neto}$ (BWPD)\n     * Gas Producido: $Q_{gas}$ (MSCFD)\n     * Relación Gas-Petróleo (GOR): $GOR = \\frac{Q_{gas} \\times 1000}{Q_{neto}}$ (SCF/STB)\n     * Corte de Agua (Water Cut): $%WC = \\frac{Q_{agua}}{Q_{bruto}} \\times 100$\n   - Validación y Conciliación de Campo: Comparación de la suma de pozos probados contra la producción total fiscalizada en tanques de almacenamiento de la batería (Factor de Pérdida / Balance de Materia).\n\n3. DIAGNÓSTICO Y ANÁLISIS DE DECLINACIÓN:\n   - Detección automática de problemas de producción: Pérdida repentina de THP (ruptura de tubería o cierre de pozo), Incremento anormal de CHP (canalización de gas), Caída de producción neta por conificación de agua.\n   - Histórico de producción por pozo con proyección gráfica de curvas de declinación exponencial en Canvas.\n\n4. PERSISTENCIA, REPORTES Y EXPORTACIÓN:\n   - Almacenamiento local estructurado en IndexedDB con soporte para exportación completa a Excel (CSV con formato de reporte oficial de operaciones).\n   - Generación de Informe Diario de Producción (DPR - Daily Production Report) para la gerencia técnica en formato PDF imprimible.\n   - Dashboard de KPIs: Producción Total Neta (BOPD), Agua Total (BWPD), Gas Total (MMSCFD), BS&W Promedio Ponderado, Pozos Activos vs. Cerrados.\n\nDISEÑO Y ERGONOMÍA:\n- Interfaz moderna en tonos grafito y esmeralda (#10141a, #1a222d, acentos verdes #00c896 y amarillos #ffd166).\n- 100% libre de dependencias externas bloqueantes, con 6 pozos de prueba precargados.',
+            },
+          ],
         },
         {
-          id: "og_seguridad",
-          nombre: "Seguridad y HSE",
+          id: 'og_seguridad',
+          nombre: 'Seguridad y HSE',
           prompts: [
             {
-              id: "og_hse_001",
-              titulo: "Sistema Digital de Permisos de Trabajo y Análisis de Riesgo",
-              categoria: "Aplicación Web",
-              prioridad: "critica",
-              prompt: `ACTÚA COMO: Profesional de Seguridad Industrial (CSP - Certified Safety Professional) con 20 años de experiencia en gestión de HSE para Oil & Gas, especializado en sistemas de permisos de trabajo, análisis de riesgo y gestión de cambios, con conocimiento profundo de OSHA PSM, EPA RMP y regulaciones IOGP.
-
-CONTEXTO TÉCNICO:
-- Industria: Planta de procesamiento de gas natural con área de proceso, almacenamiento de GLP, utilities y oficinas
-- Personal: 250 empleados + 50 contratistas
-- Tipos de trabajo: Mantenimiento mecánico, eléctrico, instrumentación, trabajo en caliente, espacios confinados, trabajo en altura, izajes críticos, excavaciones
-- Zonas clasificadas: Clase I División 1 y 2 (áreas con gas inflamable)
-- Sistemas existentes: LOTO (Lock Out Tag Out), JSA (Job Safety Analysis), MOC (Management of Change)
-- Normas aplicables: OSHA 29 CFR 1910.119 (PSM), OSHA 29 CFR 1910.146 (Confined Space), OSHA 29 CFR 1910.147 (LOTO), NFPA 51B (Hot Work), API RP 750 (Management of Process Hazards)
-- Incidentes históricos: 2 incendios menores, 5 fugas de gas, 3 lesiones con tiempo perdido en últimos 3 años
-
-TAREA:
-Desarrolla un sistema web completo de gestión de permisos de trabajo y análisis de riesgo que digitalice y mejore el proceso actual en papel. El sistema debe:
-
-1. MÓDULO DE PERMISOS DE TRABAJO:
-   - Tipos de permisos:
-     * Permiso de trabajo en caliente (Hot Work Permit)
-     * Permiso de entrada a espacio confinado (Confined Space Entry Permit)
-     * Permiso de trabajo en altura (Working at Heights Permit)
-     * Permiso de excavación (Excavation Permit)
-     * Permiso de izaje crítico (Critical Lift Permit)
-     * Permiso de trabajo eléctrico (Electrical Work Permit)
-     * Permiso de trabajo en área clasificada (Classified Area Permit)
-     * Permiso general de trabajo (General Work Permit)
-   
-   - Para cada permiso, capturar:
-     * Datos generales: Número de permiso, solicitante, área solicitante, fecha y hora de solicitud
-     * Descripción del trabajo: Ubicación específica, descripción detallada, duración estimada
-     * Identificación de peligros: Lista de peligros potenciales (checklist dinámico según tipo de permiso)
-     * Medidas de control: Controles de ingeniería, controles administrativos, EPP requerido
-     * Aislamientos requeridos: LOTO, purga, inertización, bloqueo mecánico
-     * Gas testing: Resultados de monitoreo de atmosfera (LEL, O2, H2S, CO)
-     * Autorizaciones: Firma digital de solicitante, área operativa, seguridad, bomberos (si aplica)
-     * Vigencia: Fecha/hora de inicio y vencimiento, extensiones si aplican
-     * Cierre del permiso: Verificación de área limpia, restauración de sistemas, firma de cierre
-
-2. MÓDULO DE ANÁLISIS DE RIESGO (JSA/JHA):
-   - Plantilla de JSA (Job Safety Analysis) estructurada:
-     * Paso 1: Descomposición del trabajo en pasos secuenciales
-     * Paso 2: Identificación de peligros por paso (físicos, químicos, biológicos, ergonómicos, psicosociales)
-     * Paso 3: Evaluación de riesgo inicial (probabilidad x severidad)
-     * Paso 4: Definición de medidas de control
-     * Paso 5: Evaluación de riesgo residual
-     * Paso 6: Aprobación del análisis
-   
-   - Matriz de riesgo 5x5:
-     * Probabilidad: 1 (Raro) a 5 (Casi seguro)
-     * Severidad: 1 (Leve) a 5 (Catastrófico)
-     * Niveles de riesgo: Bajo (1-4), Medio (5-9), Alto (10-16), Crítico (17-25)
-   
-   - Base de datos de peligros y controles por tipo de trabajo
-   - Recomendaciones automáticas basadas en tipo de trabajo
-   - Lecciones aprendidas de incidentes similares
-
-3. MÓDULO DE GAS TESTING:
-   - Registro de mediciones de atmosfera:
-     * Ubicación y punto de muestreo
-     * Fecha y hora de medición
-     * Instrumento utilizado (tag, calibración)
-     * Resultados: LEL (%), O2 (%), H2S (ppm), CO (ppm), otros gases si aplican
-     * Condiciones ambientales (temperatura, humedad, viento)
-     * Nombre y firma del gas tester
-   - Criterios de aceptación:
-     * LEL: < 10% para trabajo en caliente, < 20% para otros trabajos
-     * O2: 19.5% - 23.5%
-     * H2S: < 10 ppm (TLV-TWA)
-     * CO: < 25 ppm (TLV-TWA)
-   - Frecuencia de monitoreo según tipo de trabajo
-   - Alertas automáticas cuando valores exceden límites
-
-4. MÓDULO DE LOTO (LOCK OUT TAG OUT):
-   - Procedimientos de aislamiento por equipo:
-     * Identificación de fuentes de energía (eléctrica, mecánica, hidráulica, neumática, química, térmica, potencial)
-     * Secuencia de bloqueo
-     * Puntos de aislamiento específicos
-     * Verificación de aislamiento
-   - Registro de bloqueos aplicados:
-     * Quien aplica el bloqueo
-     * Fecha/hora de aplicación
-     * Tipo de bloqueo (candado, válvula, brida ciega, etc.)
-     * Tag number del equipo
-   - Liberación de bloqueos:
-     * Verificación de trabajo completado
-     * Remoción de bloqueos en orden inverso
-     * Prueba de arranque
-     * Firma de liberación
-
-5. MÓDULO DE SUPERVISIÓN EN CAMPO:
-   - Checklist de supervisión de permisos activos:
-     * Verificación de controles implementados
-     * Verificación de EPP utilizado
-     * Verificación de gas testing vigente
-     * Verificación de comunicación entre trabajadores
-     * Verificación de condiciones cambiantes
-   - Registro de observaciones de seguridad (BBS - Behavior Based Safety)
-   - Registro de actos y condiciones subestándar
-   - Acciones correctivas inmediatas
-
-6. MÓDULO DE GESTIÓN DE CONTRATISTAS:
-   - Registro de contratistas autorizados:
-     * Datos de la empresa
-     * Seguro y certificaciones
-     * Personal calificado
-     * Historial de seguridad (EMR, TRIR)
-   - Control de acceso a planta
-   - Inducción y capacitación requerida
-   - Performance de seguridad
-
-7. MÓDULO DE REPORTES Y DASHBOARD:
-   - Dashboard en tiempo real con:
-     * Permisos activos por tipo y área
-     * Trabajos de alto riesgo en ejecución
-     * Gas testing pendientes
-     * Próximos vencimientos de permisos
-     * KPIs de seguridad (permisos emitidos, Cerrar a tiempo, desviaciones)
-   - Reportes automáticos:
-     * Reporte diario de permisos
-     * Reporte semanal de trabajos de alto riesgo
-     * Reporte mensual de KPIs de seguridad
-     * Análisis de tendencias
-   - Exportación a PDF/Excel
-   - Alertas y notificaciones
-
-8. MÓDULO DE ANÁLISIS Y MEJORA:
-   - Análisis de efectividad de controles
-   - Identificación de tendencias de riesgo
-   - Benchmarking por tipo de trabajo
-   - Recomendaciones de mejora
-   - Lecciones aprendidas
-
-9. MÓDULO DE INTEGRACIÓN:
-   - Integración con sistema de MOC (Management of Change)
-   - Integración con sistema de gestión de incidentes
-   - Integración con sistema de capacitación
-   - API para integración con otros sistemas
-
-10. FUNCIONALIDADES ADICIONALES:
-    - Modo offline con sincronización
-    - Firma digital en tablets/móviles
-    - Notificaciones push para aprobaciones
-    - Escaneo de códigos QR para verificación
-    - Fotografías adjuntas
-    - Geolocalización de trabajos
-    - Control de acceso por roles (solicitante, supervisor HSE, operador, aprobador)
-    - Auditoría completa de cambios
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo sistema de gestión de seguridad
-- Diseño responsive optimizado para tablets (uso en campo) y desktop (oficina)
-- Código modular y bien documentado
-- Datos de ejemplo realistas (permisos de diferentes tipos)
-- Dashboards interactivos y flujos de trabajo claros
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, jsPDF, SheetJS, moment.js, signature_pad.js (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- Cumplimiento con OSHA PSM y IOGP
-
-CRITERIOS DE CALIDAD:
-- Sistema robusto y confiable para gestión de seguridad crítica
-- Interfaz intuitiva para usuarios con diferente nivel técnico
-- Trazabilidad completa de permisos y aprobaciones
-- Cálculos precisos de evaluación de riesgo
-- Reportes profesionales listos para auditoría
-
-ENTREGABLE FINAL:
-Sistema digital integral de permisos de trabajo que reemplace el proceso en papel, mejore la gestión de riesgo, asegure el cumplimiento regulatorio y reduzca incidentes en una planta de procesamiento de gas natural.`,
-              tags: ["permisos de trabajo", "JSA", "LOTO", "HSE", "OSHA PSM", "seguridad"],
-              uso: "Continuo / Gestión de seguridad"
+              id: 'og_hse_001',
+              titulo: 'Sistema Digital de Permisos de Trabajo y Análisis de Riesgo',
+              categoria: 'Aplicación Web',
+              prioridad: 'critica',
+              uso: 'Por turno',
+              tags: ['PTW', 'JSA', 'HSE', 'Permisos de Trabajo', 'Espacios Confinados', 'Trabajo en Caliente', 'LOTO', 'OSHA'],
+              prompt:
+                'ACTÚA COMO: Gerente Corporativo de Seguridad de Procesos (PSM) y HSE en Oil & Gas con 25 años de experiencia liderando operaciones de alto riesgo en plantas de gas, plataformas offshore y refinerías. Auditor Líder ISO 45001 y experto en OSHA 1910.119, OSHA 1910.146 (Permit-Required Confined Spaces) y OSHA 1910.147 (LOTO). Desarrollador fullstack especialista en sistemas críticos de gestión de autorizaciones.\n\nCONTEXTO TÉCNICO Y LEGAL:\n- Planta petroquímica clasificada como instalación de alto riesgo con inventario de sustancias tóxicas e inflamables.\n- Gestión de autorizaciones: Más de 50 permisos de trabajo emitidos diariamente para personal propio y contratistas.\n- Marco de Control de Trabajo (Control of Work - CoW): Permiso de Trabajo Seguro (PTW - Permit to Work), Análisis de Seguridad en el Trabajo (JSA/AST), Aislamiento de Energía (LOTO), Monitoreo de Atmósferas Peligrosas y Planes de Rescate.\n\nTAREA:\nDesarrolla una aplicación web completa, profesional y de misión crítica en un único archivo HTML/CSS/JavaScript para el Control Digital Integral de Permisos de Trabajo (PTW), Análisis de Seguridad de la Tarea (JSA) y Aislamiento de Energías Peligrosas (LOTO).\n\nMÓDULOS DEL SISTEMA Y REGLAS DE NEGOCIO ESTRICTAS:\n\n1. MATRIZ DE PERMISOS DE TRABAJO Y CATEGORIZACIÓN:\n   - Tipos de Permisos: Trabajo en Caliente (Hot Work Clase 1 y 2), Espacios Confinados (Confined Space Entry), Trabajo en Altura (>1.8m), Excavaciones (>1.2m), Trabajos con Tensión Eléctrica e Izaje Crítico.\n   - Datos del Permiso: N° Correlativo Único, Área/Unidad, Equipo intervenido, Descripción de la actividad, Empresa ejecutora, Validez horaria (Inicio / Vencimiento de turno), Supervisor Emisor, Líder Ejecutor y Vigía HSE.\n\n2. MÓDULO JSA (JOB SAFETY ANALYSIS) INTEGRADO:\n   - Desglose secuencial de pasos de la tarea, peligros identificados (Mecánico, Eléctrico, Químico, Térmico, Atmosférico, Biomecánico), consecuencias potenciales y Controles Mandatorios según la Jerarquía de Control de Riesgos (Eliminación, Sustitución, Ingeniería, Administrativo, EPP Específico).\n   - Matriz de Evaluación de Riesgo 5x5 (Probabilidad x Consecuencia) con cálculo de Riesgo Residual.\n\n3. MONITOREO DE ATMÓSFERA PARA ESPACIOS CONFINADOS Y CALIENTE:\n   - Registro de pruebas de gas obligatorias antes de la entrada y cada 2 horas con detector multigás calibrado:\n     * Oxígeno ($O_2$): Rango admisible estricto 19.5% a 23.5%.\n     * LEL (Límite Inferior de Explosividad): Máximo admisible 0% para caliente, < 10% para ingreso seguro.\n     * Sulfuro de Hidrógeno ($H_2S$): Máximo admisible < 10 ppm (Alarma en 5 ppm).\n     * Monóxido de Carbono ($CO$): Máximo admisible < 25 ppm.\n     * Compuestos Orgánicos Volátiles (VOCs / Benceno): Límite según TLV-TWA.\n   - Bloqueo automático de emisión si algún parámetro excede los límites seguros (Hard Stop).\n\n4. MATRIZ LOTO (LOCKOUT / TAGOUT) Y CERTIFICADO DE AISLAMIENTO:\n   - Puntos de Aislamiento Mecánico (Válvulas cerradas, bloqueadas con cadena, bridas ciegas / espadas / figuras 8 instaladas) y Eléctrico (Breakers abiertos en MCC, botoneras locales bloqueadas con candado y tarjeta).\n   - Verificación obligatoria de "Energía Cero" (Despresurización, purga, drenaje, bloqueo mecánico y prueba de arranque en falso).\n\n5. FIRMAS DIGITALES, HASH DE AUDITORÍA Y TRAZABILIDAD:\n   - Firma digital en Canvas para Autorizante (Emisor del Área), Ejecutor (Líder del Trabajo) y Vigía de Seguridad.\n   - Generación de Hash Criptográfico SHA-256 del permiso completo para prevenir alteraciones posteriores a la firma.\n   - Semáforo de Estado en Tiempo Real: Borrador, Solicitado, Autorizado/Activo, Suspendido, Cerrado, Vencido.\n   - Tablero visual tipo Kanban de permisos activos en planta con geolocalización o mapa de planta SVG interactivo para evitar interferencias espaciales de trabajos simultáneos (SIMOPS).\n\nREQUISITOS TÉCNICOS:\n- Persistencia en IndexedDB con soporte offline completo.\n- Exportación e impresión de la Hoja de Permiso oficial en formato A4 listo para fijar físicamente en el lugar de trabajo.\n- Código limpio, robusto y sin omisiones.',
             },
             {
-              id: "og_hse_002",
-              titulo: "Sistema de Investigación de Incidentes y Análisis de Causa Raíz",
-              categoria: "Aplicación Web",
-              prioridad: "critica",
-              prompt: `ACTÚA COMO: Investigador Senior de Incidentes con certificación TapRooT® y 20 años de experiencia investigando incidentes graves en industrias de Oil & Gas, Química y Minería. Experto en metodologías de análisis de causa raíz (RCA), incluyendo TapRooT®, Ishikawa, 5 Why's, Fault Tree Analysis (FTA) y Barrier Analysis.
-
-CONTEXTO TÉCNICO:
-- Industria: Complejo industrial con planta de procesamiento, terminal de almacenamiento y ductos
-- Personal: 500 empleados + 200 contratistas
-- Tipos de incidentes: Lesiones personales, fugas de proceso, incendios/explosiones, daños a equipo, derrames ambientales, cuasi-accidentes (near misses)
-- Normas y guías: IOGP (International Association of Oil & Gas Producers), OSHA 29 CFR 1910.119 (PSM), EPA RMP, CSB (Chemical Safety Board) Guidelines
-- Sistemas existentes: Reporte en papel, base de datos Excel, sin análisis sistemático de causas
-- Problemática: Alta reincidencia de incidentes similares, análisis superficiales, acciones correctivas inefectivas
-
-TAREA:
-Desarrolla un sistema web integral de investigación de incidentes y análisis de causa raíz que permita investigaciones sistemáticas, rigurosas y orientadas a la prevención. El sistema debe:
-
-1. MÓDULO DE REPORTE INICIAL DE INCIDENTE:
-   - Datos del incidente:
-     * Número único de incidente (generado automáticamente)
-     * Fecha y hora del incidente
-     * Ubicación específica (área, equipo, coordenadas GPS)
-     * Tipo de incidente (lesión, fuga, incendio, daño, derrame, near miss)
-     * Severidad potencial (LEC - Loss Event Catalog)
-     * Severidad real (lesiones, daños, tiempo perdido)
-   
-   - Descripción del incidente:
-     * Narrativa detallada del evento
-     * Secuencia de eventos (timeline)
-     * Personas involucradas (empleados, contratistas, públicos)
-     * Equipos/sistemas involucrados
-     * Sustancias involucradas (si aplica)
-     * Condiciones ambientales al momento del incidente
-   
-   - Respuesta inmediata:
-     * Acciones de emergencia tomadas
-     * Equipos de respuesta activados
-     * Contención inicial
-     * Notificaciones realizadas (internas/externas)
-     * Estado actual del incidente (controlado, en progreso, cerrado)
-   
-   - Evidencia inicial:
-     * Fotografías del lugar
-     * Videos (si disponibles)
-     * Documentos relevantes
-     * Testigos identificados
-
-2. MÓDULO DE INVESTIGACIÓN SISTEMÁTICA:
-   - Asignación de equipo investigador:
-     * Líder de investigación
-     * Miembros del equipo (operaciones, mantenimiento, HSE, ingeniería)
-     * Expertos técnicos (si se requieren)
-     * Representantes de contratistas (si aplica)
-   
-   - Recolección de información:
-     * Entrevistas con testigos y personas involucradas (formato estructurado)
-     * Revisión de documentos (procedimientos, permisos, bitácoras)
-     * Análisis de datos de proceso (tendencias, alarmas)
-     * Inspección del lugar del incidente
-     * Análisis de equipos/sistemas (si aplica)
-     * Revisión de mantenimiento e inspecciones previas
-   
-   - Timeline detallado:
-     * Construcción de línea de tiempo con eventos clave
-     * Identificación de puntos de decisión
-     * Análisis de ventanas de oportunidad perdidas
-
-3. MÓDULO DE ANÁLISIS DE CAUSA RAÍZ (RCA):
-   - Metodología TapRooT® simplificada:
-     * Definición del incidente (qué pasó, cuándo, dónde)
-     * Identificación de eventos causales
-     * Análisis de cada evento causal usando TapRooT® Root Cause Tree
-     * Identificación de causas contribuyentes
-     * Identificación de causas raíz (generic causes)
-   
-   - Otras metodologías disponibles:
-     * Diagrama de Ishikawa (Espina de Pescado): 6M (Mano de obra, Máquina, Método, Material, Medición, Medio ambiente)
-     * 5 Why's: Preguntas sucesivas hasta llegar a la causa raíz
-     * Fault Tree Analysis (FTA): Árbol de fallas con puertas AND/OR
-     * Barrier Analysis: Análisis de barreras de control (preventivas y mitigadoras)
-     * Change Analysis: Análisis de cambios que pudieron contribuir
-   
-   - Análisis de barreras:
-     * Identificación de barreras que debieron prevenir el incidente
-     * Evaluación de efectividad de cada barrera
-     * Identificación de barreras fallidas o ausentes
-     * Análisis de factores que degradaron las barreras
-   
-   - Análisis de cultura organizacional (si aplica):
-     * Factores humanos y organizacionales
-     * Presiones de producción vs. seguridad
-     * Normalización del desvío
-     * Comunicación y trabajo en equipo
-
-4. MÓDULO DE ACCIONES CORRECTIVAS Y PREVENTIVAS (CAPA):
-   - Identificación de acciones:
-     * Acciones inmediatas (contención, protección)
-     * Acciones correctivas (eliminar causa raíz)
-     * Acciones preventivas (evitar recurrencia en otros equipos/áreas)
-     * Acciones de mejora (fortalecer barreras existentes)
-   
-   - Para cada acción:
-     * Descripción detallada
-     * Responsable de implementación
-     * Fecha límite
-     * Recursos requeridos (presupuesto, personal, equipos)
-     * Prioridad (crítica, alta, media, baja)
-     * Tipo de acción (ingeniería, administrativo, procedimiento, capacitación, etc.)
-     * Jerarquía de controles (eliminación, sustitución, ingeniería, administrativo, EPP)
-   
-   - Seguimiento de implementación:
-     * Estado (pendiente, en progreso, completada, vencida)
-     * Evidencia de implementación
-     * Verificación de efectividad
-     * Cierre de acción con aprobación
-
-5. MÓDULO DE LECCIONES APRENDIDAS:
-   - Documentación de lecciones aprendidas:
-     * Qué pasó
-     * Por qué pasó
-     * Qué se aprendió
-     * Qué se debe hacer diferente
-   - Disseminación de lecciones aprendidas:
-     * Alertas de seguridad (Safety Alerts)
-     * Boletines de seguridad
-     * Presentaciones en reuniones de seguridad
-     * Actualización de procedimientos
-     * Capacitaciones
-   - Base de datos de lecciones aprendidas buscable
-
-6. MÓDULO DE ANÁLISIS DE TENDENCIAS:
-   - Análisis estadístico de incidentes:
-     * Frecuencia por tipo, área, equipo, actividad
-     * Tendencias temporales (mensual, trimestral, anual)
-     * Análisis de reincidencia
-     * Análisis de severidad
-   - Identificación de patrones:
-     * Equipos con alta frecuencia de incidentes
-     * Actividades de alto riesgo
-     * Áreas/problemáticas recurrentes
-     * Factores comunes en incidentes graves
-   - Benchmarking interno y externo (IOGP data)
-
-7. MÓDULO DE REPORTES Y DASHBOARD:
-   - Dashboard ejecutivo con KPIs:
-     * TRIR (Total Recordable Incident Rate)
-     * LTIR (Lost Time Incident Rate)
-     * Número de incidentes por tipo/severidad
-     * % de investigaciones completadas a tiempo
-     * % de acciones correctivas cerradas
-     * Tiempo promedio de investigación
-     * Reincidencia de incidentes
-   - Reportes automáticos:
-     * Reporte individual de investigación (formato profesional)
-     * Reporte ejecutivo mensual
-     * Reporte de tendencias trimestral
-     * Reportes regulatorios (OSHA, EPA)
-   - Exportación a PDF/Excel
-   - Gráficos y visualizaciones interactivas
-
-8. MÓDULO DE GESTIÓN DE CALIDAD:
-   - Revisión de calidad de investigaciones:
-     * Checklist de calidad de investigación
-     * Revisión por pares
-     * Aprobación por gerencia
-   - Auditoría de efectividad de acciones:
-     * Verificación de implementación
-     * Evaluación de reducción de riesgo
-     * Ajustes si es necesario
-
-9. MÓDULO DE INTEGRACIÓN:
-   - Integración con sistema de permisos de trabajo
-   - Integración con sistema de gestión de cambios (MOC)
-   - Integración con sistema de capacitación
-   - Integración con bases de datos de IOGP/CSB
-   - API para integración con otros sistemas
-
-10. FUNCIONALIDADES ADICIONALES:
-    - Modo offline con sincronización
-    - Notificaciones automáticas (email, SMS)
-    - Control de acceso por roles (investigador, supervisor, gerencia)
-    - Firma digital
-    - Adjuntar evidencias (fotos, videos, documentos)
-    - Geolocalización de incidentes
-    - Auditoría completa de cambios
-    - Confidencialidad y control de acceso a información sensible
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo sistema de gestión de investigaciones
-- Diseño responsive para desktop (oficina) y tablets (campo)
-- Código modular y bien documentado
-- Datos de ejemplo realistas (5-10 incidentes de diferentes tipos)
-- Flujos de trabajo claros y guías paso a paso
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, jsPDF, SheetJS, moment.js (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- Cumplimiento con guías IOGP y OSHA PSM
-
-CRITERIOS DE CALIDAD:
-- Sistema robusto para investigaciones rigurosas
-- Metodologías de RCA correctamente implementadas
-- Interfaz intuitiva para investigadores
-- Trazabilidad completa de investigaciones
-- Reportes profesionales listos para presentación ejecutiva
-- Análisis de tendencias que identifiquen patrones
-
-ENTREGABLE FINAL:
-Sistema integral de investigación de incidentes que permita realizar investigaciones sistemáticas y rigurosas, identificar causas raíz reales, implementar acciones correctivas efectivas y reducir la reincidencia de incidentes en un complejo industrial.`,
-              tags: ["incidentes", "causa raíz", "RCA", "TapRooT", "IOGP", "investigación"],
-              uso: "Post-incidente / Gestión de seguridad"
-            }
-          ]
+              id: 'og_hse_002',
+              titulo: 'Sistema de Investigación de Incidentes y Análisis de Causa Raíz',
+              categoria: 'Aplicación Web',
+              prioridad: 'critica',
+              uso: 'Frecuente',
+              tags: ['HSE', 'Incidentes', 'RCA', 'Causa Raíz', '5 Porqués', 'Ishikawa', 'Lecciones Aprendidas', 'Accidentes'],
+              prompt:
+                'ACTÚA COMO: Especialista Principal en Investigación de Accidentes Mayores y Análisis de Causa Raíz (RCA) en industrias de alto riesgo con 20 años de experiencia. Facilitador certificado en metodologías TapRooT, Árbol de Fallas (FTA), Diagrama de Causa-Efecto (Ishikawa 6M) y Método de los 5 Porqués. Auditor de cumplimiento en reporte e investigación de incidentes OSHA 1904 y OGP (IOGP).\n\nCONTEXTO TÉCNICO:\n- Complejo industrial que gestiona la notificación inmediata, investigación profunda, determinación de causas básicas/inmediatas y seguimiento de acciones correctivas de eventos de seguridad, ambientales y de proceso (Loss of Primary Containment - LOPC).\n- Clasificación de eventos: Casi-Accidente (Near Miss), Primeros Auxilios, Caso Médico, Tiempo Perdido (LTI), Daño a la Propiedad, Impacto Ambiental y Tier 1 / Tier 2 Process Safety Events (API RP 754).\n\nTAREA:\nDesarrolla una aplicación web completa y profesional en un solo archivo HTML/CSS/JavaScript para la Notificación, Investigación Metodológica y Análisis de Causa Raíz (RCA) de Incidentes Industriales.\n\nMÓDULOS DEL SISTEMA Y METODOLOGÍA DE INVESTIGACIÓN:\n\n1. NOTIFICACIÓN INICIAL Y PRESERVACIÓN DE EVIDENCIAS:\n   - Registro del Suceso: Fecha/Hora exacta, Ubicación/Área, Título breve, Descripción fáctica inicial, Equipos involucrados, Condiciones climáticas e iluminación.\n   - Matriz de Severidad Real vs. Potencial (Riesgo IOGP).\n   - Clasificación según API RP 754 para Seguridad de Procesos: Categorización de fugas de hidrocarburos (Líquidos inflamables, Gases tóxicos) por umbrales de liberación en 1 hora.\n   - Registro y preservación de evidencias físicas, documentales, testimoniales y digitales.\n\n2. METODOLOGÍAS RCA INTEGRADAS Y VISUALES:\n   - Módulo 1: Diagrama de Causa-Efecto (Ishikawa / 6M) interactivo renderizado en Canvas/SVG:\n     * Mano de Obra, Maquinaria/Equipo, Métodos/Procedimientos, Materiales, Medio Ambiente, Medición.\n     * Capacidad de agregar ramificaciones primarias y secundarias con clics intuitivos.\n   - Módulo 2: Método de los 5 Porqués (5 Whys) interactivo con árbol jerárquico que encadena la lógica causal hasta alcanzar la Falla Latente del Sistema de Gestión.\n   - Módulo 3: Clasificación Causal de Causas Inmediatas (Actos y Condiciones Inseguras) y Causas Raíz / Factores de Trabajo y Factores Personales.\n\n3. PLAN DE ACCIÓN SMART Y SEGUIMIENTO CAPA (CORRECTIVE AND PREVENTIVE ACTIONS):\n   - Tabla de Acciones Correctivas: Acción detallada, Nivel en la Jerarquía de Control, Responsable asignado, Fecha límite de cumplimiento, Estado (Pendiente, En Progreso, Implementada, Verificada su Eficacia).\n   - Alertas visuales automáticas de acciones vencidas o próximas a vencer.\n\n4. BOLETÍN DE LECCIONES APRENDIDAS (SAFETY ALERT):\n   - Generador automático de Alertas de Seguridad ("Safety Flash / One-Point Lesson") de 1 página con diseño visual de alto impacto para divulgación inmediata a los equipos de turno.\n   - Inclusión de resumen del incidente, ¿Qué falló?, Causa raíz identificada y Acciones clave para evitar su recurrencia.\n\n5. DASHBOARD ESTADÍSTICO Y PERSISTENCIA:\n   - Estadísticas e Indicadores Clave de Seguridad: TRIFR (Total Recordable Incident Frequency Rate), LTIFR (Lost Time Injury Frequency Rate), DART, Tasa de Cierre de Acciones Correctivas a Tiempo (%).\n   - Persistencia local en IndexedDB con soporte para importar/exportar la base de investigaciones en formato JSON con respaldo.\n   - Exportación completa del Informe Oficial de Investigación en formato PDF imprimible.\n\nREQUISITOS TÉCNICOS:\n- Interfaz moderna, accesible, estilo corporativo HSE (#1e293b, acentos ámbar #f59e0b y rojo alerta #ef4444).\n- 100% monolítico y funcional, con 3 incidentes de ejemplo precargados.',
+            },
+          ],
         },
         {
-          id: "og_correos",
-          nombre: "Correos y Comunicaciones Profesionales",
+          id: 'og_correos',
+          nombre: 'Correos y Comunicaciones Profesionales',
           prompts: [
             {
-              id: "og_cor_001",
-              titulo: "Generador de Reportes Ejecutivos de Operaciones",
-              categoria: "Herramienta de Redacción",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Gerente de Operaciones Senior con 25 años de experiencia en plantas de Oil & Gas, especializado en comunicación ejecutiva, reportes de gestión y presentaciones a directorio. Experto en sintetizar información técnica compleja en mensajes claros y accionables para audiencias ejecutivas.
-
-CONTEXTO TÉCNICO:
-- Industria: Planta de procesamiento de gas natural con capacidad de 500 MMSCFD
-- Audiencia del reporte: VP de Operaciones, Gerente General, Directorio
-- Periodicidad: Reporte diario (ejecutivo), reporte semanal (detallado), reporte mensual (estratégico)
-- KPIs clave: Producción vs. plan, disponibilidad de equipos, seguridad (TRIR, LTIR), calidad de producto, costos operativos, consumo energético, emisiones ambientales
-- Problemática: Los reportes actuales son demasiado técnicos, extensos y no enfocados en lo que importa a la gerencia
-- Expectativa: Reportes ejecutivos que en 2-3 minutos comuniquen lo esencial y permitan tomar decisiones
-
-TAREA:
-Desarrolla una herramienta web que genere reportes ejecutivos profesionales de operaciones automáticamente a partir de datos ingresados. La herramienta debe:
-
-1. MÓDULO DE INGRESO DE DATOS:
-   - Datos de producción:
-     * Producción actual (MMSCFD de gas, BPD de líquidos)
-     * Producción plan (MMSCFD, BPD)
-     * % de cumplimiento vs. plan
-     * Factores que afectaron la producción (si aplica)
-   
-   - Datos de disponibilidad:
-     * Disponibilidad global de planta (%)
-     * Equipos principales fuera de servicio (lista)
-     * Tiempo fuera de servicio (horas)
-     * Razón de cada parada (mantenimiento, falla, proceso, seguridad)
-   
-   - Datos de seguridad:
-     * Incidentes del periodo (número, tipo, severidad)
-     * Horas hombre trabajadas sin accidentes
-     * Near misses reportados
-     * Permisos de trabajo emitidos
-     * Observaciones de seguridad
-   
-   - Datos de calidad:
-     * Especificaciones de producto (punto de rocío, H2S, CO2, etc.)
-     * Fuera de especificación (si aplica)
-     * Quejas de clientes (si aplica)
-   
-   - Datos de costos:
-     * Costo operativo del periodo ($/MMSCFD)
-     * Presupuesto vs. real
-     * Varianza y explicación
-   
-   - Datos de mantenimiento:
-     * Mantenimiento preventivo completado (% vs. plan)
-     * Mantenimiento correctivo (número de órdenes)
-     * Backlog de mantenimiento (horas)
-     * Mantenimiento crítico completado
-   
-   - Eventos relevantes:
-     * Proyectos completados
-     * Proyectos en progreso
-     * Problemas críticos
-     * Decisiones pendientes
-     * Riesgos identificados
-
-2. MÓDULO DE GENERACIÓN DE REPORTES:
-   - Formato de reporte diario (1 página):
-     * Resumen ejecutivo (3-5 bullets clave)
-     * Dashboard de KPIs con semáforo (verde/amarillo/rojo)
-     * Gráfico de producción vs. plan (últimos 7 días)
-     * Top 3 eventos relevantes
-     * Top 3 pendientes/decisiones requeridas
-   
-   - Formato de reporte semanal (2-3 páginas):
-     * Resumen ejecutivo
-     * Análisis de producción (tendencias, desviaciones, causas)
-     * Análisis de disponibilidad (Pareto de fallas, MTBF, MTTR)
-     * Análisis de seguridad (tendencias, acciones en progreso)
-     * Análisis de mantenimiento (preventivo vs. correctivo, backlog)
-     * Análisis de costos (varianza, tendencias)
-     * Proyectos y mejoras (avance, próximos hitos)
-     * Plan para la próxima semana
-   
-   - Formato de reporte mensual (5-7 páginas):
-     * Resumen ejecutivo estratégico
-     * Análisis completo de todos los KPIs
-     * Análisis de tendencias (últimos 12 meses)
-     * Benchmarking vs. industria
-     * Análisis de riesgos y oportunidades
-     * Plan de acción para el próximo mes
-     * Recomendaciones estratégicas
-
-3. MÓDULO DE ESTILO Y TONO:
-   - Lenguaje ejecutivo:
-     * Claro y conciso (sin jerga técnica innecesaria)
-     * Orientado a resultados e impacto
-     * Enfocado en lo que importa a la gerencia
-     * Con recomendaciones accionables
-   
-   - Estructura de mensajes:
-     * Situación (qué pasó)
-     * Impacto (cómo nos afecta)
-     * Causa (por qué pasó)
-     * Acción (qué estamos haciendo)
-     * Recomendación (qué necesitamos decidir/aprobar)
-   
-   - Uso de visualizaciones:
-     * Gráficos simples y claros
-     * Semáforos para status
-     * Tablas resumen
-     * Infografías para KPIs clave
-
-4. MÓDULO DE PERSONALIZACIÓN:
-   - Plantillas personalizables por tipo de reporte
-   - Logo y colores corporativos
-   - Formato de exportación (PDF, Word, PowerPoint, Email)
-   - Idioma (español/inglés)
-   - Nivel de detalle (ejecutivo, gerencial, técnico)
-
-5. MÓDULO DE AUTOMATIZACIÓN:
-   - Generación automática de reportes periódicos
-   - Envío automático por email
-   - Programación de reportes (diario, semanal, mensual)
-   - Integración con fuentes de datos (SCADA, ERP, etc.)
-
-6. MÓDULO DE ANÁLISIS DE CALIDAD:
-   - Verificación de consistencia de datos
-   - Detección de anomalías y outliers
-   - Sugerencias de mejora en redacción
-   - Verificación de cumplimiento de formato
-
-FORMATO DE SALIDA:
-- Herramienta web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo generador de reportes
-- Diseño responsive para desktop
-- Código modular y bien documentado
-- Ejemplos de reportes generados (diario, semanal, mensual)
-- Plantillas de ejemplo precargadas
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, jsPDF, docx.js, SheetJS (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- Generación de documentos profesionales
-
-CRITERIOS DE CALIDAD:
-- Reportes claros, concisos y accionables
-- Lenguaje ejecutivo apropiado
-- Visualizaciones efectivas
-- Formato profesional listo para presentación
-- Personalización fácil
-
-ENTREGABLE FINAL:
-Herramienta de generación automática de reportes ejecutivos que permita a gerentes de operaciones crear reportes profesionales en minutos, mejorando la comunicación con directorio y facilitando la toma de decisiones basada en datos.`,
-              tags: ["reportes ejecutivos", "comunicación", "KPIs", "gerencia", "automatización"],
-              uso: "Diario / Semanal / Mensual"
-            }
-          ]
-        }
-      ]
+              id: 'og_cor_001',
+              titulo: 'Generador de Reportes Ejecutivos de Operaciones',
+              categoria: 'Herramienta',
+              prioridad: 'alta',
+              uso: 'Diario',
+              tags: ['Reportes', 'Comunicaciones', 'Email', 'Gerencia', 'KPIs', 'Producción', 'Operaciones'],
+              prompt:
+                'ACTÚA COMO: Director de Operaciones y Vicepresidente de Producción en una multinacional de Oil & Gas con 25 años de trayectoria corporativa. Eres un maestro en la síntesis ejecutiva, comunicación estratégica a nivel de Directorio (C-Suite), gestión de crisis operacionales y redacción de minutas de alta precisión.\n\nCONTEXTO:\n- La gerencia operativa y de planta necesita redactar y emitir diariamente comunicaciones formales, reportes de turno a vicepresidencia, solicitudes de capex/opex de emergencia, reportes flash de incidentes y minutas de comités de crisis sin perder tiempo de ingeniería.\n\nTAREA:\nDesarrolla una herramienta web interactiva completa en un único archivo HTML/CSS/JavaScript para la Generación Inteligente de Comunicaciones Ejecutivas y Reportes de Operaciones en Oil & Gas.\n\nMÓDULOS Y CAPACIDADES DE LA HERRAMIENTA:\n\n1. PLANTILLAS EJECUTIVAS ESTRUCTURADAS:\n   - Reporte Diario de Operaciones a Gerencia General (Executive Daily Brief): Producción total vs. Target presupuestario, Novedades críticas de HSE, Disponibilidad de plantas, Desviaciones mayores y Pronóstico para el día siguiente.\n   - Notificación Flash de Emergencia / Incidente Mayor: Formato 5W2H (Qué, Quién, Cuándo, Dónde, Por qué, Cómo y Acciones Inmediatas de Contención).\n   - Solicitud de Aprobación de Emergencia (MOC - Management of Change / Gasto Crítico): Justificación técnica, evaluación de riesgo por no ejecución, costo estimado y ventana de oportunidad.\n   - Minuta Ejecutiva de Handover de Turno Operacional: Estado de la planta, autorizaciones activas, contingencias en curso.\n\n2. MOTOR DE REDACCIÓN PARAMÉTRICO Y MULTI-IDIOMA:\n   - Campos estructurados con autocompletado inteligente de unidades de planta, tags y métricas operacionales estándar.\n   - Selector de Tono: Ejecutivo/Formal, Técnico Detallado, Urgente/Contingencia, Regulatorio/Legal.\n   - Selector de Idioma: Español Corporativo o Inglés Técnico Internacional de Petróleo (Bilingual Oil & Gas Standard).\n\n3. EDITOR DE SALIDA EN TIEMPO REAL CON VISTA PREVIA:\n   - Formato enriquecido HTML / Markdown / Texto Plano listo para copiar al portapapeles con 1 clic (Copy to Clipboard con formato Outlook / Teams / Gmail).\n   - Generación de asuntos de correo optimizados y estandarizados (ej. "[DAILY OPS] Planta Malvinas - Prod: 98.4% | HSE: 0 Inc | Fecha: 2026-08-18").\n   - Historial de reportes generados almacenado localmente en IndexedDB.\n\nDISEÑO:\n- Interfaz moderna, limpia, minimalista y ultra rápida (#0f172a, #1e293b, acento azul corporativo #3b82f6).\n- Código completo sin frameworks externos.',
+            },
+          ],
+        },
+      ],
     },
     {
-      id: "mineria",
-      nombre: "Minería",
-      icono: "⛏️",
-      color: "#4e342e",
-      descripcion: "Exploración, extracción, procesamiento y transporte de minerales",
+      id: 'mineria',
+      nombre: 'Minería',
+      icono: '⛏️',
+      color: '#f57c00',
+      descripcion: 'Extracción, procesamiento y transporte de minerales a cielo abierto y subterránea',
       subcategorias: [
         {
-          id: "min_inspeccion",
-          nombre: "Inspección de Equipos Mineros",
+          id: 'min_inspeccion',
+          nombre: 'Inspección de Equipos Mineros',
           prompts: [
             {
-              id: "min_insp_001",
-              titulo: "Sistema de Gestión de Inspección Pre-Operacional de Flota Minera",
-              categoria: "Aplicación Web",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Ingeniero de Mantenimiento Minero Senior con 20 años de experiencia en mantenimiento de equipos móviles de minería a cielo abierto (haul trucks, palas, perforadoras, cargadores), certificado en reliability-centered maintenance (RCM) y con conocimiento profundo de sistemas de gestión de mantenimiento (CMMS/EAM).
-
-CONTEXTO TÉCNICO:
-- Industria: Mina a cielo abierto de cobre con producción de 150,000 ton/día de mineral
-- Flota principal:
-  * 25 haul trucks (CAT 793F - 240 ton capacity, Komatsu 930E - 290 ton capacity)
-  * 4 palas eléctricas (P&H 4100XPC - 59 m³ bucket)
-  * 6 cargadores frontales (CAT 994K - 36 m³ bucket)
-  * 8 perforadoras (P&H PV-351 - 12 3/4" drill)
-  * 10 motoniveladoras (CAT 24M)
-  * 15 camiones de agua (CAT 777G - 90 ton)
-- Turnos: 3 turnos rotativos (12 horas)
-- Objetivo: 85% disponibilidad física de flota
-- Problemática actual: Inspecciones pre-operacionales en papel, inconsistentes, sin seguimiento de hallazgos, alta tasa de fallas inesperadas
-
-TAREA:
-Desarrolla un sistema web completo de gestión de inspecciones pre-operacionales para flota minera que reemplace las inspecciones en papel y mejore la confiabilidad de los equipos. El sistema debe:
-
-1. MÓDULO DE CONFIGURACIÓN DE EQUIPOS:
-   - Base de datos de equipos con:
-     * Tag number, fabricante, modelo, año, número de serie
-     * Tipo de equipo (haul truck, pala, cargador, etc.)
-     * Componentes críticos (motor, transmisión, sistema hidráulico, frenos, etc.)
-     * Checklist específico por tipo de equipo
-     * Criterios de aceptación/rechazo por ítem
-     * Fotografías de referencia (puntos de inspección)
-   
-   - Personalización de checklists por tipo de equipo:
-     * Inspección de 360° (exterior)
-     * Inspección de cabina
-     * Inspección de compartimiento de motor
-     * Pruebas de funcionamiento
-     * Inspección bajo el equipo (pit)
-
-2. MÓDULO DE INSPECCIÓN PRE-OPERACIONAL:
-   Para cada tipo de equipo, checklist específico que incluya:
-
-   HAUL TRUCKS (ejemplo CAT 793F):
-   - Inspección exterior (360°):
-     * Estado de neumáticos (presión, desgaste, daños, dual matching)
-     * Estado de llantas y rines
-     * Frenos (discos, pastillas, fugas)
-     * Suspensión (cilindros, acumuladores)
-     * Estructura (grietas, deformaciones, soldaduras)
-     * Sistema de dirección (cilindros, barras)
-     * Luces y señales (delanteras, traseras, estroboscópicas)
-     * Espejos y cámaras
-     * Sistema de supresión de polvo
-     * Estado de la caja (desgaste, daños)
-   
-   - Inspección de cabina:
-     * Asiento y cinturón de seguridad
-     * Controles (joysticks, pedales, volante)
-     * Instrumentos y pantallas
-     * Sistema de climatización (AC/calor)
-     * Radio y comunicaciones
-     * Extintor y botiquín
-     * Limpieza y visibilidad
-   
-   - Inspección de motor/compartimiento:
-     * Nivel de aceite de motor
-     * Nivel de refrigerante
-     * Estado de mangueras y conexiones
-     * Filtros de aire (indicador de restricción)
-     * Sistema de combustible (fugas)
-     * Batería y conexiones
-     * Correas y tensores
-   
-   - Inspección bajo el equipo (pit):
-     * Fugas de aceite/hidráulico
-     * Estado de articulaciones y pasadores
-     * Sistema de escape
-     * Protecciones y guardas
-     * Sistema de engrase automático
-   
-   - Pruebas de funcionamiento:
-     * Arranque del motor
-     * Prueba de frenos (servicio y estacionamiento)
-     * Prueba de dirección
-     * Prueba de levantamiento de caja
-     * Prueba de sistema de apagado de emergencia
-     * Prueba de alarmas y sensores
-
-   PALAS ELÉCTRICAS (ejemplo P&H 4100XPC):
-   - Sistema eléctrico (cables, motores, generadores)
-   - Sistema hidráulico
-   - Estructura y balancín
-   - Sistema de cableado (power cable)
-   - Sistema de lubricación automática
-   - Sistema de refrigeración
-   - Cabinas y controles
-   - Sistemas de protección
-   - Prueba de funciones críticas
-
-3. MÓDULO DE REGISTRO Y SEGUIMIENTO:
-   - Registro digital de inspección con:
-     * Nombre del operador y turno
-     * Fecha, hora y ubicación (GPS)
-     * Horas de operación del equipo (hour meter)
-     * Checklist completado (OK/NO OK/NA por ítem)
-     * Fotografías de hallazgos
-     * Comentarios y observaciones
-     * Firma digital del operador
-   
-   - Clasificación de hallazgos:
-     * Crítico: Equipo no puede operar (rojo)
-     * Importante: Requiere atención pronto (amarillo)
-     * Menor: Monitorear (verde)
-   
-   - Generación automática de órdenes de trabajo para hallazgos NO OK
-   - Notificaciones automáticas a mantenimiento
-
-4. MÓDULO DE ANÁLISIS Y REPORTES:
-   - Dashboard con KPIs:
-     * % de inspecciones completadas vs. plan
-     * Tiempo promedio de inspección
-     * Hallazgos por tipo de equipo
-     * Equipos con más hallazgos críticos
-     * Tendencias de hallazgos (30/60/90 días)
-   
-   - Análisis de confiabilidad:
-     * Correlación entre hallazgos y fallas
-     * Identificación de patrones de falla
-     * Recomendaciones de mantenimiento predictivo
-   
-   - Reportes automáticos:
-     * Reporte diario de inspecciones
-     * Reporte semanal de hallazgos
-     * Reporte mensual de tendencias
-     * Reporte de equipos críticos
-   
-   - Exportación a PDF/Excel
-
-5. MÓDULO DE INTEGRACIÓN:
-   - Integración con CMMS (SAP PM, Maximo, etc.)
-   - Integración con sistema de gestión de repuestos
-   - Integración con sistema de telemetría (CAT MineStar, Komatsu Komtrax)
-   - API para integración con otros sistemas
-
-6. FUNCIONALIDADES ADICIONALES:
-   - Modo offline con sincronización automática
-   - Escaneo de QR/Barcode para identificación de equipos
-   - Firma digital de operadores
-   - Fotografías con anotaciones
-   - Geolocalización de inspecciones
-   - Control de acceso por roles (operador, supervisor, ingeniero)
-   - Notificaciones push para hallazgos críticos
-   - Búsqueda avanzada en historial
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo sistema de gestión de mantenimiento
-- Diseño responsive optimizado para tablets (uso en campo)
-- Código modular y bien documentado
-- Datos de ejemplo realistas (flota completa, 1 semana de inspecciones)
-- Checklists detallados para cada tipo de equipo
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, jsPDF, SheetJS, moment.js (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- Preparado para integración con CMMS
-
-CRITERIOS DE CALIDAD:
-- Sistema robusto para uso en condiciones adversas (polvo, vibración)
-- Interfaz intuitiva para operadores con diferente nivel técnico
-- Checklists completos y específicos por tipo de equipo
-- Trazabilidad completa de hallazgos y acciones
-- Reportes profesionales listos para gerencia
-
-ENTREGABLE FINAL:
-Sistema digital integral de inspecciones pre-operacionales que reemplace las inspecciones en papel, mejore la detección temprana de problemas, reduzca fallas inesperadas y aumente la disponibilidad de flota en una mina a cielo abierto.`,
-              tags: ["flota minera", "inspección pre-operacional", "haul trucks", "palas", "mantenimiento"],
-              uso: "Diario / Pre-operacional"
-            }
-          ]
+              id: 'min_insp_001',
+              titulo: 'Sistema de Gestión de Inspección Pre-Operacional de Flota Minera',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Por turno',
+              tags: ['Minería', 'Camiones Caex', 'Palas', 'Pre-Uso', 'Mantenimiento', 'Seguridad Minera', 'Flota'],
+              prompt:
+                'ACTÚA COMO: Superintendente de Mantenimiento de Mina y Confiabilidad de Flota Pesada en faena minera a rajo abierto (Open Pit) y subterránea con 20 años de experiencia. Experto en gestión de activos según ISO 55000, metodologías RCM (Reliability Centered Maintenance) y estándares de seguridad minera (SERNAGEOMIN / MSHA). Desarrollador web especializado en aplicaciones de campo para operadores y mecánicos.\n\nCONTEXTO TÉCNICO:\n- Faena minera a 3,500 msnm con flota de 60 camiones de extracción de alto tonelaje (CAEX Caterpillar 797F / Komatsu 930E de 300-400 toneladas), 6 palas hidráulicas/cables (P&H 4100 / CAT 7495) y perforadoras rotativas.\n- Exigencia Operativa: Inspección Pre-Uso (Walkaround / Check-in) obligatoria de 10 minutos realizada por cada operador antes de iniciar el turno para garantizar que no existan condiciones críticas no aptas para operar (No-Go).\n\nTAREA:\nDesarrolla una aplicación web completa y robusta en un único archivo HTML/CSS/JavaScript para la Inspección Pre-Operacional y Control de Salud de Flota Minera.\n\nMÓDULOS DEL SISTEMA:\n\n1. CONFIGURACIÓN DE EQUIPO Y OPERADOR:\n   - Selección de Flota: Camión CAEX, Pala, Cargador Frontal, Perforadora, Bulldozer.\n   - Datos de Turno: ID Equipo (ej. CAEX-204), Horómetro actual, Operador, Turno (A/B/C), Supervisor a cargo.\n\n2. CHECKLIST VISUAL ESTRUCTURADO (WALKAROUND POR ZONAS):\n   - Zona 1 (Nivel de Suelo y Neumáticos): Condición de neumáticos 57"/63" (cortes en banda de rodado, presión de inflado visual, torque de tuercas de rueda), fugas en mandos finales y suspensiones del/tras.\n   - Zona 2 (Motor y Compartimiento Inferior): Niveles de fluidos (aceite de motor, refrigerante, aceite hidráulico), fugas en mangueras de alta presión, estado de correas y ventiladores.\n   - Zona 3 (Chasis y Tolva): Fisuras en soldaduras críticas de chasis, estado de cilindros de levante (hoist cylinders), cables de seguridad, pasadores.\n   - Zona 4 (Cabina y Sistemas de Seguridad Mandatorios NO-GO):\n     * Test de Freno de Servicio, Freno de Parqueo y Freno Dinámico / Retardador.\n     * Sistema de Supresión de Incendios (Check de presurización de botellas de polvo químico ANSUL / Checkfire).\n     * Sistema Anticolisión y Radares de proximidad.\n     * Cinturón de seguridad de 3 puntas, claxon, luces de faena y baliza estroboscópica.\n     * Dirección de emergencia (test de bomba secundaria).\n\n3. SISTEMA DE BLOQUEO INMEDIATO (NO-GO CRITERIA):\n   - Lógica automática: Si falla cualquier elemento crítico calificado como NO-GO (Frenos, Dirección de Emergencia, Extinción de Incendio, Dirección), el sistema bloquea inmediatamente la autorización del equipo, cambia el estado a "EQUIPO INMOVILIZADO / FUERA DE SERVICIO" y genera un aviso urgente para despacho (Dispatch) y mantenimiento de mina.\n\n4. PERSISTENCIA, ANALÍTICA Y EXPORTACIÓN:\n   - Base de datos local IndexedDB para funcionamiento 100% offline en el fondo del rajo sin cobertura 4G/WiFi.\n   - Sincronización automática de inspecciones pendientes al recuperar red.\n   - Panel de KPIs para el Superintendente: Disponibilidad física estimada, % de Checklists completados a tiempo, Top 5 fallas recurrentes por modelo de camión.\n   - Generación de Tarjeta de Inspección digital en PDF imprimible con firma del operador y código QR.\n\nDISEÑO:\n- UI Dark Industrial de alto contraste (#18181b, #27272a, acento amarillo minero #eab308 y rojo crítico #dc2626) con botones táctiles gigantes (60px) aptos para pantallas rugerizadas.',
+            },
+          ],
         },
         {
-          id: "min_bitacora",
-          nombre: "Bitácoras y Control de Producción",
+          id: 'min_bitacora',
+          nombre: 'Bitácoras y Control de Producción',
           prompts: [
             {
-              id: "min_bit_001",
-              titulo: "Sistema de Control de Producción Minera en Tiempo Real",
-              categoria: "Aplicación Web",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Superintendente de Operaciones Mineras con 25 años de experiencia en minería a cielo abierto de cobre, hierro y oro, especializado en planificación de corto plazo, control de producción y optimización de flota. Experto en sistemas de despacho y monitoreo de producción en tiempo real.
-
-CONTEXTO TÉCNICO:
-- Industria: Mina a cielo abierto de cobre con producción de 150,000 ton/día de mineral y 300,000 ton/día de estéril
-- Flota: 25 haul trucks (240-290 ton), 4 palas eléctricas (59 m³), 6 cargadores (36 m³), 8 perforadoras, 10 motoniveladoras
-- Áreas de trabajo: 3 pits activos (Pit Norte, Pit Sur, Pit Este), 4 botaderos, 2 chancadoras primarias, 1 stockpile de mineral
-- Turnos: 3 turnos de 12 horas (60 operadores de equipo, 15 supervisores)
-- Sistemas existentes: Sistema de despacho manual por radio, GPS básico en equipos, sin integración de datos
-- Problemática: Falta de visibilidad en tiempo real de producción, retrasos en reporte de producción, dificultad para optimizar asignación de equipos
-
-TAREA:
-Desarrolla un sistema web completo de control de producción minera en tiempo real que reemplace el sistema manual actual y optimice la operación. El sistema debe:
-
-1. MÓDULO DE DESPACHO Y ASIGNACIÓN DE EQUIPOS:
-   - Asignación dinámica de equipos a áreas de trabajo:
-     * Haul trucks asignados a rutas específicas (pit -> chancadora/botadero)
-     * Palas y cargadores asignados a bancos de perforación
-     * Optimización de ciclos de carga-transporte-descarga
-   - Cálculo automático de match factor (equilibrio pala-camión)
-   - Recomendaciones de reasignación basadas en producción
-   - Gestión de cambios de turno de equipos
-
-2. MÓDULO DE MONITOREO EN TIEMPO REAL:
-   - Tracking de posición de equipos (simulado con coordenadas)
-   - Estado de equipos (cargando, transportando, descargando, esperando, mantenimiento)
-   - Tiros de ciclo (cycle times) por equipo y ruta
-   - Velocidad promedio y tiempos de espera
-   - Conteo de ciclos completados por turno
-   - Alertas de equipos detenidos o fuera de ruta
-
-3. MÓDULO DE REGISTRO DE PRODUCCIÓN:
-   - Registro automático de toneladas movidas por:
-     * Área de origen (pit, banco)
-     * Tipo de material (mineral, estéril, rehandle)
-     * Destino (chancadora, botadero, stockpile)
-   - Calidad de mineral (ley de Cu, humedad, granulometría estimada)
-   - Distancia de acarreo promedio
-   - Consumo de combustible por equipo
-   - Eficiencia de operación (% tiempo productivo)
-
-4. MÓDULO DE CONTROL DE CALIDAD:
-   - Muestreo de mineral en puntos de control
-   - Registro de leyes (Cu, Au, Ag, Fe, etc.)
-   - Control de mezcla en stockpiles
-   - Alimentación a chancadora vs. plan
-   - Desviaciones de calidad y acciones correctivas
-
-5. MÓDULO DE REPORTES Y DASHBOARD:
-   - Dashboard en tiempo real con:
-     * Producción actual vs. plan (tonelaje, leyes)
-     * Estado de flota (disponible, operando, mantenimiento)
-     * Productividad por equipo (ton/hora, ciclos/hora)
-     * Utilización de flota (%)
-     * Combustible consumido vs. plan
-   - Gráficos de producción por hora/turno/día
-   - Mapas de producción por área
-   - Reportes automáticos:
-     * Reporte de producción por turno
-     * Reporte diario de producción
-     * Reporte semanal de KPIs
-     * Reporte de eficiencia de flota
-   - Exportación a PDF/Excel
-
-6. MÓDULO DE ANÁLISIS DE PERFORMANCE:
-   - Análisis de eficiencia de equipos (ton/hora real vs. diseño)
-   - Identificación de cuellos de botella
-   - Análisis de tiempos de espera y retrasos
-   - Benchmarking entre equipos similares
-   - Tendencias de productividad
-
-7. MÓDULO DE PLANIFICACIÓN:
-   - Plan de producción diario/semanal
-   - Asignación de equipos por turno
-   - Metas de producción por área
-   - Plan de mantenimiento coordinado con producción
-
-8. FUNCIONALIDADES ADICIONALES:
-   - Modo offline con sincronización
-   - Integración con sistemas de despacho (Wenco, Modular, etc.)
-   - Alertas automáticas por desviaciones
-   - Control de acceso por roles (despachador, supervisor, superintendente)
-   - Historial completo de operaciones
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo sistema de despacho minero
-- Diseño responsive para desktop (sala de control) y tablets (campo)
-- Código modular y bien documentado
-- Datos de ejemplo realistas (1 turno completo de operación)
-- Dashboards interactivos y mapas de operación
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, Leaflet.js, jsPDF, SheetJS, moment.js (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- Preparado para integración con sistemas de despacho
-
-CRITERIOS DE CALIDAD:
-- Sistema robusto para operación 24/7
-- Interfaz intuitiva para despachadores y supervisores
-- Cálculos precisos de producción y eficiencia
-- Reportes profesionales listos para gerencia
-- Performance óptima con múltiples equipos
-
-ENTREGABLE FINAL:
-Sistema integral de control de producción minera que permita monitorear y optimizar la operación en tiempo real, mejorando la productividad de flota y asegurando el cumplimiento del plan de producción.`,
-              tags: ["producción minera", "despacho", "flota", "control en tiempo real", "optimización"],
-              uso: "Diario / Continuo"
-            }
-          ]
-        }
-      ]
+              id: 'min_bit_001',
+              titulo: 'Sistema de Control de Producción Minera en Tiempo Real',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Por turno',
+              tags: ['Producción Minera', 'Tonelaje', 'Leyes', 'Dispatch', 'Chancado', 'Mina-Planta', 'KPIs'],
+              prompt:
+                'ACTÚA COMO: Jefe General de Control de Procesos Mina-Planta y Dispatcher Senior en una gran operación minera de cobre y oro con 20 años de experiencia. Experto en optimización del ciclo de transporte, balance metalúrgico diario y cálculo de KPIs de productividad minera (OEE, Rendimiento efectivo, Disponibilidad y Utilización). Desarrollador de dashboards operativos de alta velocidad.\n\nCONTEXTO:\n- Operación minera con movimiento diario de 250,000 toneladas de material (Mineral a Chancado Primario, Mineral de Baja Ley a Botaderos de Lixiviación / Stockpile y Lastre a Botaderos).\n- Necesidad de controlar en tiempo real el tonelaje movido por hora, las leyes estimadas (%Cu Total, %Cu Soluble, Ley de Oro g/t), la distancia media de transporte (DMT) y los tiempos de ciclo de los camiones.\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un solo archivo HTML/CSS/JavaScript para el Control de Producción Diaria y Balance de Materiales Mina-Planta.\n\nMÓDULOS DEL SISTEMA:\n\n1. REGISTRO DE VIAJES Y ASIGNACIÓN DE CARGA:\n   - Registro de Ciclos de Acarreo: Hora, Pala de origen (Frente de carguío), Camión asignado, Destino (Chancador Primario, Botadero Norte, Stockpile 1, Sulfuros), Tipo de Material, Tonelaje nominal/pesado por báscula, Ley de mineral (%Cu).\n   - Tiempos de Ciclo: Tiempo de viaje vacío, tiempo de espera en pala, tiempo de carga, tiempo de viaje lleno, tiempo de descarga en destino.\n\n2. CÁLCULO DE MÉTRICAS Y KPIs DE MINA EN TIEMPO REAL:\n   - Tonelaje Total Acumulado por Tipo de Material y Comparativo vs. Plan Diario (Target en Toneladas).\n   - Ley Ponderada de Alimentación a Planta:\n     $$\\text{Ley Ponderada} = \\frac{\\sum (\\text{Tonelaje}_i \\times \\text{Ley}_i)}{\\sum \\text{Tonelaje}_i}$$\n   - Indicadores de Eficiencia de Flota:\n     * Disponibilidad Mecánica: $DM = \\frac{HO}{HO + HDT} \\times 100$\n     * Utilización Efectiva: $UE = \\frac{HO}{HO + STBY} \\times 100$\n     * Productividad de Camión (Ton/Hora Efectiva).\n     * Rendimiento de Palas (Ton/Hora de Operación).\n\n3. DASHBOARD Y MONITOREO DE CHANCADO:\n   - Nivel de Stock en Pila de Chancado (Surge Pocket / Stockpile) con alertas visuales de saturación o vaciado.\n   - Gráfico de barras en Canvas con producción horaria vs. curva meta planificada.\n\n4. PERSISTENCIA Y EXPORTACIÓN:\n   - Base de datos IndexedDB para almacenar históricos de turnos.\n   - Exportación de Informe de Cierre de Turno a Excel y resumen ejecutivo en PDF listo para reunión de cambio de guardia.\n\nDISEÑO:\n- Estilo Sala de Control de Dispatch (Fondo negro azabache #09090b, acentos cian #06b6d4 y oro #f59e0b). 100% funcional y sin dependencias externas.',
+            },
+          ],
+        },
+        {
+          id: 'min_procesos',
+          nombre: 'Procesamiento y Geotecnia Minera',
+          prompts: [
+            {
+              id: 'min_mol_001',
+              titulo: 'Control y Monitoreo de Circuito de Molienda SAG y Bolas',
+              categoria: 'Aplicación Web',
+              prioridad: 'critica',
+              uso: 'Diario',
+              tags: ['Molienda', 'Molino SAG', 'Molino de Bolas', 'P80', 'Potencia', 'Llenado de Bolas', 'Minería', 'Procesamiento'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Metalúrgico Principal y Especialista en Conminución de Minerales con más de 20 años de experiencia en plantas concentradoras de cobre y oro de gran escala (>100,000 TPD). Experto en modelación y optimización de circuitos de molienda SAG (Semi-Autogenous Grinding) y Molinos de Bolas según las teorías de Bond, Austin y Morrell. Desarrollador de simuladores de proceso y dashboards de control avanzado en tiempo real.\n\nCONTEXTO TÉCNICO:\n- Circuito SABC (SAG, Ball Mill, Pebble Crusher): Molino SAG de 40\' x 25\' (28 MW) con motor Gearless (GMD) y dos Molinos de Bolas de 26\' x 40\' (16 MW c/u) en circuito cerrado con baterías de hidrociclones de 26".\n- Variables Críticas: Tonelaje de alimentación ($TPH$), Dureza del mineral ($SPI$, $BWi$), % Llenado total ($J_t$) y llenado de bolas ($J_b$), Presión de descansos hidrostáticos (Bearing pressure), Potencia consumida ($kW$), Densidad y flujo de pulpa (% Sólidos), Tamaño de partícula de producto ($P_{80}$ en $\\mu m$).\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un solo archivo HTML/CSS/JavaScript para el Monitoreo en Tiempo Real, Balance de Masa y Optimización Energética del Circuito de Molienda SAG y Bolas.\n\nMÓDULOS DEL SISTEMA Y ECUACIONES FUNDAMENTALES DE CONMINUCIÓN:\n\n1. MONITOR DE VARIABLES OPERACIONALES DEL MOLINO SAG:\n   - Panel de Adquisición: TPH Alimentación fresca (1,500 - 4,500 TPH), Consumo de Agua de Proceso ($m^3/h$), Velocidad de rotación (% Velocidad Crítica $N_c$), Presión de muñones (trunnion pressure en bar), Nivel de ruido acústico (micrófonos de impacto para detectar sobrellenado o golpeo de bolas sobre corazas), Retorno de Pebbles (TPH recirculado y potencia del chancador de pebbles).\n   - Cálculo de Velocidad Crítica de Rotación ($N_c$ en RPM):\n     $$N_c = \\frac{42.3}{\\sqrt{D - d}}$$\n     donde $D$ es el diámetro del molino y $d$ el diámetro de la bola mayor (en metros).\n\n2. BALANCE DE ENERGÍA Y CONSUMO ESPECÍFICO (BOND & MORRELL):\n   - Cálculo del Consumo Específico de Energía ($SEC$ en $kWh/t$):\n     $$SEC = \\frac{Potencia\\_Activa\\;[kW]}{Flujo\\_Masico\\;[t/h]}$$\n   - Cálculo del Índice Operativo de Trabajo de Bond ($W_{io}$):\n     $$W = 10 \\cdot W_{io} \\cdot \\left(\\frac{1}{\\sqrt{P_{80}}} - \\frac{1}{\\sqrt{F_{80}}}\\right)$$\n   - Comparación del $W_{io}$ real vs. $BWi$ de laboratorio para detectar ineficiencias en la molienda o sobremolienda.\n\n3. CONTROL DE BATERÍA DE HIDROCICLONES Y CLASIFICACIÓN:\n   - Presión de alimentación al manifold (psi/kPa), % de sólidos en alimentación, rebose (Overflow - $P_{80}$ hacia flotación) y descarga (Underflow - carga circulante hacia molino de bolas).\n   - Cálculo automático de la Carga Circulante ($CC$ %):\n     $$CC = \\frac{d_{al} - d_{of}}{d_{uf} - d_{al}} \\times 100$$\n     donde $d$ representa las densidades o % de sólidos de los flujos.\n\n4. MATRIZ DE REGLAS DE CONTROL EXPERTO Y ALERTAS:\n   - Detección de Condiciones Anómalas: "Sobrellenado de SAG" (Caída de potencia con aumento de presión de descansos), "Poco llenado / Golpe directo a corazas" (Alto ruido acústico y pico de potencia), "Cavitación de bomba de pulpa", "Emboce de ciclones / Acordonamiento (Roping)".\n   - Disparo de recomendaciones operacionales en tiempo real (Ajustar TPH, variar velocidad de rotación o dosificación de agua).\n\n5. PERSISTENCIA LOCAL, HISTOGRAMAS Y EXPORTACIÓN:\n   - Base de datos IndexedDB para registro continuo de turnos (Día / Noche).\n   - Gráficos interactivos en Canvas: Curva Potencia vs. Tonelaje, Evolución temporal de $P_{80}$ y $SEC$.\n   - Exportación de Balance de Turno en PDF y planilla Excel/CSV.\n\nDISEÑO:\n- UI Dark Industrial (#0b1120, #162238, acentos ámbar cobre #f59e0b y cian #38bdf8). Código monolítico 100% funcional y completo.',
+            },
+            {
+              id: 'min_flot_001',
+              titulo: 'Control y Balance Metalúrgico de Celdas de Flotación de Cobre',
+              categoria: 'Aplicación Web',
+              prioridad: 'critica',
+              uso: 'Diario',
+              tags: ['Flotación', 'Cobre', 'Recuperación Metalúrgica', 'Leyes', 'Espumas', 'Reactivos', 'Minería'],
+              prompt:
+                'ACTÚA COMO: Metalurgista Jefe de Planta de Flotación de Minerales Sulfurados de Cobre y Molibdeno con 20 años de trayectoria en operaciones mineras internacionales. Especialista en cinética de flotación, balance metalúrgico continuo de dos y tres productos, dosificación de reactivos químicos (Colectores Xantatos, Espumantes MIBC/Glicoles, Modificadores de pH Cal) y caracterización de espumas.\n\nCONTEXTO TÉCNICO:\n- Planta Concentradora con circuito de flotación Rougher (Celdas gigantes de 300 $m^3$), Scavenger y Cleaner (Columnas y celdas mecánicas).\n- Objetivos: Maximizar la Recuperación Metalúrgica de Cobre ($R_{Cu}$ > 88%) manteniendo una Ley de Concentrado Comercial ($L_c$ > 28% Cu) y optimizando el consumo de reactivos químicos (g/t).\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Control Metalúrgico, Balance de Masa en Línea y Optimización de Reactivos en Flotación de Cobre.\n\nMÓDULOS DEL SISTEMA Y FORMULACIONES METALÚRGICAS:\n\n1. BALANCE METALÚRGICO DE 2 PRODUCTOS (ALIMENTACIÓN, CONCENTRADO Y COLA):\n   - Variables de Entrada: Ley de Cobre en Cabeza/Alimentación ($f$ % Cu), Ley en Concentrado ($c$ % Cu), Ley en Cola ($t$ % Cu), Tonelaje Tratado ($F$ en TPH).\n   - Cálculo de Recuperación Metalúrgica ($R$ %):\n     $$R = \\frac{c \\cdot (f - t)}{f \\cdot (c - t)} \\times 100$$\n   - Cálculo de Razón de Concentración ($K$):\n     $$K = \\frac{F}{C} = \\frac{c - t}{f - t}$$\n   - Cálculo de Producción de Concentrado ($C$ en TPH):\n     $$C = \\frac{F}{K} = F \\cdot \\left(\\frac{f - t}{c - t}\\right)$$\n\n2. CONTROL DE DOSIFICACIÓN DE REACTIVOS QUÍMICOS:\n   - Colector Primario (Xantato Isopropílico / Amílico), Colector Secundario (Ditiofosfatos), Espumante (MIBC) y Lechada de Cal ($Ca(OH)_2$ para control de pH a 10.5 - 11.5).\n   - Cálculo de Dosificación Específica ($D$ en $g/t$):\n     $$D = \\frac{\\text{Flujo Reactivo}\\,[L/h] \\times \\text{Concentración}\\,[\\%] \\times \\text{Densidad}\\,[g/cm^3] \\times 10}{TPH\\,[t/h]}$$\n   - Alerta de sobredosificación (arrastre mecánico de pirita y ganga) o subdosificación (pérdida de cobre en colas).\n\n3. MONITOREO DE VARIABLES HIDRODINÁMICAS Y DE ESPUMA:\n   - Nivel de Pulpa en Celda (cm), Espesor del Colchón de Espuma (Froth Depth en mm), Flujo de Aire de Inyección ($J_g$ en cm/s), Agua de Lavado de Espuma ($m^3/h$).\n   - Detección de anomalías en la estabilidad de espuma (Espuma colapsada, espuma sobre-mineralizada, arrastre de lamas).\n\n4. DASHBOARD DE KPIs, PERSISTENCIA Y EXPORTACIÓN:\n   - Gráfico interactivo en Canvas: Curva Grado vs. Recuperación (Grade-Recovery Curve).\n   - Historial de turnos en IndexedDB con balance acumulado diario y mensual.\n   - Exportación de Certificado de Balance Metalúrgico Diario en PDF y CSV.\n\nDISEÑO:\n- UI Dark Copper Theme (#0f172a, #1a2333, acentos cobre brillante #ea580c y turquesa #06b6d4). Código 100% completo.',
+            },
+            {
+              id: 'min_rel_001',
+              titulo: 'Monitoreo Geotécnico e Hidráulico de Depósitos de Relaves (TSF)',
+              categoria: 'Aplicación Web',
+              prioridad: 'critica',
+              uso: 'Diario',
+              tags: ['Relaves', 'TSF', 'GISTM', 'Piezometría', 'Línea Freática', 'Densidad de Pulpa', 'Geotecnia', 'Minería'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Senior Geotécnico de Relaves y Auditor de Presas Mineras según el Estándar Global de Gestión de Relaves para la Industria Minera (GISTM - Global Industry Standard on Tailings Management) con más de 20 años de experiencia. Especialista en estabilidad de taludes (Morgenstern-Price, Bishop), monitoreo piezométrico (Cuerda vibrante / Standpipe), control de línea freática, reología de relaves espesados/filtrados y balance hídrico de cubeta.\n\nCONTEXTO TÉCNICO:\n- Depósito de Relaves Convencionales / Espesados de 80,000 TPD con muro de arena de 120 metros de altura levantado por método de eje central / aguas abajo.\n- Monitoreo Crítico Mandatorio: Nivel freático dentro del prisma de drenaje, presiones de poros en el muro y fundación, aceleraciones sísmicas, deformación con inclinómetros y prismas topográficos, y porcentaje de sólidos del relave depositado (% Cw > 62%).\n\nTAREA:\nDesarrolla una aplicación web completa y profesional en un único archivo HTML/CSS/JavaScript para el Monitoreo Geotécnico, Instrumentación en Tiempo Real y Alertas Tempranas de Depósitos de Relaves (TSF Monitoring System).\n\nMÓDULOS DEL SISTEMA Y FORMULACIONES GEOTÉCNICAS:\n\n1. INSTRUMENTACIÓN GEOTÉCNICA Y PIEZOMETRÍA:\n   - Registro de Piezómetros (Cuerda Vibrante / Casagrande): ID Instrumento, Ubicación (Cresta, Berma 1, Berma 2, Pie de Muro), Cota de Instalación (msnm), Presión de Poros Medida ($u$ en kPa), Nivel de Carga Hidráulica (Cota Piezométrica en msnm).\n   - Cálculo del Exceso de Presión de Poros y Ratio de Presión ($r_u$):\n     $$r_u = \\frac{u}{\\gamma \\cdot z}$$\n     donde $\\gamma$ es el peso unitario del suelo y $z$ la profundidad del instrumento.\n   - Definición de Umbrales TARP (Trigger Action Response Plan): Nivel Verde (Operación normal), Amarillo (Alerta técnica / investigación), Naranja (Acción correctiva / drenaje activo), Rojo (Evacuación y activación del Plan de Emergencia).\n\n2. MONITOREO DE LÍNEA FREÁTICA Y DRENAJE:\n   - Caudal de Drenes Basales y Chimenea ($L/s$), Turbidez del agua de drenaje (NTU para detectar arrastre de finos / piping interno).\n   - Distancia de la laguna de clarificación a la cresta del muro (Borde Libre / Freeboard mínimo legal $\\ge 2.0\\text{ m}$).\n\n3. CONTROL DE ESPESAMIENTO Y DEPOSITACIÓN DE RELAVES:\n   - Datos de Espesadores de Relaves: % Sólidos en peso (% Cw), Densidad de pulpa ($t/m^3$), Torque del rastrillo del espesador (%), Dosificación de floculante ($g/t$).\n   - Estimación de la Densidad Seca Compactada ($d_s$) y volumen ocupado en cubeta ($m^3/\\text{mes}$).\n\n4. VISUALIZACIÓN DE PERFILES TRANSVERSALES, MAPA Y EXPORTACIÓN:\n   - Corte transversal 2D interactivo del muro de relaves en Canvas donde se grafica la geometría del muro, la posición de los piezómetros con su nivel de alerta y la curva de la línea freática calculada.\n   - Persistencia local en IndexedDB.\n   - Generación de Informe Semanal de Cumplimiento GISTM en PDF con firma del Ingeniero de Registro (EoR).\n\nDISEÑO:\n- UI Dark Geotechnical (#090e17, #131b2e, acentos verde esmeralda #10b981, ámbar #f59e0b y rojo crítico #ef4444). Código 100% funcional y completo.',
+            },
+            {
+              id: 'min_tron_001',
+              titulo: 'Diseño y Control de Perforación y Tronadura (Drill & Blast)',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Semanal',
+              tags: ['Tronadura', 'Perforación', 'Drill & Blast', 'Kuz-Ram', 'Fragmentación', 'Explosivos', 'Minería a Cielo Abierto'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Senior de Perforación y Tronadura (Drill & Blast Engineer) con 20 años de experiencia en minería a cielo abierto y subterránea. Especialista en modelos de fragmentación de roca (Modelo Kuz-Ram / JKSimBlast), diseño de mallas de perforación (Burden, Espaciamiento, Pasadura), selección y carguío de explosivos (Anfo, Emulsión matriz dopada, Heavy ANFO), cálculo de factor de carga ($kg/m^3$, $g/t$) y control de vibraciones (Leyes de atenuación PPV / Campo cercano).\n\nCONTEXTO TÉCNICO:\n- Banco de mina a cielo abierto de 15 metros de altura en roca andesita dura (RMR 65-75). Malla de perforación de 120 pozos de 10 5/8" de diámetro.\n- Objetivos: Lograr la fragmentación óptima ($P_{80}$ < 6") para maximizar el rendimiento de palas y molinos SAG, minimizando el sobrequiebre (backbreak), flyrock y niveles de vibración ambiental (PPV < 10 mm/s en infraestructuras cercanas).\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Diseño de Mallas, Estimación de Fragmentación (Kuz-Ram) y Control de Factor de Carga en Tronadura Minera.\n\nMÓDULOS DEL SISTEMA Y MODELOS MATEMÁTICOS DE TRONADURA:\n\n1. PARÁMETROS GEOMÉTRICOS Y DE ROCA:\n   - Altura de Banco ($K$ en m), Diámetro de Perforación ($D$ en mm o pulgadas), Burden ($B$ en m), Espaciamiento ($S$ en m), Pasadura o Sub-drilling ($J$ en m), Taco o Stemming ($T$ en m).\n   - Longitud Total de Perforación ($H = K + J$), Volumen de Roca por Pozo ($V = B \\times S \\times K$).\n   - Factor de Roca de Cunningham ($A$) basado en RQD, espaciamiento de fracturas, densidad de roca y módulo de Young.\n\n2. CÁLCULO DE EXPLOSIVOS Y FACTOR DE CARGA (POWDER FACTOR):\n   - Tipo de Explosivo: ANFO (Densidad 0.82 $g/cm^3$, VOD 3,600 m/s, RWS 100) o Emulsión Pesada / Heavy ANFO (Densidad 1.15 - 1.25 $g/cm^3$, VOD 5,200 m/s).\n   - Longitud de Columna Explosiva ($L_e = H - T$).\n   - Masa de Explosivo por Pozo ($M_e = \\frac{\\pi \\cdot (D/1000)^2}{4} \\cdot L_e \\cdot \\rho_{exp} \\cdot 1000$).\n   - Factor de Carga Volumétrico ($q$ en $kg/m^3$) y Másico ($q_m$ en $g/t$ o $kg/t$):\n     $$q = \\frac{M_e}{B \\cdot S \\cdot K}, \\quad q_m = \\frac{q}{\\rho_{roca}}$$\n\n3. MODELO DE FRAGMENTACIÓN KUZ-RAM:\n   - Cálculo del Tamaño Medio de Fragmento ($X_{50}$ en cm):\n     $$X_{50} = A \\cdot q^{-0.8} \\cdot M_e^{0.167} \\cdot \\left(\\frac{115}{RWS}\\right)^{0.633}$$\n   - Índice de Uniformidad ($n$) según ecuación de Cunningham:\n     $$n = \\left(2.2 - 14\\frac{B}{D}\\right) \\cdot \\sqrt{\\frac{1 + S/B}{2}} \\cdot \\left(1 - \\frac{W}{B}\\right) \\cdot \\left(\\frac{L_e}{H}\\right)$$\n   - Curva Granulométrica de Rosin-Rammler: Fracción pasante $R(x) = 1 - e^{-(x / X_c)^n}$. Cálculo exacto de $P_{80}$ resultante.\n\n4. CONTROL DE VIBRACIONES (LEY DE ATENUACIÓN PPV - USBM):\n   - Pico de Velocidad de Partícula ($PPV$ en mm/s):\n     $$PPV = k \\cdot \\left(\\frac{R}{\\sqrt{W_{delay}}}\\right)^{-\\beta}$$\n     donde $R$ es la distancia al punto sensible, $W_{delay}$ la carga máxima por retardo (kg), y $k, \\beta$ constantes de sitio.\n\n5. PLANO 2D DE LA MALLA, PERSISTENCIA Y EXPORTACIÓN:\n   - Visualización interactiva en Canvas de la malla de perforación con pozos coloreados según estado (Perforado, Cargado, Tapado con taco).\n   - Base de datos IndexedDB para almacenar proyectos de tronadura.\n   - Generación de Ficha Técnica de Disparo / Hoja de Carga en PDF A4 listo para firma de operaciones y polvorín.\n\nDISEÑO:\n- UI Dark Mining (#0a0f1d, #141f36, acentos ámbar explosivo #f59e0b y rojo #ef4444). Código limpio y 100% funcional.',
+            },
+            {
+              id: 'min_lix_001',
+              titulo: 'Control y Monitoreo de Lixiviación en Pilas y Extracción por Solventes (SX-EW)',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Diario',
+              tags: ['Lixiviación', 'Pilas de Lixiviación', 'SX-EW', 'Cobre', 'Ácido Sulfúrico', 'PLS', 'Electrowinning', 'Minería'],
+              prompt:
+                'ACTÚA COMO: Metalurgista Jefe de Hidrometalurgia con 20 años de experiencia en procesos de Lixiviación en Pilas (Heap Leaching), Extracción por Solventes (SX) y Electroobtención (EW) para minerales oxidados y sulfuros secundarios de cobre. Especialista en balances hidrometalúrgicos de cobre e impurezas (Fierro, Cloro), cinéticas de extracción ácida, tasas de riego ($L/h/m^2$), consumo específico de ácido ($kg\\;H_2SO_4 / t$ mineral) y eficiencia de corriente faradaica en celdas EW.\n\nCONTEXTO TÉCNICO:\n- Planta Hidrometalúrgica con Pila Dinámica de Lixiviación de 40,000 TPD, Planta SX con 2 etapas de extracción y 1 de despojo (Stripping), y Nave EW de 120 celdas electrolíticas con cátodos permanentes de acero inoxidable.\n- Objetivos Operacionales: Controlar la tasa de riego y concentración de ácido en la solución de refino (Raffinate), monitorear la calidad y flujo de la solución rica (PLS - Pregnant Leach Solution), maximizar la transferencia neta de cobre en SX y asegurar una eficiencia de corriente >92% en EW para producir cátodos Grado A (99.99% Cu).\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Control Metalúrgico, Balance Químico y Eficiencia Energética del Circuito Lixiviación-SX-EW.\n\nMÓDULOS DEL SISTEMA Y FORMULACIONES HIDROMETALÚRGICAS:\n\n1. MONITOREO DE PILAS DE LIXIVIACIÓN Y BALANCE DE SOLUCIONES:\n   - Módulos / Celdas de Pila: ID Módulo, Área de Riego ($A$ en $m^2$), Tonelaje Apilado ($t$), Tasa de Riego ($IR$ en $L/h/m^2$), Flujo de Refino ($m^3/h$), Concentración de $H_2SO_4$ en Refino ($g/L$), Días de Ciclo de Riego.\n   - Medición de Solución Rica (PLS): Flujo ($m^3/h$), Ley de Cobre ($g/L$ Cu), Acidez Libre ($g/L\\;H_2SO_4$), pH, Concentración de $Fe^{total}$ y $Fe^{3+}$ ($g/L$).\n   - Cálculo de Cobre Extraído Instantáneo ($kg/h$ de Cu):\n     $$Cu_{ext} = Flujo_{PLS}\\,[m^3/h] \\times (Ley_{PLS} - Ley_{Refino})\\,[kg/m^3]$$\n   - Consumo Específico de Ácido Sulfúrico ($kg\\;H_2SO_4 / t$ de mineral tratado).\n\n2. CONTROL DE PLANTA DE EXTRACCIÓN POR SOLVENTES (SX):\n   - Fase Orgánica: Extractante (% v/v de Oxima / Aldoxima/Cetoxima) en diluyente queroseno, Carga de Cobre en Orgánico Cargado ($g/L$ Cu) vs. Orgánico Descargado ($g/L$ Cu).\n   - Relación Orgánico/Acuoso ($O/A$ ratio en mezcladores-decantadores E1, E2, S1), Tiempo de Separación de Fases (segundos) y Arrastre de Orgánico en Acuoso (ppm).\n   - Cálculo de Transferencia Neta de Cobre ($Delta C$ en $g/L$):\n     $$\\Delta C = Cu_{\\text{orgánico cargado}} - Cu_{\\text{orgánico descargado}}$$\n\n3. CONTROL DE NAVE DE ELECTROOBTENCIÓN (EW) Y EFICIENCIA FARADAICA:\n   - Variables de Nave: Corriente Total de Rectificadores ($I$ en Amperios), Voltaje de Celda ($V_{celda}$ en Voltios), Temperatura de Electrolito (°C), Adición de Sulfato de Cobalto ($CoSO_4$ para pasivar ánodos de plomo) y Goma Guar para nivelación catódica.\n   - Cálculo de Producción Teórica de Cobre según Ley de Faraday ($m_{teo}$ en $kg/día$):\n     $$m_{teo} = \\frac{I \\times t \\times M_{Cu}}{n \\times F_{const}} = \\frac{I\\,[A] \\times 86400\\,[s] \\times 63.546\\,[g/mol]}{2 \\times 96485\\,[C/mol] \\times 1000}$$\n   - Cálculo de la Eficiencia de Corriente Faradaica ($eta_I$ %):\n     $$\\eta_I = \\frac{\\text{Masa Real Cátodos Cosechados}\\,[kg]}{m_{teo}\\,[kg]} \\times 100$$\n   - Consumo Específico de Energía Eléctrica en EW ($kWh/t$ de Cátodo producido).\n\n4. PERSISTENCIA, ANALÍTICA Y REPORTABILIDAD:\n   - Base de datos local en IndexedDB con histórico de cosechas de cátodos y dosificación de reactivos.\n   - Gráficos interactivos en Canvas: Curva de Extracción Acumulada de Pila vs. Días de Riego, Eficiencia de Corriente EW histórica.\n   - Generación de Informe Diario de Producción Cátodos Grado A en formato PDF.\n\nDISEÑO:\n- UI Dark Hydrometallurgy (#08141e, #102436, acentos cian electrolito #06b6d4 y cobre pulido #ea580c). Código 100% terminado.',
+            },
+          ],
+        },
+      ],
     },
     {
-      id: "desalinizacion",
-      nombre: "Desalinizadoras",
-      icono: "🌊",
-      color: "#0277bd",
-      descripcion: "Plantas de desalinización y tratamiento de agua",
+      id: 'desalinizacion',
+      nombre: 'Desalinizadoras',
+      icono: '🌊',
+      color: '#0288d1',
+      descripcion: 'Plantas de tratamiento de agua marina por ósmosis inversa (SWRO)',
       subcategorias: [
         {
-          id: "des_aplicaciones",
-          nombre: "Aplicaciones de Gestión",
+          id: 'des_aplicaciones',
+          nombre: 'Aplicaciones de Gestión',
           prompts: [
             {
-              id: "des_app_001",
-              titulo: "Sistema SCADA Web para Planta Desalinizadora por Osmosis Inversa",
-              categoria: "Aplicación Web",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Ingeniero de Automatización y Control Senior con 20 años de experiencia en plantas de desalinización por ósmosis inversa, especializado en sistemas SCADA, instrumentación de proceso y optimización de plantas de agua. Experto en normas AWWA, IDA y estándares de calidad de agua OMS.
-
-CONTEXTO TÉCNICO:
-- Industria: Planta desalinizadora de agua de mar por ósmosis inversa
-- Capacidad: 100,000 m³/día de agua producida
-- Configuración: 6 trenes de RO ( Reverse Osmosis) con 80 membranas cada uno
-- Sistema de captación: Intake marino con tamices y cloración
-- Pre-tratamiento: Coagulación/floculación, filtración multimedia, cartridge filters
-- Post-tratamiento: Remineralización con cal y CO2, desinfección UV/cloro
-- Normas: OMS Guidelines for Drinking-water Quality, AWWA Standards, IDA Desalination Yearbook
-- Personal: 15 operadores (3 turnos), 3 ingenieros de proceso, 1 laboratorio
-- Problemática: Sistema SCADA antiguo, sin visualización moderna, reportes manuales, falta de optimización energética
-
-TAREA:
-Desarrolla un sistema SCADA web completo para monitoreo y control de planta desalinizadora por ósmosis inversa. El sistema debe:
-
-1. MÓDULO DE CAPTACIÓN Y PRE-TRATAMIENTO:
-   - Monitoreo de parámetros de agua de mar:
-     * Temperatura (°C)
-     * Salinidad/TDS (ppm)
-     * Turbiedad (NTU)
-     * pH
-     * SDI (Silt Density Index)
-     * Cloro libre (ppm)
-   - Control de bombas de captación (estado, velocidad, flujo)
-   - Estado de tamices y sistema de limpieza
-   - Dosificación de cloro y coagulante
-   - Niveles de tanques de agua cruda
-
-2. MÓDULO DE ÓSMOSIS INVERSA (RO):
-   - Monitoreo por tren de RO:
-     * Presión de alimentación (bar)
-     * Presión de concentrado (bar)
-     * Presión diferencial (bar)
-     * Flujo de permeado (m³/h)
-     * Flujo de rechazo (m³/h)
-     * Recovery (%)
-     * Conductividad de permeado (μS/cm)
-     * Conductividad de rechazo (μS/cm)
-     * Temperatura de alimentación (°C)
-   - Cálculos automáticos:
-     * Normalización de datos (vs. condiciones de diseño)
-     * Salt rejection (%)
-     * Specific energy consumption (kWh/m³)
-     * Flux (LMH - liters per square meter per hour)
-   - Estado de bombas de alta presión
-   - Dosificación de antiscalant y ácido
-
-3. MÓDULO DE POST-TRATAMIENTO:
-   - Monitoreo de remineralización:
-     * Dosis de cal (kg/h)
-     * Dosis de CO2 (kg/h)
-     * pH de producto
-     * Alcalinidad (mg/L CaCO3)
-     * Dureza (mg/L CaCO3)
-     * LSI (Langelier Saturation Index)
-   - Desinfección final:
-     * Dosis de UV (mJ/cm²)
-     * Cloro residual (ppm)
-   - Tanque de almacenamiento y bombas de distribución
-
-4. MÓDULO DE CONTROL Y AUTOMATIZACIÓN:
-   - Diagramas P&ID interactivos con animación de flujo
-   - Control de bombas (start/stop, velocidad VFD)
-   - Control de válvulas (abrir/cerrar, modulación)
-   - Secuencias de arranque/parada
-   - Secuencia de CIP (Clean In Place)
-   - Lógica de protección y enclavamientos
-
-5. MÓDULO DE ALERTAS Y ALARMAS:
-   - Sistema de alarmas por desviación de parámetros:
-     * Presión diferencial alta (fouling)
-     * Conductividad de permeado alta (membrana dañada)
-     * Recovery bajo
-     * Temperatura fuera de rango
-     * Nivel de tanques crítico
-   - Priorización de alarmas (crítica, alta, media, baja)
-   - Historial de alarmas con timestamps
-   - Notificaciones por email/SMS
-
-6. MÓDULO DE REPORTES Y DASHBOARD:
-   - Dashboard ejecutivo con KPIs:
-     * Producción total (m³/día)
-     * Calidad de permeado (TDS, pH)
-     * Consumo energético específico (kWh/m³)
-     * Recovery promedio (%)
-     * Disponibilidad de planta (%)
-     * Costo de producción ($/m³)
-   - Tendencias históricas de parámetros críticos
-   - Análisis de performance de membranas
-   - Reportes automáticos:
-     * Reporte diario de producción
-     * Reporte de calidad de agua
-     * Reporte de consumo energético
-     * Reporte de CIP y limpieza de membranas
-   - Exportación a PDF/Excel
-
-7. MÓDULO DE OPTIMIZACIÓN ENERGÉTICA:
-   - Análisis de consumo energético por tren
-   - Recomendaciones de optimización de presión
-   - Cálculo de costo energético por m³ producido
-   - Benchmarking vs. mejores prácticas (IDA)
-
-8. MÓDULO DE GESTIÓN DE MEMBRANAS:
-   - Registro de membranas (instalación, limpieza, performance)
-   - Predicción de vida útil
-   - Programación de limpiezas CIP
-   - Análisis de fouling y scaling
-
-9. FUNCIONALIDADES ADICIONALES:
-   - Modo offline con sincronización
-   - Acceso remoto seguro
-   - Control de acceso por roles (operador, supervisor, ingeniero)
-   - Integración con laboratorio (LIMS)
-   - Historial completo de operaciones
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo SCADA moderno
-- Diseño responsive para sala de control (desktop) y campo (tablets)
-- Código modular y bien documentado
-- Datos de ejemplo realistas (24 horas de operación)
-- Diagramas P&ID interactivos
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, jsPDF, SheetJS, moment.js (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- Preparado para integración con PLC/SCADA real
-
-CRITERIOS DE CALIDAD:
-- Sistema robusto para operación 24/7
-- Interfaz intuitiva para operadores
-- Cálculos precisos de proceso
-- Visualización clara de estado de planta
-- Reportes profesionales listos para gerencia
-
-ENTREGABLE FINAL:
-Sistema SCADA web completo para monitoreo y control de planta desalinizadora que permita optimizar la operación, reducir consumo energético, asegurar calidad de agua y mejorar la toma de decisiones operativas.`,
-              tags: ["SCADA", "ósmosis inversa", "desalinización", "control de proceso", "agua"],
-              uso: "Continuo / Operación de planta"
-            }
-          ]
-        }
-      ]
+              id: 'des_app_001',
+              titulo: 'Sistema SCADA Web para Planta Desalinizadora por Osmosis Inversa',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Diario',
+              tags: ['SWRO', 'Desalinizadora', 'Ósmosis Inversa', 'Membranas', 'Flujo Permeado', 'Conductividad', 'SDI', 'Energía'],
+              prompt:
+                "ACTÚA COMO: Ingeniero Principal de Procesos y Operaciones de Plantas Desalinizadoras de Agua de Mar por Ósmosis Inversa (SWRO - Seawater Reverse Osmosis) con 20 años de experiencia internacional. Máximo experto en pretratamiento (DAF, Filtros Multimedia, Ultrafiltración), sistemas de membranas de alta presión (DuPont FilmTec, Toray, Hydranautics), Dispositivos de Recuperación de Energía (ERD tipo Pressure Exchanger ERI / DWEER) y acondicionamiento de agua producto. Desarrollador de software de supervisión de procesos.\n\nCONTEXTO TÉCNICO:\n- Planta SWRO con capacidad de producción de 100,000 $m^3$/día de agua potable / industrial para minería o consumo urbano.\n- Parámetros Críticos del Proceso: Salinidad del agua de mar (TDS ~38,000 ppm, Temperatura 14°C a 24°C), Índice de Densidad de Sedimentos (SDI15 < 3.0), Presión de Bomba de Alta Presión (HPP ~55 a 70 bar), Tasa de Recuperación ($Y = 40\\% - 45\\%$), Flujo de Permeado ($Q_p$), Salinidad del Permeado (Conductividad < 400 $\\mu S/cm$, Boro < 0.5 mg/L), Consumo Específico de Energía (SEC en $kWh/m^3$).\n\nTAREA:\nDesarrolla una aplicación web completa y monolítica en un único archivo HTML/CSS/JavaScript que funcione como un Sistema SCADA Web y Normalización de Membranas para Planta Desalinizadora SWRO.\n\nMÓDULOS DEL SISTEMA Y CÁLCULOS RIGUROSOS DE PROCESOS:\n\n1. ESQUEMA DEL PROCESO Y MONITOREO DE VARIABLES (P&ID INTERACTIVO):\n   - Pretratamiento: Presión de entrada, $\\Delta P$ en Filtros de Cartucho (alerta si $\\Delta P > 1.0\\text{ bar}$), SDI15 medido, Dosis de Anti-incrustante (ppm) y Bisulfito de Sodio (SBS / ORP en mV).\n   - Bastidor de Membranas (RO Racks): Presión de Alimentación ($P_f$), Presión de Salmuera / Concentrado ($P_c$), Presión de Permeado ($P_p$), Flujo de Alimentación ($Q_f$), Flujo de Permeado ($Q_p$), Flujo de Concentrado ($Q_c$).\n   - Calidad de Agua: Conductividad y TDS en alimentación, permeado y concentrado.\n   - Sistema ERD: Eficiencia de transferencia de presión en recuperadores isobáricos (%).\n\n2. MOTOR DE CÁLCULO DE PROCESOS Y NORMALIZACIÓN ASTM D4516:\n   - Tasa de Recuperación ($Y$):\n     $$Y = \\left(\\frac{Q_p}{Q_f}\\right) \\times 100$$\n   - Rechazo de Sales ($R_s$):\n     $$R_s = \\left(1 - \\frac{TDS_{permeado}}{TDS_{alimentación}}\\right) \\times 100$$\n   - Presión Neta de Impulsión (NDP - Net Driving Pressure):\n     $$NDP = \\left(\\frac{P_f + P_c}{2}\\right) - P_p - \\Delta \\pi_{promedio}$$\n     Donde $\\Delta \\pi$ es la presión osmótica diferencial calculada por correlación de Van 't Hoff.\n   - Cálculo de Consumo Específico de Energía (SEC):\n     $$SEC = \\frac{\\text{Potencia Eléctrica Activa Consumida (kW)}}{Q_p \\;(m^3/h)} \\quad [kWh/m^3]$$\n     (Target óptimo: 2.8 a 3.5 $kWh/m^3$).\n   - Detección temprana de Ensuciamiento (Fouling / Scaling): Alerta automática cuando el Flujo Normalizado de Permeado cae > 10% o la $\\Delta P$ normalizada sube > 15%, recomendando protocolo de Limpieza Química (CIP - Clean In Place ácido/alcalino).\n\n3. INTERFAZ SCADA INDUSTRIAL Y DIAGRAMA DINÁMICO:\n   - Diagrama de flujo de proceso animado con SVG interactivo que muestra las líneas de agua de mar (azul oscuro), permeado (celeste brillante) y salmuera de alta presión (rojo/naranja) con valores en tiempo real.\n   - Panel de control de bastidores (Racks A, B, C, D) con indicadores de alarma por alta conductividad o alta presión.\n   - Gráfico de tendencias históricas de SEC y Conductividad en Canvas.\n\n4. PERSISTENCIA Y REPORTABILIDAD:\n   - Base de datos IndexedDB con exportación a CSV/Excel y reporte técnico formal en PDF para gerencia de planta.\n\nDISEÑO:\n- UI Dark Aquatic (#0a192f, #172a45, acentos azul océano #64ffda y cian #00b4d8). 100% código terminado y sin dependencias externas.",
+            },
+          ],
+        },
+        {
+          id: 'desal_procesos_avanzados',
+          nombre: 'Procesos Avanzados de Desalinización',
+          prompts: [
+            {
+              id: 'desal_uf_001',
+              titulo: 'Control y Monitoreo de Pretratamiento por Ultrafiltración (UF)',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Diario',
+              tags: ['Ultrafiltración', 'UF', 'Pretratamiento', 'SDI', 'TMP', 'Permeabilidad', 'Retrolavado', 'Desalinización'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Principal de Procesos de Membranas y Tratamiento de Agua de Mar con más de 20 años de experiencia en plantas desalinizadoras SWRO de gran escala (>100,000 m3/día). Especialista en sistemas de pretratamiento por Ultrafiltración (UF de fibra hueca presurizada o sumergida), control de ensuciamiento coloidal/orgánico, cálculo de Presión Transmembrana (TMP), permeabilidad normalizada y optimización de secuencias de retrolavado (Backwash) y mantenimiento químico (CEB).\n\nCONTEXTO TÉCNICO:\n- Planta Desalinizadora con 12 racks de Ultrafiltración (Membranas PVDF de 0.02-0.04 $\\mu m$, flujo de diseño 65-80 LMH) que tratan agua de mar abierta con variabilidad estacional de turbidez y eventos de bloom de algas (Marea Roja).\n- Desafío: Proteger las membranas de Ósmosis Inversa asegurando un Índice de Densidad de Silt ($SDI_{15}$ < 2.5) y turbidez < 0.1 NTU, optimizando el consumo de agua de retrolavado y químicos (NaClO, HCl/Ácido Cítrico).\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Monitoreo en Tiempo Real, Cálculo de Permeabilidad Normalizada y Gestión de Ciclos de Retrolavado de Ultrafiltración (UF Monitoring & Control System).\n\nMÓDULOS DEL SISTEMA Y CÁLCULOS RIGUROSOS DE ULTRAFILTRACIÓN:\n\n1. MONITOREO HIDRÁULICO DE RACKS DE UF:\n   - Variables por Rack: Flujo de Filtrado ($Q_p$ en $m^3/h$), Presión de Entrada / Alimentación ($P_{in}$ en bar), Presión de Salida / Filtrado ($P_{out}$ en bar), Presión de Concentrado/Rechazo ($P_{conc}$ en bar), Temperatura del Agua de Mar ($T$ en °C), Turbidez de entrada y salida (NTU), $SDI_{15}$ medido.\n   - Cálculo de la Presión Transmembrana ($TMP$ en bar):\n     $$TMP = \\frac{P_{in} + P_{conc}}{2} - P_{out}$$\n   - Cálculo del Flux de Filtración ($J$ en $L/m^2/h$ - LMH):\n     $$J = \\frac{Q_p \\times 1000}{A_{membrana}}$$\n   - Cálculo de Permeabilidad Hidráulica Específica a 20°C ($L_p^{20}$ en $LMH/bar$):\n     $$L_p^{20} = \\frac{J}{TMP} \\times \\text{TCF}(T)$$\n     donde el Factor de Corrección por Temperatura basado en la viscosidad dinámica del agua $\\mu(T)$ es:\n     $$\\text{TCF}(T) = \\frac{\\mu(T)}{\\mu(20^\\circ\\text{C})} = \\exp\\left(0.0239 \\times (20 - T)\\right)$$\n\n2. CONTROL DE CICLOS DE FILTRACIÓN, RETROLAVADO (BW) Y CEB:\n   - Temporizador de Ciclo de Filtración (30 a 60 minutos).\n   - Secuencia de Retrolavado: Vaciado, Soplado con Aire (Air Scour a 2.0 bar), Retrolavado con Agua de Filtrado a alto flujo (200-250 LMH), Enjuague hacia drenaje (Rinse).\n   - Monitoreo de Limpieza Química Mejorada (CEB - Chemically Enhanced Backwash): CEB Ácido ($HCl$ / Ácido Cítrico pH 2.0 para incrustaciones inorgánicas) y CEB Alcalino/Oxidante ($NaOCl$ 50-200 ppm, pH 11.0 para biopelículas).\n\n3. MATRIZ DE REGLAS DE CONTROL Y DIAGNÓSTICO DE INTEGRIDAD:\n   - Test de Caída de Presión de Aire (Pressure Decay Test - PDT) para detección de fibras rotas: Alerta si la tasa de caída de presión es $> 0.05\\text{ bar/min}$.\n   - Alerta de Ensuciamiento Rápido: Disparo si la tasa de incremento de $TMP$ supera los $0.1\\text{ bar/semana}$ a flux constante.\n\n4. PERSISTENCIA, ANALÍTICA Y REPORTABILIDAD:\n   - Base de datos IndexedDB con registro de variables por rack y eventos de limpieza.\n   - Gráficos interactivos en Canvas: Evolución temporal de $TMP$ y Permeabilidad Normalizada $L_p^{20}$ post-BW.\n   - Exportación de Informe de Operación de UF en PDF y CSV.\n\nDISEÑO:\n- UI Dark Aqua (#0b192c, #1e3e62, acentos cian puro #00adb5 y blanco hielo #e0f2fe). Código 100% completo y funcional.',
+            },
+            {
+              id: 'desal_cip_001',
+              titulo: 'Sistema de Limpieza Química en Sitio (CIP) para Membranas de SWRO',
+              categoria: 'Aplicación Web',
+              prioridad: 'critica',
+              uso: 'Mensual',
+              tags: ['CIP', 'Limpieza Química', 'Ómosis Inversa', 'SWRO', 'Ensuciamiento', 'pH', 'Temperatura', 'Desalinización'],
+              prompt:
+                'ACTÚA COMO: Especialista Senior en Operación y Mantenimiento de Membranas de Desalinización por Ósmosis Inversa (SWRO) con 20 años de experiencia. Experto en diagnóstico de mecanismos de ensuciamiento (Fouling biológico, orgánico, coloidal y Scaling por $CaSO_4, CaCO_3, BaSO_4, SiO_2$), diseño y ejecución de protocolos de Limpieza Química en Sitio (CIP - Clean-In-Place) según directrices de fabricantes (DuPont FilmTec, LG Chem, Toray, Hydranautics).\n\nCONTEXTO TÉCNICO:\n- Bastidor SWRO de dos etapas con 120 tubos de presión (Vessels de 7 u 8 elementos de 8" c/u).\n- Criterios Normalizados de Disparo de CIP (Norma ASTM D4516):\n  * Caída de flujo de permeado normalizado $> 10-15\\%$.\n  * Incremento de la Presión Diferencial normalizada ($Delta P$) $> 15-20\\%$.\n  * Incremento del paso de sales normalizado (caída de rechazo de sal) $> 10\\%$.\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para la Planificación, Monitoreo de Variables Críticas y Registro de Protocolos de Limpieza Química (CIP) en Membranas SWRO.\n\nMÓDULOS DEL SISTEMA Y REGLAS TÉCNICAS CIP:\n\n1. EVALUACIÓN Y DIAGNÓSTICO PRE-CIP:\n   - Entrada de datos de operación normalizada: Flujo de permeado normalizado actual vs. diseño ($m^3/h$), Presión diferencial $Delta P$ actual vs. diseño (bar), Paso de sal actual (%).\n   - Selector de Tipo de Ensuciamiento Dominante:\n     * Ensuciamiento Inorgánico / Incrustaciones (Scaling por carbonatos/sulfatos en última etapa): Protocolo Ácido (Ácido Cítrico 2.0% o HCl a pH 2.0 - 2.5).\n     * Ensuciamiento Orgánico / Biológico / Coloidal (Biofouling en primera etapa): Protocolo Alcalino (NaOH + Na-EDTA 0.1% a pH 11.0 - 11.5 y surfactante SDS).\n     * Ensuciamiento por Sílice ($SiO_2$): Protocolo Alcalino a alta temperatura ($T \\le 40^\\circ\\text{C}$) a pH 11.5.\n\n2. MONITOREO DE PARÁMETROS CRÍTICOS EN LÍNEA DURANTE EL CIP:\n   - Panel de Seguimiento del Tanque CIP: Nivel del tanque ($m^3$), pH de la solución de recirculación, Temperatura (°C con alarma estricta: NO superar 35-40°C según tolerancia del fabricante de membrana para evitar delaminación), Caudal de Recirculación CIP (8-10 $m^3/h$ por vessel de 8"), Presión de Entrada CIP (máximo 4.0 bar / 60 psi).\n   - Registro de Etapas CIP: 1. Desplazamiento de agua de mar con permeado; 2. Recirculación de baja velocidad; 3. Remojo (Soaking de 1 a 12 horas); 4. Recirculación a alto caudal; 5. Enjuague final con agua permeada hasta neutralización de pH y conductividad.\n\n3. MONITOREO DE AGOTAMIENTO QUÍMICO EN EL TANQUE:\n   - Detección de neutralización de la solución química: Si en un CIP ácido el pH sube $> 0.5$ unidades, o en un CIP alcalino el pH baja $> 0.5$ unidades, alertar para re-dosificar químico concentrado.\n   - Turbidez y coloración de la solución recirculada para evaluar desprendimiento de biomasa o incrustaciones.\n\n4. REGISTRO HISTÓRICO, EVALUACIÓN POST-CIP Y EXPORTACIÓN:\n   - Cálculo del % de Recuperación de Rendimiento Hidráulico Post-CIP.\n   - Base de datos local en IndexedDB con histórico de CIPs por tren de ósmosis.\n   - Generación de Informe Oficial de Protocolo CIP en PDF con curvas de pH, Temperatura y Presión diferencial durante la limpieza.\n\nDISEÑO:\n- UI Dark Chemical (#0f172a, #1a2234, acentos violeta químico #8b5cf6 y cian #06b6d4). Código 100% completo y sin dependencias.',
+            },
+            {
+              id: 'desal_quim_001',
+              titulo: 'Control y Dosificación de Químicos de Proceso en Desalinización',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Diario',
+              tags: ['Dosificación Química', 'Antiincrustante', 'Coagulante', 'SBS', 'ORP', 'Cloración', 'Desalinización', 'SWRO'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Químico Jefe de Tratamiento de Aguas y Desalinización Marina con 20 años de experiencia. Experto en química del agua marina, índices de saturación mineral (Langelier LSI, Stiff & Davis S&DSI), mecanismos de desinfección/decloración, coagulación/floculación en filtros de arena/UF y dosificación de antiincrustantes (Fosfonatos, Poliacrilatos).\n\nCONTEXTO TÉCNICO:\n- Planta SWRO con toma de agua abierta de mar que requiere acondicionamiento químico continuo:\n  1. Hipoclorito de Sodio ($NaOCl$ 1-2 ppm) para desinfección de la obra de toma y control de biofouling macroscópico.\n  2. Coagulante Inorgánico ($FeCl_3$ 1-5 ppm) para optimizar la filtración granular o UF.\n  3. Bisulfito de Sodio ($NaHSO_3$ - SBS) para decloración total (proteger las membranas de poliamida de la degradación oxidativa por cloro libre, manteniendo ORP < 250 mV).\n  4. Antiincrustante (Antiscalant 2-4 ppm) para prevenir precipitación de $CaCO_3$, $CaSO_4$ y $SrSO_4$ en los canales de salmuera de la última etapa.\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Control, Cálculo Estequiométrico y Monitoreo de Bombas Dosificadoras de Químicos en Desalinización.\n\nMÓDULOS DEL SISTEMA Y CÁLCULOS QUÍMICOS RIGUROSOS:\n\n1. MOTOR ESTEQUIOMÉTRICO DE DOSIFICACIÓN:\n   - Parámetros de Entrada: Caudal de Agua de Mar ($Q_{sw}$ en $m^3/h$), Dosis deseada ($C_{target}$ en $mg/L$ o ppm), Concentración del químico comercial en el estanque (% p/p o % p/v), Densidad de la solución comercial ($\rho$ en $kg/L$).\n   - Cálculo del Flujo de Dosificación de Bomba ($Q_{quim}$ en $L/h$):\n     $$Q_{quim} = \\frac{Q_{sw}\\,[m^3/h] \\times C_{target}\\,[mg/L]}{\\text{Concentración}\\,[\\%] \\times \\rho\\,[kg/L] \\times 10}$$\n   - Cálculo de Frecuencia / Carrera (Stroke %) para bombas dosificadoras de diafragma de desplazamiento positivo.\n\n2. CONTROL CRÍTICO DE DECLORACIÓN (SBS vs. CLORO LIBRE):\n   - Reacción Estequiométrica de Neutralización:\n     $$NaHSO_3 + Cl_2 + H_2O \\rightarrow NaHSO_4 + 2HCl$$\n   - Razón estequiométrica teórica: 1.47 mg de SBS por cada 1.0 mg de Cloro Libre ($Cl_2$). Factor de seguridad operacional recomendado: 2.0 a 3.0 mg SBS / mg Cloro.\n   - Monitoreo del Potencial RedOx (ORP en mV):\n     * ORP > 350 mV: Alarma Roja Crítica -> "Presencia de Cloro Libre / Peligro de Destrucción de Membranas" (Disparo de parada de bombas de alta presión).\n     * ORP 180 - 250 mV: Rango Verde Óptimo (Condición reductora segura).\n     * ORP < 150 mV: Alerta Amarilla -> "Sobredosificación de SBS" (Desperdicio de químico y riesgo de fomento de bacterias reductoras de sulfato SRB).\n\n3. CONTROL DE CONSUMO, AUTONOMÍA Y REABASTECIMIENTO DE ESTANQUES:\n   - Registro de Estanques de Almacenamiento: Capacidad ($m^3$), Nivel actual (%), Tasa de consumo diario ($L/día$), Días de autonomía restante.\n   - Alerta preventiva de nivel bajo (Low Level) para programar la descarga de camiones cisterna.\n\n4. PERSISTENCIA LOCAL, HISTORIAL Y REPORTABILIDAD:\n   - Base de datos IndexedDB con registro de dosis aplicadas, lecturas de ORP y niveles de estanque.\n   - Gráficos interactivos en Canvas: Evolución temporal de ORP vs. Caudal de dosificación de SBS.\n   - Exportación de Balance Químico Mensual en PDF y Excel.\n\nDISEÑO:\n- UI Dark Laboratory (#0b1520, #132437, acentos verde esmeralda #10b981, ámbar #f59e0b y rojo alerta #ef4444). Código 100% completo.',
+            },
+            {
+              id: 'desal_remin_001',
+              titulo: 'Sistema de Remineralización y Post-Tratamiento de Agua Desalinizada',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Diario',
+              tags: ['Remineralización', 'Calcita', 'CO2', 'Post-tratamiento', 'Langelier', 'LSI', 'Agua Potable', 'Desalinización'],
+              prompt:
+                "ACTÚA COMO: Ingeniero Principal de Calidad de Agua Potable y Post-Tratamiento de Desalinización con 20 años de experiencia. Especialista en química de equilibrio carbonato-bicarbonato, disolución de lechos de calcita ($CaCO_3$), inyección de dióxido de carbono ($CO_2$), remineralización para consumo humano (Normas OMS / Directiva Europea / EPA) y acondicionamiento anticorrosivo para transporte por acueductos y cañerías de acero/hormigón.\n\nCONTEXTO TÉCNICO:\n- El agua permeada producida por una planta SWRO es extremadamente corrosiva, desmineralizada (TDS < 300 mg/L, Dureza de Calcio < 10 mg/L as $CaCO_3$, Alcalinidad < 10 mg/L as $CaCO_3$, LSI < -2.0) y agresiva para las redes de distribución.\n- Proceso de Remineralización: Inyección de gas $CO_2$ disuelto en agua permeada para formar ácido carbónico ($H_2CO_3$), seguido por paso a través de lechos presurizados o abiertos de calcita ($CaCO_3$) donde se disuelve calcio y bicarbonato:\n  $$CaCO_3(s) + CO_2(g) + H_2O \\rightleftharpoons Ca^{2+} + 2HCO_3^-$$\n- Objetivos de Calidad Final: Dureza de Calcio $> 50-60\\text{ mg/L}$ as $CaCO_3$, Alcalinidad $> 60-80\\text{ mg/L}$ as $CaCO_3$, pH entre 7.5 y 8.3, e Índice de Saturación de Langelier ($LSI$) entre 0.0 y +0.3 (ligeramente incrustante para proteger cañerías contra corrosión).\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Control del Proceso de Remineralización, Modelado del Equilibrio Calcita-$CO_2$ y Monitoreo de Estabilidad del Agua.\n\nMÓDULOS DEL SISTEMA Y MODELO DE EQUILIBRIO QUÍMICO:\n\n1. MONITOREO DE VARIABLES DE ENTRADA Y SALIDA DE REMINERALIZACIÓN:\n   - Agua Permeada (Entrada): Caudal ($m^3/h$), Temperatura (°C), pH, Conductividad ($mu S/cm$), Alcalinidad inicial ($mg/L\\;CaCO_3$), Calcio inicial ($mg/L\\;Ca^{2+}$).\n   - Inyección de Dióxido de Carbono ($CO_2$): Flujo de gas ($kg/h$ o $g/m^3$), Presión en manifold de inyección (bar), Eficiencia de disolución en contactores de gas.\n   - Lechos de Calcita: Número de lechos en servicio, Altura del lecho de calcita (m), Velocidad de paso o Empty Bed Contact Time ($EBCT$ en minutos), Pérdida de carga hidráulica en el lecho ($Delta P$ en bar).\n\n2. MOTOR DE CÁLCULO DE ÍNDICES DE ESTABILIDAD Y AGRESIVIDAD:\n   - Cálculo del pH de Saturación ($pH_s$):\n     $$pH_s = (pK_2' - pK_s') + pCa^{2+} + pAlk + C(T, TDS)$$\n   - Cálculo del Índice de Saturación de Langelier ($LSI$):\n     $$LSI = pH_{medido} - pH_s$$\n     * $LSI < -0.5$: Altamente Agresivo / Corrosivo (Riesgo de destrucción de tuberías y lixiviación de metales pesados).\n     * $LSI = 0.0 \\pm 0.2$: Agua Equilibrada y Estable (Óptimo).\n     * $LSI > +0.5$: Sobresaturado / Altamente Incrustante (Riesgo de obstrucción en redes).\n   - Cálculo del Índice de Rznar ($RI = 2pH_s - pH$) y Potencial de Precipitación de Carbonato de Calcio ($CCPP$ en $mg/L$).\n\n3. CONTROL DE CONSUMO DE CALCITA Y PROGRAMACIÓN DE RECARGA:\n   - Tasa de Disolución de Calcita ($kg/día$ de $CaCO_3$ consumidos):\n     $$\\text{Consumo}\\;CaCO_3 = Ca^{2+}_{ganado}\\,[g/m^3] \\times \\left(\\frac{100.09\\,g/mol\\;CaCO_3}{40.08\\,g/mol\\;Ca^{2+}}\\right) \\times \\frac{Q\\,[m^3/h] \\times 24}{1000}$$\n   - Estimación de la disminución de altura del lecho y alerta para recarga física de mineral.\n\n4. PERSISTENCIA, ANALÍTICA Y REPORTABILIDAD:\n   - Almacenamiento local en IndexedDB con histórico de análisis físico-químicos de agua tratada.\n   - Gráficos interactivos en Canvas: Evolución de LSI, Alcalinidad y Dureza a lo largo del tiempo.\n   - Generación de Certificado de Calidad de Agua para Consumo en PDF.\n\nDISEÑO:\n- UI Dark Pure Water (#081420, #11283e, acentos azul glaciar #38bdf8 y verde menta #34d399). Código 100% terminado y autónomo.",
+            },
+            {
+              id: 'desal_erd_001',
+              titulo: 'Monitoreo y Eficiencia de Dispositivos de Recuperación de Energía (ERD / PX)',
+              categoria: 'Aplicación Web',
+              prioridad: 'critica',
+              uso: 'Diario',
+              tags: ['ERD', 'Energy Recovery', 'Pressure Exchanger', 'PX', 'Eficiencia', 'SEC', 'SWRO', 'Desalinización'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Principal de Eficiencia Energética e Hidráulica de Alta Presión en Desalinización Marina con más de 20 años de experiencia. Especialista en dispositivos de recuperación de energía isobáricos (Pressure Exchangers - ERI PX, DWEER, Danfoss iSave) y centrífugos (Turbinas Pelton, Turbochargers), balance hidráulico de trenes de ósmosis y optimización del Consumo Específico de Energía ($SEC$ en $kWh/m^3$).\n\nCONTEXTO TÉCNICO:\n- Tren SWRO de 20,000 $m^3/día$ equipado con una matriz de 16 Intercambiadores de Presión Isobáricos (PX-Q300) operando en paralelo, una Bomba de Alta Presión (HPP) y una Bomba Booster de circulación.\n- Principio Físico del PX: Transfiere directamente la energía de presión de la salmuera de rechazo de alta presión (60-70 bar) al agua de mar de alimentación de baja presión (2-4 bar) con una eficiencia mecánica superior al 95-97%, reduciendo el consumo energético de la planta en más de un 60%.\n\nTAREA:\nDesarrolla una aplicación web completa y profesional en un único archivo HTML/CSS/JavaScript para el Monitoreo en Tiempo Real, Balance de Presiones/Flujos y Cálculo de Eficiencia de Dispositivos de Recuperación de Energía (ERD PX Performance Tracker).\n\nMÓDULOS DEL SISTEMA Y MODELO TERMODINÁMICO/HIDRÁULICO ERD:\n\n1. MONITOREO DE CORRIENTES Y VARIABLES HIDRÁULICAS DEL PX:\n   - Flujo de Salmuera de Alta Presión ($HP_{in}$ de rechazo de membrana: $P_{HP,in}$ en bar, $Q_{HP,in}$ en $m^3/h$, Salinidad $S_{HP,in}$ en ppm TDS).\n   - Flujo de Agua de Mar de Baja Presión ($LP_{in}$ de bombas de alimentación: $P_{LP,in}$ en bar, $Q_{LP,in}$ en $m^3/h$, Salinidad $S_{LP,in}$ en ppm TDS).\n   - Flujo de Agua de Mar de Alta Presión hacia Booster ($HP_{out}$: $P_{HP,out}$ en bar, $Q_{HP,out}$ en $m^3/h$, Salinidad $S_{HP,out}$ en ppm TDS).\n   - Flujo de Salmuera de Baja Presión hacia Emisario ($LP_{out}$: $P_{LP,out}$ en bar, $Q_{LP,out}$ en $m^3/h$).\n\n2. CÁLCULO DE EFICIENCIA MECÁNICA/HIDRÁULICA DEL DISPOSITIVO ERD:\n   - Cálculo de la Eficiencia del Intercambiador de Presión ($eta_{PX}$ %):\n     $$\\eta_{PX} = \\frac{(P_{HP,out} - P_{LP,in}) \\times Q_{HP,out}}{(P_{HP,in} - P_{LP,out}) \\times Q_{HP,in}} \\times 100$$\n   - Cálculo de la Mezcla Volumétrica o Salina (Volumetric / Salinity Overmixing %):\n     $$\\text{Overmixing}\\,(\\%) = \\frac{S_{HP,out} - S_{LP,in}}{S_{HP,in} - S_{LP,in}} \\times 100$$\n     (Un overmixing normal es de 1 a 3%; valores superiores a 5% indican desgaste de rotores cerámicos o desbalance de caudales LP/HP).\n\n3. BALANCE GLOBAL DE ENERGÍA Y CONSUMO ESPECÍFICO (SEC):\n   - Potencia Eléctrica de la Bomba de Alta Presión ($kW_{HPP}$) y Bomba Booster ($kW_{Booster}$).\n   - Caudal de Producción de Agua Desalinizada ($Q_{permeado}$ en $m^3/h$).\n   - Cálculo del Consumo Específico de Energía de la Isla de Membranas ($SEC_{SWRO}$ en $kWh/m^3$):\n     $$SEC_{SWRO} = \\frac{kW_{HPP} + kW_{Booster}}{Q_{permeado}}$$\n   - Comparación de Ahorro Energético vs. Tren convencional sin ERD (Ahorro de $kWh/día$ y reducción de huella de carbono en toneladas de $CO_2/año$).\n\n4. MATRIZ DE SALUD DE ROTORES CERÁMICOS Y ALERTAS:\n   - Detección de Cavitación por baja contrapresión en la línea de baja presión $LP_{out}$ ($P_{LP,out} < 1.0\\text{ bar}$).\n   - Detección de Desbalance de Flujo (Flow Ratio $Q_{LP} / Q_{HP} \\ne 1.0$).\n\n5. PERSISTENCIA, ANALÍTICA Y EXPORTACIÓN:\n   - Base de datos IndexedDB con histórico de eficiencia por tren.\n   - Gráficos interactivos en Canvas: Curva de Eficiencia vs. Caudal y Gráfico de Consumo Específico ($kWh/m^3$) a lo largo del año.\n   - Generación de Informe de Eficiencia Energética en PDF.\n\nDISEÑO:\n- UI Dark Tech Energy (#0a121e, #142236, acentos cian eléctrico #00f2fe y esmeralda #10b981). Código 100% completo.',
+            },
+          ],
+        },
+      ],
     },
     {
-      id: "energia",
-      nombre: "Plantas de Energía",
-      icono: "⚡",
-      color: "#f9a825",
-      descripcion: "Generación térmica, renovable, transmisión y distribución",
+      id: 'energia',
+      nombre: 'Plantas de Energía',
+      icono: '⚡',
+      color: '#fbc02d',
+      descripcion: 'Generación de energía solar fotovoltaica, térmica y subestaciones eléctricas',
       subcategorias: [
         {
-          id: "en_aplicaciones",
-          nombre: "Aplicaciones de Gestión",
+          id: 'en_aplicaciones',
+          nombre: 'Aplicaciones de Gestión',
           prompts: [
             {
-              id: "en_app_001",
-              titulo: "Sistema de Monitoreo de Generación Fotovoltaica con Análisis de Performance",
-              categoria: "Aplicación Web",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Ingeniero de Energías Renovables Senior con 15 años de experiencia en plantas solares fotovoltaicas de utilidad, especializado en monitoreo de performance, análisis de datos y optimización de generación. Experto en estándares IEC 61724 (PV System Performance Monitoring) y normas IEEE.
-
-CONTEXTO TÉCNICO:
-- Industria: Planta fotovoltaica de 100 MW conectada a red de transmisión
-- Configuración: 300,000 paneles monocristalinos de 335W, 50 inversores centrales de 2MW
-- Ubicación: Desierto de Atacama, Chile (alta radiación, baja precipitación)
-- Radiación promedio: 2,500 kWh/m²/año (una de las más altas del mundo)
-- Sistema de monitoreo: Dataloggers por inversor, estación meteorológica, sensores de paneles
-- Problemática: Sistema de monitoreo disperso, sin análisis integrado de performance, dificultad para identificar underperformance, falta de reportes automáticos
-
-TAREA:
-Desarrolla un sistema web completo de monitoreo y análisis de performance para planta fotovoltaica. El sistema debe:
-
-1. MÓDULO DE MONITOREO EN TIEMPO REAL:
-   - Datos de generación por inversor:
-     * Potencia AC (kW)
-     * Potencia DC (kW)
-     * Energía generada (kWh)
-     * Voltaje y corriente DC/AC
-     * Frecuencia (Hz)
-     * Factor de potencia
-     * Estado (operando/falla/mantenimiento)
-   - Datos meteorológicos:
-     * Irradiancia global (W/m²)
-     * Irradiancia directa y difusa
-     * Temperatura ambiente (°C)
-     * Temperatura de módulos (°C)
-     * Velocidad y dirección de viento (m/s)
-     * Humedad relativa (%)
-   - Estado de subestación y conexión a red
-
-2. MÓDULO DE ANÁLISIS DE PERFORMANCE:
-   - Cálculos automáticos según IEC 61724:
-     * Performance Ratio (PR) - índice de performance
-     * Capacity Factor - factor de capacidad
-     * Specific Yield - rendimiento específico (kWh/kWp)
-     * Array Yield - rendimiento del arreglo
-     * System losses - pérdidas del sistema
-   - Análisis de underperformance:
-     * Identificación de inversores con baja producción
-     * Detección de strings problemáticos
-     * Análisis de degradación de paneles
-     * Pérdidas por sombreado, suciedad, temperatura
-   - Benchmarking entre inversores y áreas
-
-3. MÓDULO DE ANÁLISIS DE DATOS:
-   - Tendencias históricas de generación
-   - Análisis de correlación radiación vs. generación
-   - Análisis de pérdidas por temperatura
-   - Análisis de disponibilidad
-   - Análisis de curvas de duración de potencia
-   - Comparación vs. año típico (TMY)
-
-4. MÓDULO DE ALERTAS Y MANTENIMIENTO:
-   - Sistema de alertas automáticas:
-     * Inversores fuera de servicio
-     * Baja producción vs. esperado
-     * Temperaturas de módulos elevadas
-     * Problemas de conexión a red
-   - Generación automática de órdenes de trabajo
-   - Tracking de mantenimiento preventivo y correctivo
-   - Análisis de MTBF y MTTR
-
-5. MÓDULO DE REPORTES Y DASHBOARD:
-   - Dashboard ejecutivo con KPIs:
-     * Generación total (MWh) vs. plan
-     * Performance Ratio (%)
-     * Factor de capacidad (%)
-     * Disponibilidad de planta (%)
-     * Ingresos por generación ($)
-     * Evitación de emisiones CO2 (ton)
-   - Gráficos de generación diaria/mensual/anual
-   - Mapas de calor de producción por inversor
-   - Reportes automáticos:
-     * Reporte diario de generación
-     * Reporte mensual de performance
-     * Reporte anual de energía
-     * Reportes regulatorios
-   - Exportación a PDF/Excel
-
-6. MÓDULO DE PREDICCIÓN:
-   - Predicción de generación diaria basada en pronóstico meteorológico
-   - Predicción de ingresos
-   - Análisis de estacionalidad
-   - Planificación de mantenimiento basada en predicción
-
-7. MÓDULO DE GESTIÓN AMBIENTAL:
-   - Cálculo de evitación de emisiones de CO2
-   - Reportes de sostenibilidad
-   - Análisis de huella de carbono
-
-8. FUNCIONALIDADES ADICIONALES:
-   - Modo offline con sincronización
-   - Acceso remoto seguro
-   - Integración con pronóstico meteorológico
-   - Control de acceso por roles
-   - API para integración con otros sistemas
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo sistema de monitoreo de generación
-- Diseño responsive para desktop y tablets
-- Código modular y bien documentado
-- Datos de ejemplo realistas (1 mes de operación)
-- Dashboards interactivos y gráficos dinámicos
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, Leaflet.js, jsPDF, SheetJS, moment.js (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- Cálculos según IEC 61724
-
-CRITERIOS DE CALIDAD:
-- Sistema robusto para monitoreo 24/7
-- Cálculos precisos de performance
-- Interfaz intuitiva para ingenieros y operadores
-- Reportes profesionales listos para inversionistas
-- Análisis avanzado de datos
-
-ENTREGABLE FINAL:
-Sistema integral de monitoreo y análisis de performance para planta fotovoltaica que permita optimizar la generación, identificar problemas rápidamente, generar reportes automáticos y maximizar el retorno de inversión.`,
-              tags: ["fotovoltaica", "solar", "monitoreo", "performance", "IEC 61724"],
-              uso: "Continuo / Monitoreo de generación"
-            }
-          ]
-        }
-      ]
+              id: 'en_app_001',
+              titulo: 'Sistema de Monitoreo de Generación Fotovoltaica con Análisis de Performance',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Diario',
+              tags: ['Solar', 'Fotovoltaica', 'Performance Ratio', 'Inversores', 'Irradiancia', 'IEC 61724', 'Energía Renovable'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Principal de Operación y Mantenimiento (O&M) y Asset Manager de Plantas Solares Fotovoltaicas a Gran Escala (Utility Scale > 100 MWp) con 20 años de experiencia. Especialista en la norma internacional IEC 61724 (Photovoltaic System Performance Monitoring), análisis de curvas I-V, degradación de módulos y optimización de rendimiento de inversores centrales y string. Desarrollador web de plataformas de telemetría energética.\n\nCONTEXTO TÉCNICO:\n- Parque Solar Fotovoltaico de 150 MWp compuesto por 320,000 paneles bifaciales montados sobre seguidores solares de 1 eje (Single-Axis Trackers) y 40 inversores centrales de 3.3 MVA con centros de transformación a 33 kV y subestación elevadora a 220 kV.\n- Estación Meteorológica (MET Station): Sensores de irradiancia en el plano del módulo (POA en $W/m^2$), irradiancia horizontal global (GHI), temperatura de célula/módulo (°C), temperatura ambiente, velocidad y dirección de viento, y sensor de suciedad (Soiling Index).\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Monitoreo en Tiempo Real, Análisis de Rendimiento (PR) y Detección de Pérdidas de Energía según IEC 61724.\n\nMÓDULOS DEL SISTEMA Y FÓRMULAS DE RENDIMIENTO IEC 61724:\n\n1. MONITOREO DE RADIACIÓN Y GENERACIÓN EN TIEMPO REAL:\n   - Métricas en Cabecera: Potencia Activa Instantánea Generada ($P_{ac}$ en MW), Irradiancia POA ($W/m^2$), Temperatura de Panel ($T_{mod}$ en °C), Energía Diaria Inyectada a Red (MWh), Soiling Ratio actual (%).\n   - Monitoreo por Centro de Transformación e Inversor (Inversores INV-01 a INV-40): Potencia DC de entrada ($P_{dc}$), Voltaje DC, Corriente DC, Potencia AC de salida ($P_{ac}$), Eficiencia del Inversor ($\\eta_{inv} = P_{ac} / P_{dc} \\times 100$).\n\n2. MOTOR DE CÁLCULO DE PERFORMANCE RATIO (PR) Y RENDIMIENTOS:\n   - Rendimiento del Sistema ($Y_f$ en $kWh/kWp$):\n     $$Y_f = \\frac{E_{ac} \\;(kWh)}{P_{stc} \\;(kWp)}$$\n   - Rendimiento de Referencia ($Y_r$ en $kWh/kWp$ o Horas Pico de Sol - HSP):\n     $$Y_r = \\frac{\\sum POA \\; (W/m^2) \\times \\Delta t}{1000 \\; W/m^2}$$\n   - Performance Ratio Estándar ($PR$ según IEC 61724-1):\n     $$PR = \\left(\\frac{Y_f}{Y_r}\\right) \\times 100$$\n   - Performance Ratio Corregido por Temperatura ($PR_{temp}$):\n     $$PR_{temp} = \\frac{Y_f}{Y_r \\cdot [1 + \\gamma \\cdot (T_{mod\\_promedio} - 25^\\circ\\text{C})]}$$\n     Donde $\\gamma$ es el coeficiente de temperatura de potencia del módulo (típico -0.35 %/°C).\n\n3. DIAGNÓSTICO DE PÉRDIDAS DE ENERGÍA (WATERFALL LOSS ANALYSIS):\n   - Desglose analítico de pérdidas: Pérdidas por Temperatura, Pérdidas por Ensuciamiento (Soiling), Pérdidas por Sombreamiento / Seguimiento, Pérdidas por Clipping del Inversor, Pérdidas por Indisponibilidad / Mantenimiento.\n   - Detección de String / Inversor Bajo Rendimiento (Underperforming): Algoritmo de comparación cruzada entre inversores adyacentes para detectar fallas en trackers, disparos de fusibles o suciedad localizada.\n\n4. PERSISTENCIA, ANALÍTICA Y REPORTABILIDAD:\n   - Gráficos interactivos en Canvas: Curva de Generación Solar diaria (Potencia vs. Irradiancia) y Comparativa mensual de PR.\n   - Base de datos IndexedDB para almacenar históricos diarios.\n   - Exportación de Informe Mensual de Generación y O&M en formato PDF y CSV.\n\nDISEÑO:\n- UI Dark Solar Theme (#0b101b, #151d30, acentos amarillo sol #facc15 y verde energía #22c55e). Código completo, modular y sin dependencias externas.',
+            },
+          ],
+        },
+        {
+          id: 'ene_sistemas_avanzados',
+          nombre: 'Sistemas Avanzados y Eficiencia Energética',
+          prompts: [
+            {
+              id: 'ene_eol_001',
+              titulo: 'SCADA y Monitoreo de Parques Eólicos según IEC 61400',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Diario',
+              tags: ['Eólica', 'Aerogeneradores', 'IEC 61400', 'Curva de Potencia', 'Pitch', 'Yaw', 'SCADA', 'Energía Renovable'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Principal de Operaciones y Mantenimiento de Parques Eólicos (Wind Farm O&M Manager) con 20 años de experiencia en tecnología de aerogeneradores onshore y offshore (Vestas, Siemens Gamesa, GE Vernova, Nordex). Experto en la norma IEC 61400 (Wind energy generation systems - Part 12-1: Power performance measurement), análisis de curvas de potencia, control de paso de pala (Pitch), orientación de góndola (Yaw), vibraciones en multiplicadoras (Gearboxes) y disponibilidad técnica (Disponibilidad energética y temporal).\n\nCONTEXTO TÉCNICO:\n- Parque Eólico de 150 MW compuesto por 30 aerogeneradores de 5.0 MW c/u (Diámetro de rotor 150 m, Altura de buje 120 m).\n- Desafío Operacional: Monitorear el rendimiento aerodinámico y eléctrico en tiempo real, identificar desviaciones de la curva de potencia de diseño (Underperformance), mitigar cargas mecánicas por desalineación de guiñada (Yaw error) y maximizar la producción anual de energía (AEP - Annual Energy Production).\n\nTAREA:\nDesarrolla una aplicación web completa y profesional en un único archivo HTML/CSS/JavaScript para el Monitoreo SCADA en Tiempo Real, Análisis de Curvas de Potencia Normalizadas y Diagnóstico de Turbinas Eólicas según IEC 61400-12-1.\n\nMÓDULOS DEL SISTEMA Y MODELO FÍSICO/AERODINÁMICO:\n\n1. TELEMETRÍA SCADA Y VARIABLES POR AEROGENERADOR (WTG):\n   - Datos de Viento: Velocidad de Viento en Góndola ($v$ en m/s), Dirección de Viento (°), Densidad del Aire ($\rho$ en $kg/m^3$), Turbulencia ($TI$ % - Turbulence Intensity).\n   - Datos de Turbina: Potencia Activa ($P$ en kW / MW), Potencia Reactiva (kVAR), Frecuencia de Red (Hz), Voltaje (V), Velocidad de Rotor (RPM), Ángulo de Pitch (° de cada pala), Posición de Góndola / Yaw (°), Error de Yaw (° desalineación respecto al viento).\n   - Temperaturas de Componentes Críticos: Rodamiento principal, Multiplicadora (Entrada, Eje intermedio, Eje de alta), Generador (Bobinados, Rodamientos), Transformador y Convertidor de frecuencia (IGBTs).\n\n2. MOTOR DE CÁLCULO DE CURVA DE POTENCIA NORMALIZADA (IEC 61400-12-1):\n   - Normalización de Velocidad de Viento por Densidad de Aire según IEC:\n     $$v_{norm} = v_{med} \\times \\left(\\frac{\\rho}{1.225\\,kg/m^3}\\right)^{1/3}$$\n   - Límite Teórico de Betz (Máxima eficiencia aerodinámica teórica $C_p^{max} = 16/27 \\approx 59.3\\%$):\n     $$P_{viento} = \\frac{1}{2} \\rho A v^3, \\quad C_p = \\frac{P_{electrica}}{P_{viento}}$$\n   - Clasificación en Regiones Operacionales:\n     * Región 1: Por debajo de Cut-in ($v < 3.0\\text{ m/s}$) -> Standby / Giro lento.\n     * Región 2: Carga Parcial ($3.0 \\le v < 11.5\\text{ m/s}$) -> Control de torque para optimizar $C_p$ con Pitch a 0°.\n     * Región 3: Carga Nominal ($11.5 \\le v \\le 25.0\\text{ m/s}$) -> Control activo de Pitch para regular potencia a 5,000 kW.\n     * Región 4: Por encima de Cut-out ($v > 25.0\\text{ m/s}$) -> Parada por tormenta y embanderamiento de palas (Pitch 90°).\n\n3. DIAGNÓSTICO DE DESVIACIONES Y DISPONIBILIDAD:\n   - Detección de Desalineación de Yaw (Yaw Misalignment): Detección automática si el promedio de desalineación supera $\\pm 4^\\circ$, generando pérdidas de energía del orden de $\\cos^2(\\theta)$ o $\\cos^3(\\theta)$.\n   - Disponibilidad Técnica según IEC TS 61400-26-1 (Time-based & Production-based Availability %).\n\n4. MAPA DEL PARQUE EN TIEMPO REAL, PERSISTENCIA Y EXPORTACIÓN:\n   - Vista aérea interactiva del parque eólico en Canvas con la orientación exacta de cada turbina girando según su velocidad de viento real.\n   - Base de datos IndexedDB para histórico de eventos y alarmas.\n   - Generación de Informe Mensual de Rendimiento del Parque Eólico en PDF.\n\nDISEÑO:\n- UI Dark Cyber-Wind (#090e17, #131c2d, acentos verde esmeralda #10b981, azul eléctrico #3b82f6 y ámbar #f59e0b). Código 100% completo.',
+            },
+            {
+              id: 'ene_sub_001',
+              titulo: 'Monitoreo y Protección de Subestaciones Eléctricas de Alta Tensión (IEC 61850)',
+              categoria: 'Aplicación Web',
+              prioridad: 'critica',
+              uso: 'Diario',
+              tags: [
+                'Subestaciones',
+                'Alta Tensión',
+                'IEC 61850',
+                'Transformadores',
+                'DGA',
+                'Relés de Protección',
+                'Interruptores',
+                'Energía',
+              ],
+              prompt:
+                'ACTÚA COMO: Ingeniero Principal de Sistemas Eléctricos de Potencia y Subestaciones de Alta Tensión (HV Substations) con más de 20 años de experiencia en utilities y transmisión eléctrica (220 kV / 500 kV). Especialista en automatización de subestaciones según la norma IEC 61850 (GOOSE, MMS, Sampled Values), coordinación de protecciones eléctricas (ANSI 50/51 Sobrecorriente, 87 Diferencial, 21 Distancia), monitoreo de Transformadores de Poder mediante Análisis de Gases Disueltos en Aceite (DGA - IEEE C57.104) e interruptores de potencia en $SF_6$.\n\nCONTEXTO TÉCNICO:\n- Subestación Seccionadora y Transformadora 220/66 kV con dos Transformadores de Poder de 100 MVA, banco de interruptores de tanque muerto en $SF_6$, seccionadores motorizados y relés IEDs (Intelligent Electronic Devices) comunicados por bus de proceso y bus de estación IEC 61850.\n- Monitoreo Crítico: Diagnóstico térmico y de gases combustibles en el aceite del transformador, presión y densidad de gas $SF_6$ en interruptores, calidad de energía (Armónicos THD, Factor de Potencia, Flicker) y disparo de protecciones.\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Monitoreo Unifilar, Diagnóstico DGA de Transformadores de Poder y Registro de Eventos de Protecciones Eléctricas según IEC 61850.\n\nMÓDULOS DEL SISTEMA Y NORMAS IEEE/IEC:\n\n1. DIAGRAMA UNIFILAR INTERACTIVO (SLD) Y ESTADO DE BAHÍAS:\n   - Esquema Unifilar dinámico en SVG/Canvas de la subestación con interruptores (52), seccionadores de línea (89) y seccionadores de puesta a tierra (89T).\n   - Animación de estados: Cerrado (Rojo / Energizado), Abierto (Verde / Desenergizado), En Falla (Intermitente).\n   - Variables Eléctricas en Línea: Voltajes de Fase y Línea ($V_a, V_b, V_c$), Corrientes ($I_a, I_b, I_c$), Potencia Activa ($P$ en MW), Reactiva ($Q$ en MVAR), Aparente ($S$ en MVA), Factor de Potencia ($cos \\phi$) y Frecuencia ($f$ en Hz).\n\n2. DIAGNÓSTICO DE SALUD DE TRANSFORMADORES POR DGA (IEEE C57.104):\n   - Concentraciones de Gases Disueltos en Aceite Dieléctrico (ppm): Hidrógeno ($H_2$), Metano ($CH_4$), Etano ($C_2H_6$), Etileno ($C_2H_4$), Acetileno ($C_2H_2$), Monóxido de Carbono ($CO$) y Dióxido de Carbono ($CO_2$).\n   - Diagnóstico Automático por Métodos Estándar:\n     * Triángulo de Duval 1 (% $CH_4$, % $C_2H_4$, % $C_2H_2$): Clasificación en PD (Descargas Parciales), D1 (Descargas de baja energía / chispas), D2 (Descargas de alta energía / arco), T1 (Falla térmica < 300°C), T2 (Falla térmica 300-700°C), T3 (Falla térmica > 700°C).\n     * Ratios de Rogers y Criterio de Gases Totales Combustibles (TDCG).\n   - Monitoreo de Humedad en Papel Aislante (ppm de agua y % saturación relativa) y Temperatura del Punto Más Caliente del Devanado (Hot-Spot Temperature según IEEE C57.91).\n\n3. MONITOREO DE INTERRUPTORES Y PRESIÓN DE GAS SF6:\n   - Presión y Densidad de $SF_6$ compensada por temperatura (bar / MPa).\n   - Alarma Etapa 1 (Relleno de $SF_6$) y Alarma Etapa 2 (Bloqueo de Disparo / Trip Lockout por baja rigidez dieléctrica).\n   - Tiempo de Apertura y Cierre de Contactos Principales (milisegundos) y acumulador de corriente de corte interrumpida ($sum I^2 t$) para estimar el desgaste de contactos de arco.\n\n4. REGISTRO DE EVENTOS SOE, PERSISTENCIA Y EXPORTACIÓN:\n   - Registro de Secuencia de Eventos (SOE) con precisión de milisegundos y causa de actuación del relé de protección.\n   - Base de datos IndexedDB con histórico de disparos y pruebas DGA.\n   - Generación de Informe de Estado de Salud de la Subestación en PDF A4.\n\nDISEÑO:\n- UI Dark Grid Tech (#070b14, #10192a, acentos azul neón #00f2fe, amarillo advertencia #eab308 y rojo disparo #ef4444). Código limpio y 100% funcional.',
+            },
+            {
+              id: 'ene_bess_001',
+              titulo: 'Sistema de Gestión y Monitoreo de Almacenamiento con Baterías (BESS)',
+              categoria: 'Aplicación Web',
+              prioridad: 'critica',
+              uso: 'Diario',
+              tags: ['BESS', 'Baterías', 'Litio', 'SoC', 'SoH', 'BMS', 'EMS', 'Arbitraje Energético', 'Energía'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Principal de Sistemas de Almacenamiento de Energía en Baterías (BESS - Battery Energy Storage Systems) y Especialista en Gestión Energética (EMS / BMS) con más de 15 años de experiencia en proyectos utility-scale (Tesla Megapack, Fluence, Sungrow, BYD). Experto en electroquímica de celdas Li-ion (LFP / NMC), estimación de Estado de Carga (State of Charge - SoC por Filtro de Kalman), Estado de Salud (State of Health - SoH), gestión térmica de racks (HVAC / Liquid Cooling), degradación de celdas (Cycle aging vs. Calendar aging) y estrategias de arbitraje de mercado eléctrico y regulación de frecuencia (Fast Frequency Response - FFR).\n\nCONTEXTO TÉCNICO:\n- Instalación BESS Utility-Scale de 50 MW / 200 MWh (Sistema de 4 horas) basada en química Litio Hierro Fosfato (LFP - $LiFePO_4$).\n- Desafíos: Monitorear la homogeneidad de voltajes y temperaturas a nivel de celda (evitar embalamiento térmico - Thermal Runaway), controlar los ciclos de carga/descarga según perfiles de precio horario (Arbitraje) y minimizar la degradación acelerada del banco de baterías.\n\nTAREA:\nDesarrolla una aplicación web completa y profesional en un único archivo HTML/CSS/JavaScript para el Monitoreo en Tiempo Real del BMS/EMS, Estimación de SoC/SoH y Simulación de Despacho Económico de un BESS.\n\nMÓDULOS DEL SISTEMA Y MODELOS ELECTROQUÍMICOS/TERMODINÁMICOS:\n\n1. MONITOREO MULTINIVEL DEL BESS (CELDA, MÓDULO, RACK, CONTENEDOR):\n   - Variables Globales de Sistema: Potencia Activa de Carga/Descarga ($P$ en MW), Potencia Reactiva ($Q$ en MVAR), Voltaje de Bus DC ($V_{DC}$ en Voltios), Corriente DC ($I_{DC}$ en Amperios), Factor de Potencia, Eficiencia Round-Trip (RTE %).\n   - Variables por Rack de Baterías: Máximo/Mínimo Voltaje de Celda ($V_{cell}^{max}, V_{cell}^{min}$ en mV), Desbalance de Celda ($Delta V_{cell}$ en mV con alerta si $Delta V > 30\\text{ mV}$), Máxima/Mínima Temperatura de Celda ($T_{cell}^{max}, T_{cell}^{min}$ en °C con alarma si $T > 45^\\circ\\text{C}$), Tasa de Flujo y Temperatura de Refrigerante Líquido.\n\n2. ESTIMACIÓN AVANZADA DE SoC, SoH Y LÍMITES DE POTENCIA (DOD):\n   - Algoritmo de Estimación de Estado de Carga (SoC %): Integración de corriente (Coulomb Counting) corregida por curva $OCV(SoC)$ (Open Circuit Voltage):\n     $$SoC(t) = SoC(0) - \\frac{1}{Q_n} \\int_0^t I_{bat}(\\tau)\\,d\\tau$$\n   - Estimación de Estado de Salud (SoH % basado en capacidad retenida y aumento de resistencia interna $R_{int}$):\n     $$SoH = \\frac{Q_{actual\\_max}}{Q_{nominal}} \\times 100$$\n   - Cálculo de Límites de Potencia de Carga/Descarga Dinámicos en Tiempo Real (Charge/Discharge Power Limits en kW) en función de la temperatura y el SoC actual para proteger las celdas.\n\n3. MOTOR DE DESPACHO ECONÓMICO Y ARBITRAJE EN TIEMPO REAL:\n   - Curva de Precios Marginales del Mercado Eléctrico Spot ($USD/MWh) en 24 horas.\n   - Lógica de Carga Óptima en horas de precio bajo/solar (Valle) y Descarga Óptima en horas de alta demanda/precio pico (Punta).\n   - Cálculo de Ingresos Diarios por Arbitraje ($USD/día) descontando el costo de degradación por ciclo.\n\n4. MATRIZ DE SEGURIDAD CONTRA EMBALAMIENTO TÉRMICO (NFPA 855):\n   - Monitoreo de sensores de gas de advertencia temprana ($CO, H_2$, VOCs liberados durante el venting de celdas antes del fuego).\n   - Bloqueo y desconexión automática del contactor principal en caso de sobrevoltaje, subvoltaje o gradiente térmico anómalo ($dT/dt > 1^\\circ\\text{C/min}$).\n\n5. PERSISTENCIA, ANALÍTICA Y EXPORTACIÓN:\n   - Base de datos IndexedDB con histórico de ciclos equivalentes y degradación.\n   - Gráficos interactivos en Canvas: Evolución de SoC, Potencia MW, y mapa de dispersión de voltajes de celdas.\n   - Generación de Informe Diario de Desempeño BESS en PDF.\n\nDISEÑO:\n- UI Dark Cyber-Battery (#080f1e, #0f1d38, acentos verde batería #22c55e, cian #00f2fe y naranja térmico #f97316). Código 100% completo.',
+            },
+            {
+              id: 'ene_cal_001',
+              titulo: 'Control de Eficiencia de Calderas Industriales de Vapor (ASME PTC 4)',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Semanal',
+              tags: ['Calderas', 'Vapor', 'ASME PTC 4', 'Eficiencia Térmica', 'Combustión', 'Gases de Escape', 'O2', 'Energía'],
+              prompt:
+                'ACTÚA COMO: Ingeniero Principal de Termodinámica y Plantas Térmicas con 20 años de experiencia en calderas industriales de vapor acuotubulares y pirotubulares (Babcock & Wilcox, Cleaver-Brooks, Foster Wheeler). Especialista en la norma ASME PTC 4 (Fired Steam Generators - Performance Test Codes), balance de calor por Método Directo e Indirecto (Pérdidas de calor), optimización de combustión mediante control de exceso de aire ($O_2 / CO$ en chimenea) y purgas de caldera.\n\nCONTEXTO TÉCNICO:\n- Caldera Acuotubular Industrial de 50 Toneladas/hora de Vapor Sobrecalentado (42 bar, 400°C) alimentada por Gas Natural o Fuel Oil con economizador y precalentador de aire.\n- Objetivos: Calcular con precisión la eficiencia térmica de la caldera, identificar y cuantificar las pérdidas de calor según ASME PTC 4 y optimizar la relación aire/combustible para minimizar el consumo de combustible y las emisiones de gases de efecto invernadero.\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Cálculo de Eficiencia Térmica de Calderas según ASME PTC 4, Análisis de Combustión y Control de Purgas.\n\nMÓDULOS DEL SISTEMA Y BALANCES TERMODINÁMICOS ASME PTC 4:\n\n1. ENTRADA DE DATOS DE OPERACIÓN Y COMBUSTIBLE:\n   - Datos de Vapor y Agua: Caudal de Vapor Generado ($m_s$ en $t/h$), Presión de Vapor ($P_s$ en bar), Temperatura de Vapor ($T_s$ en °C), Temperatura de Agua de Alimentación ($T_{fw}$ en °C), Caudal de Purga Continua ($m_{bd}$ en $t/h$).\n   - Datos de Combustible: Tipo de Combustible (Gas Natural / Diésel / Fuel Oil), Poder Calorífico Superior ($HHV$) e Inferior ($LHV$ en $MJ/kg$ o $kcal/kg$), Flujo de Combustible ($m_f$ en $kg/h$ o $Nm^3/h$).\n   - Datos de Gases de Combustión (Chimenea): Temperatura de Gases de Escape ($T_g$ en °C), Temperatura Ambiente ($T_{amb}$ en °C), Concentración de Oxígeno ($O_2$ % base seca), Monóxido de Carbono ($CO$ en ppm), Dióxido de Carbono ($CO_2$ %).\n\n2. CÁLCULO DE EFICIENCIA POR MÉTODO DIRECTO E INDIRECTO (ASME PTC 4):\n   - Eficiencia por Método Directo (Entrada-Salida):\n     $$\\eta_{\\text{directa}} = \\frac{m_s \\cdot (h_s - h_{fw}) + m_{bd} \\cdot (h_{bd} - h_{fw})}{m_f \\cdot HHV} \\times 100$$\n     donde $h$ representa las entalpías específicas del vapor, agua y purga ($kJ/kg$).\n   - Eficiencia por Método Indirecto (Suma de Pérdidas según ASME PTC 4):\n     $$\\eta_{\\text{indirecta}} = 100 - (L_{gas\\_seco} + L_{humedad\\_comb} + L_{humedad\\_aire} + L_{radiacion} + L_{incombustos})$$\n     * Pérdida por Gases Secos de Chimenea ($L_{gas\\_seco} = \\frac{m_{gs} \\cdot C_{p,gs} \\cdot (T_g - T_{amb})}{HHV} \\times 100$).\n     * Pérdida por Humedad formada por combustión de Hidrógeno ($L_{H_2O}$).\n     * Pérdida por Radiación y Convección en paredes de caldera (según curva ABMA).\n     * Pérdida por Combustión Incompleta ($CO$).\n\n3. CONTROL DE COMBUSTIÓN Y EXCESO DE AIRE:\n   - Cálculo del Exceso de Aire ($\\%EA$):\n     $$\\%EA = \\frac{O_2}{20.9 - O_2} \\times 100$$\n   - Diagnóstico del Punto Óptimo de Combustión: Alerta si el exceso de aire es insuficiente ($CO > 100\\text{ ppm}$ -> Combustión incompleta con riesgo de explosión) o si es excesivo ($O_2 > 4.5\\%$ en gas natural -> Pérdida innecesaria de calor por chimenea).\n\n4. PERSISTENCIA LOCAL, HISTORIAL Y EXPORTACIÓN:\n   - Base de datos IndexedDB para almacenar balances diarios y pruebas de combustión.\n   - Gráficos interactivos en Canvas: Diagrama de Sankey de distribución de pérdidas de calor y curva de Eficiencia vs. Carga de Caldera.\n   - Generación de Informe Oficial de Prueba de Eficiencia Térmica en PDF.\n\nDISEÑO:\n- UI Dark Thermal (#110e0e, #221818, acentos llama naranja #f97316, rojo calor #ef4444 y amarillo #f59e0b). Código 100% completo.',
+            },
+            {
+              id: 'ene_iso_001',
+              titulo: 'Sistema de Auditoría y Gestión de Eficiencia Energética (ISO 50001)',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Mensual',
+              tags: [
+                'ISO 50001',
+                'Eficiencia Energética',
+                'Línea Base',
+                'EnPI',
+                'CUSUM',
+                'Auditoría Energética',
+                'Energía',
+                'Sostenibilidad',
+              ],
+              prompt:
+                'ACTÚA COMO: Auditor Líder de Sistemas de Gestión de la Energía ISO 50001:2018 y Certified Energy Manager (CEM - Association of Energy Engineers) con 20 años de experiencia en grandes complejos industriales y manufactureros. Especialista en establecimiento de Líneas Base Energéticas (EnB - Energy Baselines), Indicadores de Desempeño Energético (EnPIs), análisis de regresión multivariable, control estadístico CUSUM (Cumulative Sum of Differences) y planes de medidas de ahorro energético (MAEs).\n\nCONTEXTO TÉCNICO:\n- Complejo industrial que consume electricidad (MWh), gas natural ($Nm^3$), vapor y diésel, con una factura energética anual superior a $15M USD.\n- Requisito Mandatorio ISO 50001: Demostrar de forma cuantitativa y normalizada la mejora continua del desempeño energético, aislando variables no energéticas (Volumen de producción, Grados-Día de Calefacción/Refrigeración CDD/HDD, Humedad).\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para la Gestión de la Línea Base Energética, Seguimiento de EnPIs y Control CUSUM según la norma ISO 50001.\n\nMÓDULOS DEL SISTEMA Y MODELOS ESTADÍSTICOS ISO 50006 / ISO 50015:\n\n1. MATRIZ DE CONSUMO ENERGÉTICO Y USOS SIGNIFICATIVOS DE ENERGÍA (USE):\n   - Registro de Fuentes de Energía: Electricidad de red, Autogeneración solar/térmica, Gas Natural, GLP, Diésel, Biomasa.\n   - Conversión automática a unidades equivalentes comunes: $MWh$, $GJ$, $kboe$ y toneladas de $CO_2$ equivalentes ($tCO_{2e}$).\n   - Identificación y Desglose de USEs (Usos Significativos de la Energía): Hornos, Compresores de Aire, Sistema de Refrigeración, Molinos, Bombeo de Agua, Iluminación y Climatización (HVAC).\n\n2. MODELADO DE LÍNEA BASE ENERGÉTICA (EnB) POR REGRESIÓN MULTIVARIABLE:\n   - Ajuste de modelo de regresión lineal simple o múltiple:\n     $$Consumo\\_Teorico\\;[MWh] = \\beta_0 + \\beta_1 \\times Produccion\\;[t] + \\beta_2 \\times HDD + \\beta_3 \\times CDD$$\n   - Evaluación estadística de la validez del modelo: Coeficiente de determinación ($R^2 > 0.85$), p-value ($p < 0.05$) y $F$-statistic.\n\n3. CONTROL DE DESEMPEÑO CUSUM Y DETECCIÓN DE AHORROS/DESVÍOS:\n   - Cálculo del Ahorro de Energía Real ($E_{ahorro}$ en un periodo $t$):\n     $$E_{ahorro}(t) = Consumo\\_Esperado_{EnB}(t) - Consumo\\_Real(t)$$\n   - Cálculo de la Suma Acumulada de Diferencias (CUSUM):\n     $$CUSUM(T) = \\sum_{t=1}^T \\left(Consumo\\_Esperado_{EnB}(t) - Consumo\\_Real(t)\\right)$$\n   - Interpretación Gráfica: Pendiente ascendente indica ahorro sostenido de energía (éxito de una MAE); pendiente descendente indica degradación del desempeño / sobreconsumo.\n\n4. MATRIZ DE MEDIDAS DE AHORRO ENERGÉTICO (MAEs) Y RETORNO DE INVERSIÓN:\n   - Registro de Proyectos de Ahorro: Descripción técnica, Inversión requerida ($CAPEX$), Ahorro energético estimado ($MWh/año$, $USD/año$), Periodo de Retorno Simple (Payback en años) y VAN / TIR del proyecto.\n\n5. PERSISTENCIA, ANALÍTICA Y EXPORTACIÓN:\n   - Base de datos IndexedDB con histórico mensual de consumos y producción.\n   - Gráficos interactivos en Canvas: Gráfico de Regresión Consumo vs. Producción y Gráfico CUSUM temporal.\n   - Generación de Informe Ejecutivo de Desempeño Energético ISO 50001 en PDF listo para auditoría.\n\nDISEÑO:\n- UI Dark Eco-Energy (#0a1612, #122820, acentos verde esmeralda #10b981, azul #0ea5e9 y oro #eab308). Código 100% terminado.',
+            },
+          ],
+        },
+      ],
     },
     {
-      id: "general",
-      nombre: "Uso General Industrial",
-      icono: "📋",
-      color: "#37474f",
-      descripcion: "Herramientas y aplicaciones transversales para cualquier industria",
+      id: 'general',
+      nombre: 'Uso General Industrial',
+      icono: '🏭',
+      color: '#546e7a',
+      descripcion: 'Herramientas transversales de gestión de operaciones, mantenimiento y confiabilidad',
       subcategorias: [
         {
-          id: "gen_herramientas",
-          nombre: "Herramientas de Gestión",
+          id: 'gen_herramientas',
+          nombre: 'Herramientas de Gestión',
           prompts: [
             {
-              id: "gen_herr_001",
-              titulo: "Sistema de Gestión de Indicadores KPI con Dashboard Ejecutivo",
-              categoria: "Aplicación Web",
-              prioridad: "alta",
-              prompt: `ACTÚA COMO: Gerente de Excelencia Operacional y Business Intelligence con 20 años de experiencia implementando sistemas de gestión de KPIs en industrias manufactureras, Oil & Gas, minería y servicios. Experto en metodologías de mejora continua (Lean, Six Sigma, TPM) y visualización de datos ejecutivos.
-
-CONTEXTO TÉCNICO:
-- Industria: Aplicable a cualquier industria manufacturera o de procesos
-- Audiencia: Gerencia general, directores, superintendentes, supervisores
-- Problemática: KPIs dispersos en Excel, sin visualización integrada, falta de tendencias, reportes manuales que consumen tiempo, dificultad para identificar desviaciones rápidamente
-- Expectativa: Sistema centralizado de KPIs con dashboards ejecutivos, alertas automáticas, tendencias y análisis de performance
-
-TAREA:
-Desarrolla un sistema web completo de gestión de indicadores KPI con dashboards ejecutivos que centralice todos los indicadores de gestión de una planta industrial. El sistema debe:
-
-1. MÓDULO DE CONFIGURACIÓN DE KPIs:
-   - Definición de KPIs con:
-     * Nombre del indicador
-     * Fórmula de cálculo
-     * Unidad de medida
-     * Frecuencia de medición (diario, semanal, mensual)
-     * Responsable del indicador
-     * Meta/objetivo
-     * Límites de semáforo (verde, amarillo, rojo)
-     * Categoría (seguridad, producción, calidad, mantenimiento, costos, energía, RRHH)
-   - Plantillas predefinidas de KPIs industriales:
-     * Seguridad: TRIR, LTIR, días sin accidentes, % de observaciones cerradas
-     * Producción: Tonelaje producido, OEE, disponibilidad, performance, calidad
-     * Mantenimiento: MTBF, MTTR, disponibilidad de equipos, % preventivo vs. correctivo, backlog
-     * Calidad: % producto conforme, reprocesos, quejas de clientes, costos de no calidad
-     * Costos: Costo unitario, presupuesto vs. real, varianza
-     * Energía: Consumo específico, intensidad energética, costo energético por unidad
-     * RRHH: Rotación, absentismo, horas de capacitación, clima laboral
-
-2. MÓDULO DE INGRESO DE DATOS:
-   - Ingreso manual de valores de KPIs
-   - Importación masiva desde Excel/CSV
-   - Validación de datos (rangos, consistencia)
-   - Historial de valores ingresados
-   - Cálculo automático de indicadores derivados
-
-3. MÓDULO DE DASHBOARDS EJECUTIVOS:
-   - Dashboard general con vista de todos los KPIs:
-     * Semáforo de cumplimiento (verde/amarillo/rojo)
-     * Tendencia histórica (últimos 12 meses)
-     * Comparación vs. meta
-     * Ranking de KPIs críticos
-   - Dashboards por categoría:
-     * Dashboard de seguridad
-     * Dashboard de producción
-     * Dashboard de mantenimiento
-     * Dashboard de calidad
-     * Dashboard de costos
-     * Dashboard de energía
-   - Drill-down desde resumen ejecutivo hasta detalle
-   - Personalización de vistas por usuario/rol
-
-4. MÓDULO DE ANÁLISIS Y TENDENCIAS:
-   - Gráficos de tendencia histórica
-   - Análisis de variación (vs. periodo anterior, vs. mismo mes año anterior)
-   - Análisis de correlación entre KPIs
-   - Identificación de patrones y anomalías
-   - Proyección de tendencias
-   - Análisis de Pareto (80/20)
-
-5. MÓDULO DE ALERTAS Y NOTIFICACIONES:
-   - Alertas automáticas cuando KPIs exceden límites:
-     * Notificación visual en dashboard
-     * Email automático a responsables
-     * Resumen ejecutivo diario/semanal
-   - Escalamiento automático según severidad
-   - Tracking de acciones correctivas por KPI en rojo
-
-6. MÓDULO DE REPORTES:
-   - Reportes automáticos:
-     * Reporte ejecutivo mensual (1-2 páginas)
-     * Reporte detallado por categoría
-     * Reporte de tendencias trimestral
-     * Reporte de análisis de causa raíz para KPIs críticos
-   - Formatos: PDF, Excel, PowerPoint
-   - Personalización de plantillas
-   - Distribución automática por email
-
-7. MÓDULO DE METAS Y OBJETIVOS:
-   - Definición de metas anuales/mensuales
-   - Tracking de cumplimiento
-   - Análisis de gap vs. objetivos
-   - Plan de acción para cerrar brechas
-
-8. MÓDULO DE BENCHMARKING:
-   - Comparación vs. estándares de industria
-   - Benchmarking entre plantas/áreas similares
-   - Mejores prácticas identificadas
-
-9. FUNCIONALIDADES ADICIONALES:
-   - Modo offline con sincronización
-   - Control de acceso por roles y permisos
-   - Auditoría de cambios
-   - API para integración con otros sistemas
-   - Exportación de datos para análisis externo
-
-FORMATO DE SALIDA:
-- Aplicación web completa en HTML/CSS/JavaScript
-- Interfaz profesional tipo Business Intelligence
-- Diseño responsive para desktop, tablets y móviles
-- Código modular y bien documentado
-- Datos de ejemplo realistas (12 meses de KPIs)
-- Dashboards interactivos y gráficos dinámicos
-
-RESTRICCIONES:
-- Todo en un solo archivo HTML
-- Librerías permitidas: Chart.js, jsPDF, SheetJS, moment.js (CDN)
-- Funcionalidad offline completa
-- LocalStorage para persistencia
-- Preparado para integración con backend
-
-CRITERIOS DE CALIDAD:
-- Sistema robusto y escalable
-- Visualización clara y ejecutiva
-- Cálculos precisos de indicadores
-- Reportes profesionales listos para presentación
-- Interfaz intuitiva para todos los niveles
-
-ENTREGABLE FINAL:
-Sistema integral de gestión de KPIs que centralice todos los indicadores de una planta industrial, proporcione dashboards ejecutivos claros, genere alertas automáticas y facilite la toma de decisiones basada en datos.`,
-              tags: ["KPIs", "dashboard ejecutivo", "Business Intelligence", "gestión", "indicadores"],
-              uso: "Continuo / Gestión empresarial"
-            }
-          ]
-        }
-      ]
-    }
+              id: 'gen_herr_001',
+              titulo: 'Sistema de Gestión de Indicadores KPI con Dashboard Ejecutivo',
+              categoria: 'Herramienta',
+              prioridad: 'alta',
+              uso: 'Diario',
+              tags: ['KPIs', 'Dashboard', 'Confiabilidad', 'MTBF', 'MTTR', 'OEE', 'Mantenimiento', 'Gerencia'],
+              prompt:
+                'ACTÚA COMO: Director Corporativo de Excelencia Operacional y Mantenimiento (Asset Management Director) con 25 años de trayectoria en corporaciones industriales globales. Maestro en gestión del desempeño según normas SMRP (Society for Maintenance & Reliability Professionals), ISO 55000 y metodologías Lean / TPM. Desarrollador de cuadros de mando integrales (Balanced Scorecard).\n\nCONTEXTO TÉCNICO:\n- Dirección de operaciones que consolida los indicadores clave de desempeño (KPIs) de múltiples plantas y áreas: Mantenimiento, Confiabilidad, Producción, Seguridad (HSE), Costos y Calidad.\n- Necesidad de un Dashboard Ejecutivo Integral que permita el cálculo automatizado, seguimiento de metas mensuales, análisis de tendencias y generación de planes de acción correctiva.\n\nTAREA:\nDesarrolla una aplicación web completa y profesional en un solo archivo HTML/CSS/JavaScript para la Gestión y Visualización de Indicadores Clave de Desempeño (KPIs) Industriales.\n\nMÓDULOS DEL SISTEMA Y CÁLCULOS DE INGENIERÍA:\n\n1. MOTOR DE CÁLCULO DE KPIs ESTÁNDAR SMRP / ISO:\n   - Confiabilidad y Mantenimiento:\n     * Tiempo Medio Entre Fallas ($MTBF$): $MTBF = \\frac{\\text{Horas Operativas (HO)}}{\\text{Número de Fallas}}$\n     * Tiempo Medio Para Reparar ($MTTR$): $MTTR = \\frac{\\text{Horas de Detención por Falla (HDT)}}{\\text{Número de Fallas}}$\n     * Disponibilidad Mecánica ($A$): $A = \\frac{MTBF}{MTBF + MTTR} \\times 100$\n     * Cumplimiento del Programa de Mantenimiento Preventivo (PM Compliance %): $\\frac{\\text{OTs Ejecutadas a Tiempo}}{\\text{OTs Programadas}} \\times 100$\n     * Razón Mantenimiento Proactivo vs. Reactivo (% Proactive Work).\n   - Producción y Eficiencia Global:\n     * Eficiencia General de los Equipos ($OEE$): $OEE = \\text{Disponibilidad} \\times \\text{Rendimiento} \\times \\text{Calidad}$\n   - Seguridad y HSE:\n     * Índice de Frecuencia de Accidentes (TRIFR / LTIFR) y Días sin Incidentes con Tiempo Perdido.\n\n2. CONFIGURACIÓN DINÁMICA DE KPIs Y UMBRALES:\n   - Capacidad de crear, editar y parametrizar nuevos KPIs con nombre, unidad, fórmula, periodicidad, target (meta), valor real y rangos de semáforo (Verde / Ámbar / Rojo).\n   - Cálculo automático de desviación respecto a la meta y estado de cumplimiento.\n\n3. DASHBOARD INTERACTIVO Y MATRIZ BALANCED SCORECARD:\n   - Cuadrícula ejecutiva con tarjetas KPI interactivas que muestran valor actual, tendencia respecto al mes anterior (+/- %) y sparklines de tendencia histórica en Canvas.\n   - Gráficos comparativos de barras y líneas para análisis de evolución temporal.\n\n4. GESTIÓN DE PLANES DE ACCIÓN PARA KPIs EN ROJO:\n   - Registro de iniciativas de mejora cuando un KPI no alcanza la meta: Causa raíz identificada, acción correctiva, responsable y fecha compromiso.\n\n5. PERSISTENCIA Y EXPORTACIÓN:\n   - Almacenamiento local seguro en IndexedDB con soporte para importar/exportar datos en JSON.\n   - Exportación de Informe de Gestión Mensual en formato PDF A4 y hoja de cálculo Excel (CSV).\n\nDISEÑO:\n- UI Dark Executive (#0f172a, #1e293b, acentos en azul #38bdf8, verde #4ade80 y rojo #f87171). Código completo, modular y sin librerías externas obligatorias.',
+            },
+          ],
+        },
+        {
+          id: 'ind_confiabilidad_mantenimiento',
+          nombre: 'Confiabilidad, Tribología y Mantenimiento Predictivo',
+          prompts: [
+            {
+              id: 'ind_vib_001',
+              titulo: 'Sistema Experto de Mantenimiento Predictivo por Análisis de Vibraciones (ISO 10816/20816)',
+              categoria: 'Aplicación Web',
+              prioridad: 'critica',
+              uso: 'Diario',
+              tags: [
+                'Vibraciones',
+                'Predictivo',
+                'ISO 10816',
+                'ISO 20816',
+                'FFT',
+                'Rodamientos',
+                'Desbalance',
+                'Desalineación',
+                'Mantenimiento',
+              ],
+              prompt:
+                'ACTÚA COMO: Especialista Principal en Análisis de Vibraciones Mecánicas y Mantenimiento Predictivo Nivel IV (ISO 18436-2 / Mobius Institute) con más de 20 años de experiencia diagnosticando maquinaria rotativa crítica en plantas industriales, mineras y petroquímicas (Bombas centrífugas, Motores eléctricos, Compresores, Ventiladores, Turbinas). Experto en la norma ISO 20816 / ISO 10816 (Mechanical vibration - Evaluation of machine vibration by measurements on non-rotating parts), procesamiento de señales FFT (Fast Fourier Transform), envolvente de aceleración (Demodulation / PeakVue) para detección temprana de fallas en rodamientos y análisis orbital.\n\nCONTEXTO TÉCNICO:\n- Parque de 250 activos rotativos críticos monitoreados periódicamente mediante acelerómetros piezoeléctricos triaxiales en descansos (Horizontal, Vertical, Axial).\n- Desafío: Discriminar con precisión matemática los patrones espectrales de fallas mecánicas típicas (Desbalance estático/dinámico a 1X RPM, Desalineación angular/paralela a 2X y 3X RPM, Soltura mecánica a armónicos 1X-10X, Fallas de engranajes GMF y Frecuencias características de rodamientos BPFI, BPFO, BSF, FTF).\n\nTAREA:\nDesarrolla una aplicación web completa y profesional en un solo archivo HTML/CSS/JavaScript para la Evaluación de Severidad de Vibraciones según ISO 20816, Diagnóstico Espectral Automatizado y Gestión de Rutas de Mantenimiento Predictivo.\n\nMÓDULOS DEL SISTEMA Y CÁLCULOS RIGUROSOS DE ANÁLISIS DE VIBRACIONES:\n\n1. CONFIGURACIÓN DE MAQUINARIA Y LÍMITES DE SEVERIDAD (ISO 20816-3):\n   - Catálogo de Activos: Tag de Máquina, Tipo de Máquina (Grupo 1: Grandes máquinas >300 kW; Grupo 2: Máquinas medianas 15-300 kW; Grupo 3: Bombas con impulsor multivía), Tipo de Soporte (Rígido / Flexible), Velocidad de Rotación Nominal ($N$ en RPM, Frecuencia Fundamental $1X = N/60$ Hz).\n   - Umbrales de Severidad ISO en Velocidad RMS (mm/s de 10 a 1000 Hz):\n     * Zona A (Verde): Máquina nueva o recién reparada.\n     * Zona B (Verde Claro): Operación sin restricción a largo plazo.\n     * Zona C (Amarillo): Operación restringida / Requiere planificar mantenimiento correctivo.\n     * Zona D (Rojo): Daño inminente / Requiere DETENCIÓN INMEDIATA de la máquina.\n\n2. CÁLCULO DE FRECUENCIAS CARACTERÍSTICAS DE FALLA EN RODAMIENTOS:\n   - Parámetros Geométricos del Rodamiento: Número de elementos rodantes ($N_b$), Diámetro de bola/rodillo ($d$), Diámetro primitivo de paso ($D_p$), Ángulo de contacto ($alpha$).\n   - Frecuencia de Falla de Pista Exterior ($BPFO$):\n     $$BPFO = \\frac{N_b}{2} \\times \\left(1 - \\frac{d}{D_p}\\cos\\alpha\\right) \\times 1X$$\n   - Frecuencia de Falla de Pista Interior ($BPFI$):\n     $$BPFI = \\frac{N_b}{2} \\times \\left(1 + \\frac{d}{D_p}\\cos\\alpha\\right) \\times 1X$$\n   - Frecuencia de Elemento Rodante ($BSF$):\n     $$BSF = \\frac{D_p}{2d} \\times \\left(1 - \\left(\\frac{d}{D_p}\\cos\\alpha\\right)^2\\right) \\times 1X$$\n   - Frecuencia de Jaula ($FTF$):\n     $$FTF = \\frac{1}{2} \\times \\left(1 - \\frac{d}{D_p}\\cos\\alpha\\right) \\times 1X$$\n\n3. MOTOR DE DIAGNÓSTICO ESPECTRAL AUTOMATIZADO:\n   - Ingesta de Datos Espectrales FFT (Pares de Frecuencia Hz - Amplitud mm/s o g\'s).\n   - Motor de Reglas de Inferencia Experta:\n     * Si predomina $1X$ radial con baja fase -> Diagnóstico: "Desbalance de Masa".\n     * Si predomina $2X$ radial y alto $1X$ axial -> Diagnóstico: "Desalineación de Acoplamiento".\n     * Si aparecen múltiples armónicos exactos $1X, 2X, 3X, \\dots, 8X$ -> Diagnóstico: "Soltura Mecánica / Holgura en Pernos de Anclaje".\n     * Si aparecen picos no sincrónicos coincidentes con $BPFI/BPFO$ con bandas laterales $1X$ -> Diagnóstico: "Degradación Severa de Rodamiento".\n\n4. VISOR DE ESPECTRO FFT INTERACTIVO, PERSISTENCIA Y REPORTABILIDAD:\n   - Gráfico de Espectro de Frecuencia interactivo en Canvas con zoom, cursor armónico (Harmonic Cursor) y marcadores de fallas de rodamientos.\n   - Base de datos IndexedDB para almacenar rutas de medición históricas.\n   - Generación de Informe Técnico de Diagnóstico Predictivo en PDF A4 con recomendaciones de intervención para el equipo de mecánicos.\n\nDISEÑO:\n- UI Dark Tech Machinery (#0c101c, #162035, acentos verde esmeralda #10b981, ámbar #f59e0b y rojo vibración #ef4444). Código 100% completo.',
+            },
+            {
+              id: 'ind_air_001',
+              titulo: 'Auditoría de Eficiencia Energética y Detección de Fugas en Redes de Aire Comprimido (ISO 11011)',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Semanal',
+              tags: [
+                'Aire Comprimido',
+                'ISO 11011',
+                'Fugas',
+                'Ultrasonido',
+                'Eficiencia',
+                'Compresores',
+                'Ahorro Energético',
+                'Industrial',
+              ],
+              prompt:
+                'ACTÚA COMO: Auditor Senior de Sistemas de Aire Comprimido Industrial certificado según la norma ISO 11011 (Compressed air - Energy efficiency - Assessment) y especialista en detección acústica por ultrasonido con más de 20 años de experiencia. Experto en termodinámica de compresión de aire (Tornillo rotativo, Centrífugo, Pistón), cálculo de costo del $m^3$ de aire comprimido, análisis de demanda y dimensionamiento de almacenamiento/pulmones de aire.\n\nCONTEXTO TÉCNICO:\n- Complejo fabril con una sala de compresores de 4 unidades de tornillo rotativo de 250 kW c/u (Presión de red 7.0 bar, Caudal total 160 $m^3/min$), secadores frigoríficos y una red de distribución de tuberías de 5 km con múltiples puntos de consumo neumático.\n- Problema Típico: Las fugas de aire comprimido representan en promedio entre el 20% y el 35% de la energía eléctrica total consumida por los compresores, generando sobrecostos de cientos de miles de dólares al año.\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para la Auditoría Integral de Redes de Aire Comprimido, Registro Georreferenciado de Fugas por Ultrasonido y Cálculo de Potencial de Ahorro según ISO 11011.\n\nMÓDULOS DEL SISTEMA Y FORMULACIONES TERMODINÁMICAS/ACÚSTICAS:\n\n1. MONITOREO Y RENDIMIENTO DE SALA DE COMPRESORES:\n   - Variables de Compresores: Potencia Eléctrica Medida ($kW$), Caudal Entregado ($FAD$ en $m^3/min$ a condiciones estándar ISO 1217), Presión de Descarga ($P$ en bar(g)), Horas en Carga vs. Horas en Vacío.\n   - Cálculo del Consumo Específico de Energía de la Sala ($SEC_{aire}$ en $kW / (m^3/min)$ o $kWh/Nm^3$):\n     $$SEC_{aire} = \\frac{\\sum Potencia\\_Total\\;[kW]}{\\sum FAD\\;[m^3/min]}$$\n   - Cálculo del Costo Unitario del Aire Comprimido ($USD/m^3$) considerando tarifa eléctrica ($USD/kWh$), horas de operación anuales y costos de mantenimiento.\n\n2. CÁLCULO DE CAUDAL Y PÉRDIDA ECONÓMICA DE FUGAS (ISO 11011):\n   - Registro de Fugas Detectadas por Ultrasonido: ID Fuga, Ubicación (Nave, Columna, Equipo, Tipo de Conexión: Manguera, Racor, Válvula, FRL), Nivel de Decibeles ultrasónicos medidos ($dB\\mu V$ a 40 kHz) o Diámetro Estimado del Orificio ($d$ en mm), Presión de Línea en el Punto ($P$ en bar).\n   - Cálculo del Caudal de Pérdida por Orificio ($Q_{fuga}$ en $L/min$ o $m^3/h$ en flujo sónico/subsónico):\n     $$Q_{fuga} = C_d \\times A \\times P_u \\times \\sqrt{\\frac{\\gamma}{R \\cdot T} \\left(\\frac{2}{\\gamma + 1}\\right)^{\\frac{\\gamma + 1}{\\gamma - 1}}}$$\n   - Cálculo del Costo Anual de la Fuga ($USD/año$):\n     $$Costo_{anual} = Q_{fuga}\\,[m^3/min] \\times 60 \\times Horas\\_Operacion\\,[h/año] \\times Costo_{aire}\\,[USD/m^3]$$\n   - Reducción de Emisiones de $CO_2$ asociadas a la reparación de la fuga ($tCO_2/año$).\n\n3. MATRIZ DE PRIORIZACIÓN DE REPARACIÓN Y WORKFLOW:\n   - Clasificación de Severidad: Menor (< $50 USD/año), Media ($50 - $300 USD/año), Mayor (> $300 USD/año / Peligro operacional).\n   - Flujo de Trabajo: Detectada -> Orden de Trabajo Creada -> Reparada -> Verificada post-reparación por ultrasonido.\n\n4. PERSISTENCIA LOCAL, MAPA DE PLANTA Y EXPORTACIÓN:\n   - Base de datos IndexedDB para inspección en terreno sin conexión a internet.\n   - Mapa interactivo de la red de tuberías en Canvas con pines interactivos coloreados por severidad de fuga.\n   - Generación de Informe Ejecutivo de Auditoría de Aire Comprimido en PDF con matriz de ahorro financiero total.\n\nDISEÑO:\n- UI Dark Industrial Air (#0a131f, #142236, acentos cian neumático #38bdf8 y verde ahorro #22c55e). Código limpio y 100% completo.',
+            },
+            {
+              id: 'ind_lub_001',
+              titulo: 'Gestión de Lubricación y Monitoreo de Condición de Aceite Industrial (ISO 4406 / ASTM)',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Semanal',
+              tags: ['Lubricación', 'Tribología', 'ISO 4406', 'Conteo de Partículas', 'Viscosidad', 'TAN', 'TBN', 'Mantenimiento'],
+              prompt:
+                'ACTÚA COMO: Especialista Principal en Tribología y Lubricación de Maquinaria Industrial certificado Noria CLS / MLA III (Certified Lubrication Specialist / Machinery Lubricant Analyst) con 20 años de experiencia. Experto en análisis de laboratorio de aceites y grasas industriales según normas ASTM, conteo de partículas y código de limpieza ISO 4406, degradación oxidativa (TAN / TBN), espectrometría de metales de desgaste (ICP), análisis de contaminación por agua (Karl Fischer ASTM D6304) y gestión de pautas de relubricación.\n\nCONTEXTO TÉCNICO:\n- Planta con más de 400 puntos de lubricación crítica: Centrales hidráulicas de alta presión (Aceites ISO VG 46/68), reductores y multiplicadoras industriales (Aceites sintéticos ISO VG 220/320/460), turbinas y compresores.\n- Desafío Tribológico: Más del 70% de las fallas mecánicas de componentes lubricados se originan por contaminación (Partículas sólidas, Humedad) o degradación química del lubricante.\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para el Control de Análisis de Aceite en Laboratorio, Cálculo de Código de Limpieza ISO 4406 y Gestión de Rutas de Lubricación.\n\nMÓDULOS DEL SISTEMA Y REGLAS TRIBOLÓGICAS ASTM / ISO:\n\n1. FICHA TÉCNICA DEL ACTIVO Y FLUIDO LUBRICANTE:\n   - Datos del Equipo: Tag Activo, Componente (Reductor, Sistema Hidráulico, Descanso liso, Cojinete), Volumen de Cárter ($L$), Tipo de Aceite (Mineral, Sintético PAO, PAG, Éster), Grado de Viscosidad ISO VG (32, 46, 68, 100, 150, 220, 320, 460).\n   - Código de Limpieza ISO Objetivo (Target Cleanliness Code, ej. 16/14/11 para sistemas hidráulicos servo).\n\n2. MÓDULO DE INTERPRETACIÓN DE ANÁLISIS DE LABORATORIO:\n   - Conteo de Partículas Sólidas y Código ISO 4406 (3 Números: $>4\\mu m / >6\\mu m / >14\\mu m$): Conversión automática del número de partículas por mL al código de escala ISO (Escala 1 a 28).\n   - Medición de Viscosidad Cinemática a 40°C y 100°C ($cSt$ según ASTM D445): Alerta si la viscosidad varía más de un $\\pm 10\\%$ respecto al aceite nuevo virgen.\n   - Contenido de Agua por Karl Fischer ($ppm$ según ASTM D6304): Alarma si el agua supera el límite de saturación (100 ppm en hidráulicos, 300 ppm en reductores).\n   - Número de Ácido Total ($TAN$ en $mg\\;KOH/g$ según ASTM D664) y Número de Base Total ($TBN$ en motores diésel según ASTM D2896).\n   - Metales de Desgaste por Espectrometría ICP (ppm de $Fe, Cu, Pb, Sn, Al, Cr$) y Contaminantes ($Si, Na$).\n\n3. MOTOR DE DIAGNÓSTICO EXPERTO TRI-VECTOR (SALUD, CONTAMINACIÓN Y DESGASTE):\n   - Diagnóstico Automático de Modos de Falla:\n     * Alto $Si$ + Alto $Fe$ + Alto conteo de partículas -> "Desgaste Abrasivo por Ingreso de Polvo Ambiental / Falla de Respirador Desecante".\n     * Caída de Viscosidad + Bajo Flash Point -> "Dilución por Combustible".\n     * Alto $TAN$ + Aumento de Viscosidad + Olor rancio -> "Degradación Oxidativa Térmica Severa del Aceite".\n     * Código ISO medido superior al objetivo -> "Recomendación: Microfiltración Dializadora / Cambio de Elementos Filtrantes".\n\n4. GESTIÓN DE RUTAS DE RELUBRICACIÓN, PERSISTENCIA Y REPORTES:\n   - Planificador de frecuencias de relubricación por horas de servicio o fecha calendario.\n   - Almacenamiento local en IndexedDB con histórico de muestras por equipo.\n   - Gráficos interactivos en Canvas: Evolución temporal de Código ISO, Viscosidad y Metales de Desgaste (ppm).\n   - Generación de Informe Oficial de Diagnóstico de Laboratorio Tribológico en PDF A4.\n\nDISEÑO:\n- UI Dark Oil Theme (#11150f, #1e241b, acentos ámbar aceite #d97706, oro #eab308 y esmeralda #10b981). Código 100% completo.',
+            },
+            {
+              id: 'ind_rca_001',
+              titulo: 'Sistema de Investigación de Fallas y Análisis de Causa Raíz (RCA - Apollo / Ishikawa)',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Semanal',
+              tags: ['RCA', 'Causa Raíz', 'Apollo', 'Ishikawa', '5 Porqués', 'Árbol de Fallas', 'Investigación', 'Mantenimiento'],
+              prompt:
+                'ACTÚA COMO: Facilitador Master en Análisis de Causa Raíz (RCA - Root Cause Analysis / Metodología Apollo y Árbol Lógico de Fallas) e Ingeniero de Confiabilidad Industrial con más de 20 años de experiencia liderando investigaciones de fallas catastróficas en activos mayores. Experto en el principio de causa-efecto, preservación de evidencias físicas, diagrama de espina de pescado (Ishikawa 6M), metodología de los 5 Porqués y diseño de planes de acción correctiva/preventiva con seguimiento de efectividad.\n\nCONTEXTO TÉCNICO:\n- Evento de Falla Mayor en Planta: Detención no programada de una línea crítica de producción con daño severo en un turbocompresor o bomba principal, generando pérdidas de producción de $2M USD y riesgo de seguridad.\n- Exigencia: Realizar una investigación rigurosa, libre de sesgos y basada en evidencias demostrables para identificar las causas físicas, humanas y latentes (sistémicas/organizacionales), asegurando que el evento no vuelva a ocurrir jamás.\n\nTAREA:\nDesarrolla una aplicación web completa y profesional en un solo archivo HTML/CSS/JavaScript para la Gestión Integral de Investigaciones de Fallas, Construcción Visual de Árboles Lógicos Causa-Efecto (RCA Apollo) y Matriz Ishikawa.\n\nMÓDULOS DEL SISTEMA Y METODOLOGÍAS DE CONFIABILIDAD:\n\n1. REGISTRO DEL EVENTO Y PRESERVACIÓN DE EVIDENCIAS:\n   - Ficha del Evento: Título de la Falla, N° de Caso RCA, Activo Involucrado (Tag), Área/Línea, Fecha/Hora del Evento, Tiempo de Detención (Horas), Impacto Económico ($USD en lucro cesante + costo de reparación), Clasificación de Severidad (Catastrófica, Mayor, Moderada, Menor), Equipo de Investigación (Líder facilitador, Especialistas de área).\n   - Preservación de Evidencias de las 5P: Partes (Piezas fracturadas/dañadas), Posición (Fotos de cómo quedó la máquina), Personas (Entrevistas y testimonios de operadores), Papeles (Registros de SCADA, OTs previas, pautas de mantenimiento), Paradigmas (Prácticas operacionales).\n\n2. CONSTRUCTOR VISUAL DE ÁRBOL DE CAUSA-EFECTO (MÉTODO APOLLO):\n   - Diagrama de Bloques Jerárquico Interactivo en Canvas/SVG:\n     * Cada nodo de causa contiene: [Causa Propuesta] + [Evidencia de Respaldo que la prueba].\n     * Diferenciación de causas en cada nivel: "Acción" (Evento detonante) y "Condición" (Estado previo necesario).\n     * Navegación en profundidad: "¿Por qué ocurrió esto?" ramificando hacia causas físicas, humanas y latentes.\n   - Herramienta complementaria: Diagrama de Ishikawa 6M (Método, Máquina, Mano de obra, Material, Medio ambiente, Medición) y Test de los 5 Porqués estructurado.\n\n3. MATRIZ DE PLAN DE ACCIONES CORRECTIVAS Y PREVENTIVAS:\n   - Registro de Acciones: Acción Correctiva Propuesta, Causa Raíz a la que ataca, Tipo de Control (Eliminación, Sustitución, Control de Ingeniería, Control Administrativo), Responsable, Fecha Límite de Implementación, Estado (Abierta, En Proceso, Implementada, Verificada).\n   - Verificación de Efectividad: Evaluación técnica formal a los 30, 60 y 90 días para comprobar que la falla fue erradicada definitivamente.\n\n4. PERSISTENCIA LOCAL, GRAFICACIÓN Y EXPORTACIÓN:\n   - Base de datos IndexedDB para almacenar todas las investigaciones con capacidad de adjuntar fotos de evidencias en base64.\n   - Renderizado y exportación del Árbol de Causa-Efecto completo a imagen PNG de alta resolución.\n   - Generación de Informe Formal de Investigación de Causa Raíz (RCA Report) en PDF A4 listo para presentación a la Gerencia General.\n\nDISEÑO:\n- UI Dark Reliability (#0e1726, #1b2e4b, acentos violeta #8b5cf6, ámbar #f59e0b y azul #3b82f6). Código 100% completo y sin dependencias.',
+            },
+            {
+              id: 'ind_mro_001',
+              titulo: 'Gestión de Repuestos Críticos, Stock de Seguridad y Clasificación VED/ABC para MRO Industrial',
+              categoria: 'Aplicación Web',
+              prioridad: 'alta',
+              uso: 'Semanal',
+              tags: ['MRO', 'Repuestos Críticos', 'Stock de Seguridad', 'ABC', 'VED', 'EOQ', 'Confiabilidad', 'Cadena de Suministro'],
+              prompt:
+                'ACTÚA COMO: Gerente Principal de Gestión de Repuestos y Materiales de Mantenimiento (MRO Materials & Spares Manager) con 20 años de experiencia en minería, siderurgia y manufactura pesada. Especialista en optimización de inventarios de mantenimiento, modelación probabilística de repuestos de baja rotación y alto impacto (Poisson / Binomial Negativa), clasificación cruzada ABC-VED (Vital, Esencial, Deseable), cálculo de Stock de Seguridad y Costo Total de Propiedad (TCO).\n\nCONTEXTO TÉCNICO:\n- Almacén de Mantenimiento (Bodega MRO) con más de 5,000 SKUs de repuestos (Motores de repuesto, tarjetas electrónicas de PLC, sellos mecánicos, rodamientos especiales, bombas de repuesto).\n- Dilema Clásico: Minimizar el capital inmovilizado en inventario ($) sin incurrir en paradas catastróficas de planta por falta de un repuesto crítico con Lead Time de fabricación de 6 a 12 meses.\n\nTAREA:\nDesarrolla una aplicación web completa y autónoma en un único archivo HTML/CSS/JavaScript para la Clasificación de Criticidad de Repuestos (Matriz ABC-VED), Dimensionamiento de Stock de Seguridad y Cálculo de Cantidad Económica de Pedido (EOQ) para MRO Industrial.\n\nMÓDULOS DEL SISTEMA Y MODELOS MATEMÁTICOS DE INVENTARIO:\n\n1. REGISTRO Y MATRIZ DE CRITICIDAD DE MATERIALES (ABC-VED):\n   - Catálogo de SKUs: Código de Material / Parte, Descripción Técnica, Equipo Donde se Instala (Tag), Criticidad del Equipo Asociado (A: Crítico, B: Importante, C: Secundario), Proveedor Principal, Lead Time de Entrega ($LT$ en semanas/meses), Costo Unitario ($USD$), Consumo Anual Histórico ($D$ unidades/año).\n   - Clasificación por Valor Económico de Consumo (Pareto ABC):\n     * Clase A (80% del valor del inventario - ~20% de los ítems).\n     * Clase B (15% del valor del inventario - ~30% de los ítems).\n     * Clase C (5% del valor del inventario - ~50% de los ítems).\n   - Clasificación por Criticidad Operacional (VED):\n     * V (Vital): Su falla detiene inmediatamente la planta / Riesgo de vida o ambiental / Sin sustituto posible.\n     * E (Esencial): Detiene equipos secundarios o reduce capacidad con margen de maniobra.\n     * D (Deseable): No afecta directamente la continuidad operacional.\n   - Matriz Combinada 3x3 (AV, BV, CV, AE, BE, CE, AD, BD, CD) con estrategia de gestión diferenciada para cada cuadrante.\n\n2. CÁLCULO ESTADÍSTICO DE STOCK DE SEGURIDAD Y PUNTO DE REORDEN (ROP):\n   - Para Repuestos de Demanda Continua (Modelo Normal):\n     * Desviación estándar de la demanda ($sigma_D$) y desviación estándar del Lead Time ($sigma_{LT}$).\n     * Nivel de Servicio Deseado ($CSL$, ej. 98% -> Factor de seguridad $Z = 2.05$).\n     * Stock de Seguridad ($SS$):\n       $$SS = Z \\times \\sqrt{LT \\cdot \\sigma_D^2 + D^2 \\cdot \\sigma_{LT}^2}$$\n     * Punto de Reorden ($ROP$):\n       $$ROP = (D \\times LT) + SS$$\n   - Para Repuestos Críticos de Baja Rotación (Modelo de Poisson):\n     * Cálculo de probabilidad de stockout según distribución acumulada de Poisson para tasa de falla $lambda$:\n       $$P(k \\le s) = \\sum_{k=0}^s \\frac{(\\lambda \\cdot LT)^k e^{-\\lambda \\cdot LT}}{k!} \\ge CSL$$\n\n3. CÁLCULO DE CANTIDAD ECONÓMICA DE PEDIDO (EOQ / WILSON):\n   - Costo por Colocar una Orden ($S$ en $USD$), Tasa Anual de Mantenimiento de Inventario ($H = i \\times Costo_{unitario}$):\n     $$EOQ = \\sqrt{\\frac{2 \\cdot D \\cdot S}{H}}$$\n\n4. PERSISTENCIA LOCAL, ANÁLISIS DE CAPITAL Y EXPORTACIÓN:\n   - Base de datos IndexedDB con toda la matriz de repuestos.\n   - Gráficos interactivos en Canvas: Curva de Pareto ABC acumulada y Gráfico de distribución de stock de seguridad por cuadrante VED.\n   - Exportación de la Matriz de Estrategia MRO a Excel/CSV y reporte de optimización en PDF.\n\nDISEÑO:\n- UI Dark Logistics (#0f172a, #1a2234, acentos cian #06b6d4, verde esmeralda #10b981 y ámbar #f59e0b). Código 100% terminado.',
+            },
+          ],
+        },
+      ],
+    },
   ],
-  
-  configuracion: {
-    nombreApp: "Biblioteca de Promps Industriales",
-    version: "3.0.0",
-    autor: "Industrial Prompt Library",
-    descripcion: "Colección profesional de mega-prompts para generación de aplicaciones industriales completas en Oil & Gas, Minería, Desalinización, Energía y más.",
-    idiomas: ["es"],
-    plataformas: ["Android", "iOS", "Web", "Tablet"],
-    funcionalidades: [
-      "Búsqueda por palabras clave",
-      "Filtrado por industria y categoría",
-      "Exportación a PDF",
-      "Exportación a Excel",
-      "Envío por correo electrónico",
-      "Guardado offline (PWA)",
-      "Favoritos personales",
-      "Historial de uso",
-      "Copiado rápido al portapapeles",
-      "Modo oscuro/claro"
-    ]
-  }
 };

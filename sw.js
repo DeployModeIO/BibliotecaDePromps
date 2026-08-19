@@ -10,26 +10,24 @@ const ASSETS_TO_CACHE = [
   '/js/platform-tests.js',
   '/manifest.json',
   '/icons/icon-192.svg',
-  '/icons/icon-512.svg'
+  '/icons/icon-512.svg',
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS_TO_CACHE))
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.addAll(ASSETS_TO_CACHE))
       .then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(cacheNames =>
-      Promise.all(
-        cacheNames
-          .filter(name => name !== CACHE_NAME)
-          .map(name => caches.delete(name))
-      )
-    ).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((cacheNames) => Promise.all(cacheNames.filter((name) => name !== CACHE_NAME).map((name) => caches.delete(name))))
+      .then(() => self.clients.claim())
   );
 });
 
@@ -38,40 +36,44 @@ self.addEventListener('fetch', (event) => {
 
   if (url.origin === 'https://fonts.gstatic.com' || url.origin === 'https://fonts.googleapis.com') {
     event.respondWith(
-      caches.open(CACHE_NAME).then(cache =>
-        cache.match(event.request).then(cached => {
-          if (cached) return cached;
-          return fetch(event.request).then(response => {
-            if (response && response.status === 200) {
-              cache.put(event.request, response.clone());
-            }
-            return response;
-          });
-        })
-      ).catch(() => new Response('', { status: 504 }))
+      caches
+        .open(CACHE_NAME)
+        .then((cache) =>
+          cache.match(event.request).then((cached) => {
+            if (cached) return cached;
+            return fetch(event.request).then((response) => {
+              if (response && response.status === 200) {
+                cache.put(event.request, response.clone());
+              }
+              return response;
+            });
+          })
+        )
+        .catch(() => new Response('', { status: 504 }))
     );
     return;
   }
 
   event.respondWith(
-    caches.match(event.request)
-      .then(cachedResponse => {
-        if (cachedResponse) return cachedResponse;
-        return fetch(event.request).then(networkResponse => {
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) return cachedResponse;
+      return fetch(event.request)
+        .then((networkResponse) => {
           if (!networkResponse || networkResponse.status !== 200) {
             return networkResponse;
           }
           const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
+          caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
           return networkResponse;
-        }).catch(() => {
+        })
+        .catch(() => {
           if (event.request.destination === 'document') {
             return caches.match('/index.html');
           }
         });
-      })
+    })
   );
 });
 

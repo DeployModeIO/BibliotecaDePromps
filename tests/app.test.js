@@ -10,26 +10,95 @@ const vm = require('vm');
 // Mock minimo del DOM para Node
 const mockDom = {
   document: {
-    getElementById: () => ({ addEventListener() {}, classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } }, style: {}, querySelector() {}, querySelectorAll() { return []; }, setAttribute() {}, getAttribute() { return null; }, toggleAttribute() {}, appendChild() {}, remove() {}, click() {}, focus() {}, select() {}, hidden: false, textContent: '', innerHTML: '', value: '', dataset: {}, parentElement: null }),
+    getElementById: () => ({
+      addEventListener() {},
+      classList: {
+        add() {},
+        remove() {},
+        toggle() {},
+        contains() {
+          return false;
+        },
+      },
+      style: {},
+      querySelector() {},
+      querySelectorAll() {
+        return [];
+      },
+      setAttribute() {},
+      getAttribute() {
+        return null;
+      },
+      toggleAttribute() {},
+      appendChild() {},
+      remove() {},
+      click() {},
+      focus() {},
+      select() {},
+      hidden: false,
+      textContent: '',
+      innerHTML: '',
+      value: '',
+      dataset: {},
+      parentElement: null,
+    }),
     querySelectorAll: () => [],
-    createElement: () => ({ style: {}, classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } }, appendChild() {}, remove() {}, setAttribute() {}, getAttribute() { return null; }, addEventListener() {}, querySelector() {}, querySelectorAll() { return []; }, dataset: {}, textContent: '', innerHTML: '', hidden: false, parentElement: null }),
+    createElement: () => ({
+      style: {},
+      classList: {
+        add() {},
+        remove() {},
+        toggle() {},
+        contains() {
+          return false;
+        },
+      },
+      appendChild() {},
+      remove() {},
+      setAttribute() {},
+      getAttribute() {
+        return null;
+      },
+      addEventListener() {},
+      querySelector() {},
+      querySelectorAll() {
+        return [];
+      },
+      dataset: {},
+      textContent: '',
+      innerHTML: '',
+      hidden: false,
+      parentElement: null,
+    }),
     body: { style: {}, appendChild() {}, overflow: '', classList: { add() {}, remove() {} } },
     activeElement: { tagName: 'BODY' },
     documentElement: { setAttribute() {}, getAttribute: () => 'dark' },
-    addEventListener: () => {}
+    addEventListener: () => {},
   },
   window: {
-    addEventListener: () => {}, scrollTo: () => {}, open: () => {}, promptLibrary: null,
-    location: { href: '' }, performance: { now: () => Date.now() },
-    requestAnimationFrame: (cb) => cb(Date.now()), setInterval: () => {}, setTimeout: (cb) => cb(), clearTimeout: () => {},
-    IntersectionObserver: class { observe() {} unobserve() {} },
+    addEventListener: () => {},
+    scrollTo: () => {},
+    open: () => {},
+    promptLibrary: null,
+    location: { href: '' },
+    performance: { now: () => Date.now() },
+    requestAnimationFrame: (cb) => cb(Date.now()),
+    setInterval: () => {},
+    setTimeout: (cb) => cb(),
+    clearTimeout: () => {},
+    IntersectionObserver: class {
+      observe() {}
+      unobserve() {}
+    },
     URL: { createObjectURL: () => 'blob:', revokeObjectURL: () => {} },
-    Blob: class { constructor() {} },
+    Blob: class {
+      constructor() {}
+    },
     navigator: { onLine: true, clipboard: { writeText: async () => {} }, serviceWorker: { register: async () => {} } },
     localStorage: { getItem: () => null, setItem: () => {}, removeItem: () => {} },
-    console: { log() {}, warn() {}, error() {} }
+    console: { log() {}, warn() {}, error() {} },
   },
-  getComputedStyle: () => ({})
+  getComputedStyle: () => ({}),
 };
 
 // Configurar globales
@@ -61,6 +130,7 @@ const context = vm.createContext({ ...global, console: global.console });
 loadDataFile(path.join(__dirname, '..', 'js', 'prompts-data.js'), 'PROMPTS_DB', context);
 loadDataFile(path.join(__dirname, '..', 'js', 'prompts-data-extra.js'), 'PROMPTS_DB_EXTRA', context);
 loadDataFile(path.join(__dirname, '..', 'js', 'prompts-data-v2.js'), 'PROMPTS_DB_V2', context);
+loadDataFile(path.join(__dirname, '..', 'js', 'prompts-data-fullstack.js'), 'PROMPTS_DB_FULLSTACK', context);
 
 // Cargar platform-tests via vm
 const platformTestsFile = fs.readFileSync(path.join(__dirname, '..', 'js', 'platform-tests.js'), 'utf8');
@@ -158,6 +228,28 @@ describe('PROMPTS_DB_V2 estructura', () => {
 
   test('prompts v2 tienen estructura valida', () => {
     const db = context.PROMPTS_DB_V2;
+    db.categorias.forEach((cat) => {
+      cat.subcategorias.forEach((sub) => {
+        sub.prompts.forEach((p) => {
+          expect(p.id).toBeTruthy();
+          expect(p.titulo).toBeTruthy();
+          expect(['critica', 'alta', 'media']).toContain(p.prioridad);
+          expect(p.prompt.length).toBeGreaterThan(500);
+        });
+      });
+    });
+  });
+});
+
+describe('PROMPTS_DB_FULLSTACK estructura', () => {
+  test('PROMPTS_DB_FULLSTACK tiene categorias', () => {
+    const db = context.PROMPTS_DB_FULLSTACK;
+    expect(db).toBeDefined();
+    expect(db.categorias.length).toBeGreaterThanOrEqual(1);
+  });
+
+  test('prompts fullstack tienen estructura valida', () => {
+    const db = context.PROMPTS_DB_FULLSTACK;
     db.categorias.forEach((cat) => {
       cat.subcategorias.forEach((sub) => {
         sub.prompts.forEach((p) => {
