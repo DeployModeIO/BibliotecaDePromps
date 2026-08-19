@@ -351,15 +351,13 @@ const AIChat = (() => {
         if (resp.ok) {
           let models = [];
           try {
-            const data = resp.json ? await resp.json() : null;
-            if (data) {
-              if (probe.type === 'ollama') {
-                models = (data.models || data || []).map((m) => m.name || m.model || m);
-              } else if (probe.type === 'kobold') {
-                models = [data.result || data.model || 'kobold-model'];
-              } else {
-                models = (data.data || data.models || data || []).map((m) => m.id || m.name || m);
-              }
+            const data = await resp.json();
+            if (probe.type === 'ollama') {
+              models = (data.models || data || []).map((m) => m.name || m.model || m);
+            } else if (probe.type === 'kobold') {
+              models = [data.result || data.model || 'kobold-model'];
+            } else {
+              models = (data.data || data.models || data || []).map((m) => m.id || m.name || m);
             }
           } catch {
             /* ignore parse errors */
@@ -678,10 +676,16 @@ const AIChat = (() => {
       });
     } catch (fetchErr) {
       if (fetchErr.message && (fetchErr.message.includes('Failed to fetch') || fetchErr.message.includes('NetworkError'))) {
+        const isFileProtocol = window.location.protocol === 'file:';
+        if (isFileProtocol) {
+          throw new Error(
+            'Estás abriendo la página como archivo local (file://).\nAbre http://localhost:3000 en vez de file:///D:/Proyectos/...'
+          );
+        }
         throw new Error(
           'Ollama no accesible por CORS. En Windows, abre una terminal Admin y ejecuta:\n' +
             'setx OLLAMA_ORIGINS "*"\n' +
-            'Luego reinicia Ollama. Alternativamente, abre http://localhost:11434 en otra pestaña para verificar.'
+            'Luego reinicia Ollama. Verifica en http://localhost:11434'
         );
       }
       throw fetchErr;
