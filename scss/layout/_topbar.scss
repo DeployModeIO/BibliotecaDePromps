@@ -187,3 +187,71 @@
   height: 4px;
   opacity: 0.5;
 }
+
+// ---- platform chips ----
+.pchips {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.pchip-label {
+  font-family: var(--f-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--txt-3);
+  white-space: nowrap;
+}
+
+.pchip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--txt-2);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  padding: 0.35rem 0.65rem;
+  cursor: pointer;
+  transition:
+    transform 0.16s var(--ease-out),
+    border-color 0.16s ease,
+    color 0.16s ease,
+    background 0.16s ease,
+    box-shadow 0.16s ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: var(--amber-dim);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.96);
+  }
+
+  &.is-on {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: #171004;
+    font-weight: 600;
+    box-shadow: 0 2px 10px var(--amber-dim);
+  }
+
+  &[data-platform='all'] {
+    border-style: dashed;
+    font-weight: 600;
+
+    &.is-on {
+      border-style: solid;
+      background: var(--amber);
+      border-color: var(--amber);
+      color: #171004;
+    }
+  }
+}

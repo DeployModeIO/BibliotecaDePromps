@@ -93,11 +93,11 @@ const AIChat = (() => {
       type: 'cloud',
       tier: 'both',
       apiKey: '',
-      models: ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-2.0-pro', 'gemini-2.5-pro'],
-      defaultModel: 'gemini-2.0-flash',
+      models: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-2.0-pro'],
+      defaultModel: 'gemini-2.5-flash',
       modelsEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
       authType: 'query',
-      note: 'Tier gratuito: 1500 req/día para gemini-2.0-flash. Sin costo para flash-lite o con API key gratuita de Google AI Studio.',
+      note: 'Tier gratuito: 1500 req/día para gemini-2.5-flash / gemini-2.0-flash. Sin costo para flash-lite o con API key gratuita de Google AI Studio.',
     },
     {
       id: 'groq',
@@ -106,8 +106,8 @@ const AIChat = (() => {
       type: 'cloud',
       tier: 'free',
       apiKey: '',
-      models: ['llama-3.1-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'],
-      defaultModel: 'llama-3.1-70b-versatile',
+      models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768', 'deepseek-r1-distill-llama-70b', 'qwen-2.5-32b'],
+      defaultModel: 'llama-3.3-70b-versatile',
       modelsEndpoint: 'https://api.groq.com/openai/v1/models',
       note: 'Tier gratuito con límites de ratio (RPM/TPM). Inferencia LPU de ultra-baja latencia.',
     },
@@ -121,13 +121,18 @@ const AIChat = (() => {
       models: [
         'openai/gpt-4o',
         'anthropic/claude-3.5-sonnet',
+        'google/gemini-2.5-flash',
         'google/gemini-2.0-flash',
+        'meta-llama/llama-4-maverick:free',
+        'google/gemini-2.5-flash:free',
+        'deepseek/deepseek-chat:free',
+        'mistral/mistral-small:free',
         'meta-llama/llama-3.2-3b-instruct:free',
         'google/gemini-2.0-flash-exp:free',
       ],
       defaultModel: 'openai/gpt-4o',
       modelsEndpoint: 'https://openrouter.ai/api/v1/models',
-      note: 'Modelos con sufijo :free (ej. meta-llama/llama-3.2-3b-instruct:free) son gratuitos vía OpenRouter.',
+      note: 'Modelos con sufijo :free (ej. meta-llama/llama-4-maverick:free) son gratuitos vía OpenRouter.',
     },
     {
       id: 'deepseek',
@@ -148,10 +153,10 @@ const AIChat = (() => {
       type: 'cloud',
       tier: 'paid',
       apiKey: '',
-      models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'],
+      models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'o1', 'o3-mini', 'o4-mini'],
       defaultModel: 'gpt-4o-mini',
       modelsEndpoint: 'https://api.openai.com/v1/models',
-      note: 'API oficial de pago por tokens consumidos.',
+      note: 'API oficial de OpenAI (modelos GPT-4o, GPT-4.1, razonadores o1, o3-mini, o4-mini).',
     },
     {
       id: 'anthropic',
@@ -160,12 +165,12 @@ const AIChat = (() => {
       type: 'cloud',
       tier: 'paid',
       apiKey: '',
-      models: ['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229', 'claude-3-haiku-20240307'],
-      defaultModel: 'claude-3-5-sonnet-20241022',
+      models: ['claude-sonnet-4-20250514', 'claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-opus-4-20250514'],
+      defaultModel: 'claude-sonnet-4-20250514',
       headers: { 'anthropic-version': '2023-06-01' },
       modelsEndpoint: 'https://api.anthropic.com/v1/models',
       authType: 'x-api-key',
-      note: 'API de pago por tokens consumidos.',
+      note: 'API oficial de Anthropic Claude.',
     },
     {
       id: 'alibaba',
@@ -179,6 +184,83 @@ const AIChat = (() => {
       modelsEndpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/models',
       note: 'Plan de tokens gratuitos con registro en Alibaba Cloud Model Studio.',
     },
+    {
+      id: 'mistral',
+      name: 'Mistral AI',
+      endpoint: 'https://api.mistral.ai/v1/chat/completions',
+      type: 'cloud',
+      tier: 'both',
+      apiKey: '',
+      models: ['mistral-large-latest', 'mistral-medium-latest', 'mistral-small-latest', 'pixtral-large-latest', 'codestral-latest'],
+      defaultModel: 'mistral-large-latest',
+      modelsEndpoint: 'https://api.mistral.ai/v1/models',
+      note: 'Modelos Mistral, Pixtral y Codestral. Tier gratuito / créditos de prueba disponibles.',
+    },
+    {
+      id: 'together',
+      name: 'Together AI',
+      endpoint: 'https://api.together.xyz/v1/chat/completions',
+      type: 'cloud',
+      tier: 'both',
+      apiKey: '',
+      models: [
+        'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+        'mistralai/Mixtral-8x22B-Instruct-v0.1',
+        'Qwen/Qwen2.5-72B-Instruct-Turbo',
+        'deepseek-ai/DeepSeek-R1',
+      ],
+      defaultModel: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+      modelsEndpoint: 'https://api.together.xyz/v1/models',
+      note: 'Tier gratuito con créditos de bienvenida para inferencia open-source.',
+    },
+    {
+      id: 'perplexity',
+      name: 'Perplexity',
+      endpoint: 'https://api.perplexity.ai/chat/completions',
+      type: 'cloud',
+      tier: 'paid',
+      apiKey: '',
+      models: ['sonar-pro', 'sonar', 'sonar-reasoning-pro'],
+      defaultModel: 'sonar-pro',
+      modelsEndpoint: 'https://api.perplexity.ai/models',
+      note: 'Modelos Sonar de búsqueda y razonamiento online ($10 free credit on signup).',
+    },
+    {
+      id: 'xai',
+      name: 'xAI / Grok',
+      endpoint: 'https://api.x.ai/v1/chat/completions',
+      type: 'cloud',
+      tier: 'paid',
+      apiKey: '',
+      models: ['grok-2-1212', 'grok-2-vision-1212', 'grok-beta'],
+      defaultModel: 'grok-2-1212',
+      modelsEndpoint: 'https://api.x.ai/v1/models',
+      note: 'Modelos Grok de xAI ($25 free credit on signup).',
+    },
+    {
+      id: 'cohere',
+      name: 'Cohere',
+      endpoint: 'https://api.cohere.ai/v2/chat',
+      type: 'cloud',
+      tier: 'both',
+      apiKey: '',
+      models: ['command-r-plus', 'command-r', 'command'],
+      defaultModel: 'command-r-plus',
+      modelsEndpoint: 'https://api.cohere.ai/v2/models',
+      note: 'Modelos Command R / Command R+ (trial keys disponibles sin costo).',
+    },
+    {
+      id: 'cerebras',
+      name: 'Cerebras',
+      endpoint: 'https://api.cerebras.ai/v1/chat/completions',
+      type: 'cloud',
+      tier: 'free',
+      apiKey: '',
+      models: ['llama3.3-70b', 'llama-3.1-8b'],
+      defaultModel: 'llama3.3-70b',
+      modelsEndpoint: 'https://api.cerebras.ai/v1/models',
+      note: 'Inferencia ultra rápida con Wafer-Scale Engine (free tier with rate limits).',
+    },
   ];
 
   /* ============================================================
@@ -188,8 +270,8 @@ const AIChat = (() => {
     {
       id: 'gemini_free',
       name: 'Google Gemini Free Tier',
-      endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-      models: ['gemini-2.0-flash', 'gemini-2.0-flash-lite'],
+      endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+      models: ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'],
       tier: 'free',
       description: 'Sin API key requerida para modelos lite o API key gratuita desde Google AI Studio (1500 req/día).',
       url: 'https://aistudio.google.com/',
@@ -198,16 +280,32 @@ const AIChat = (() => {
       id: 'groq_free',
       name: 'Groq Free Tier',
       endpoint: 'https://api.groq.com/openai/v1/chat/completions',
-      models: ['llama-3.1-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'],
+      models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768', 'deepseek-r1-distill-llama-70b', 'qwen-2.5-32b'],
       tier: 'free',
       description: 'Inferencia ultra rápida con tier gratuito sujeto a límites de ratio.',
       url: 'https://console.groq.com/',
     },
     {
+      id: 'cerebras_free',
+      name: 'Cerebras Free Tier',
+      endpoint: 'https://api.cerebras.ai/v1/chat/completions',
+      models: ['llama3.3-70b', 'llama-3.1-8b'],
+      tier: 'free',
+      description: 'Inferencia ultra rápida por hardware Wafer-Scale Engine con tier gratuito.',
+      url: 'https://cloud.cerebras.ai/',
+    },
+    {
       id: 'openrouter_free',
       name: 'OpenRouter Free Models',
       endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-      models: ['meta-llama/llama-3.2-3b-instruct:free', 'google/gemini-2.0-flash-exp:free'],
+      models: [
+        'meta-llama/llama-4-maverick:free',
+        'google/gemini-2.5-flash:free',
+        'deepseek/deepseek-chat:free',
+        'mistral/mistral-small:free',
+        'meta-llama/llama-3.2-3b-instruct:free',
+        'google/gemini-2.0-flash-exp:free',
+      ],
       tier: 'free',
       description: 'Modelos con sufijo :free accesibles sin costo.',
       url: 'https://openrouter.ai/models?free=true',
@@ -220,6 +318,38 @@ const AIChat = (() => {
       tier: 'free',
       description: 'deepseek-chat incluye tier gratuito / créditos iniciales al registrarse.',
       url: 'https://platform.deepseek.com/',
+    },
+    {
+      id: 'mistral_free',
+      name: 'Mistral AI Free Trial',
+      endpoint: 'https://api.mistral.ai/v1/chat/completions',
+      models: ['mistral-small-latest', 'codestral-latest', 'mistral-large-latest'],
+      tier: 'free',
+      description: 'Créditos iniciales y nivel gratuito de experimentación en La Plateforme.',
+      url: 'https://console.mistral.ai/',
+    },
+    {
+      id: 'together_free',
+      name: 'Together AI Free Credits',
+      endpoint: 'https://api.together.xyz/v1/chat/completions',
+      models: [
+        'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+        'mistralai/Mixtral-8x22B-Instruct-v0.1',
+        'Qwen/Qwen2.5-72B-Instruct-Turbo',
+        'deepseek-ai/DeepSeek-R1',
+      ],
+      tier: 'free',
+      description: 'Créditos gratuitos de bienvenida para inferencia de modelos open-source.',
+      url: 'https://www.together.ai/',
+    },
+    {
+      id: 'cohere_free',
+      name: 'Cohere Trial Tier',
+      endpoint: 'https://api.cohere.ai/v2/chat',
+      models: ['command-r-plus', 'command-r', 'command'],
+      tier: 'free',
+      description: 'Trial API Keys gratuitas para evaluación y prototipado.',
+      url: 'https://dashboard.cohere.com/',
     },
   ];
 
@@ -240,13 +370,49 @@ const AIChat = (() => {
       name: 'Google AI Studio Gemini Free',
       url: 'https://ai.google.dev/pricing',
       type: 'portal',
-      description: 'Documentación oficial del tier gratuito de Gemini (1500 req/día para Gemini 2.0 Flash).',
+      description: 'Documentación oficial del tier gratuito de Gemini (1500 req/día para Gemini 2.0/2.5 Flash).',
     },
     {
       name: 'Groq Cloud Rate Limits',
       url: 'https://console.groq.com/docs/rate-limits',
       type: 'portal',
       description: 'Límites y cuotas de inferencia gratuita de Groq Cloud.',
+    },
+    {
+      name: 'Mistral AI Documentation',
+      url: 'https://docs.mistral.ai/getting-started/models/',
+      type: 'portal',
+      description: 'Documentación oficial y catálogo de modelos de Mistral AI.',
+    },
+    {
+      name: 'Together AI Models Catalog',
+      url: 'https://docs.together.ai/docs/inference-models',
+      type: 'portal',
+      description: 'Lista y especificaciones de modelos open-source en Together AI.',
+    },
+    {
+      name: 'Perplexity AI Model Cards',
+      url: 'https://docs.perplexity.ai/guides/model-cards',
+      type: 'portal',
+      description: 'Modelos Sonar y capacidades de búsqueda en tiempo real de Perplexity.',
+    },
+    {
+      name: 'xAI Grok Documentation',
+      url: 'https://docs.x.ai/docs/models',
+      type: 'portal',
+      description: 'Guía oficial de modelos Grok y visión de xAI.',
+    },
+    {
+      name: 'Cohere Models API Documentation',
+      url: 'https://docs.cohere.com/v2/docs/models',
+      type: 'portal',
+      description: 'Documentación de modelos Command R y Command R+ en Cohere API v2.',
+    },
+    {
+      name: 'Cerebras Inference Documentation',
+      url: 'https://inference-docs.cerebras.ai/models',
+      type: 'portal',
+      description: 'Modelos Llama 3.3 optimizados para Wafer-Scale Engine en Cerebras Cloud.',
     },
   ];
 
@@ -397,7 +563,9 @@ const AIChat = (() => {
       showToast('Ingrese una API Key primero');
       return;
     }
-    let modelsUrl = provider.modelsEndpoint || provider.endpoint.replace('/chat/completions', '/models').replace('/messages', '/models');
+    let modelsUrl =
+      provider.modelsEndpoint ||
+      provider.endpoint.replace('/chat/completions', '/models').replace('/messages', '/models').replace('/chat', '/models');
     if (provider.authType === 'query' && provider.apiKey) {
       modelsUrl += (modelsUrl.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(provider.apiKey);
     }
@@ -420,33 +588,62 @@ const AIChat = (() => {
       if (resp.ok) {
         const data = await resp.json();
         let models = [];
-        if (Array.isArray(data.data)) {
-          models = data.data.map((m) => m.id || m.name || '').filter(Boolean);
-        } else if (Array.isArray(data.models)) {
+
+        // Special handler for Gemini models.list API and other formats
+        if (Array.isArray(data.models)) {
           models = data.models
+            .filter((m) => {
+              if (m && m.supportedGenerationMethods && Array.isArray(m.supportedGenerationMethods)) {
+                return m.supportedGenerationMethods.includes('generateContent');
+              }
+              return true;
+            })
             .map((m) => {
-              const name = m.name || m.id || '';
+              const name = (m && (m.name || m.id)) || (typeof m === 'string' ? m : '');
+              return name.replace(/^models\//, '');
+            })
+            .filter(Boolean);
+        } else if (Array.isArray(data.data)) {
+          models = data.data
+            .map((m) => {
+              const name = (m && (m.id || m.name)) || (typeof m === 'string' ? m : '');
               return name.replace(/^models\//, '');
             })
             .filter(Boolean);
         } else if (Array.isArray(data)) {
-          models = data.map((m) => (typeof m === 'string' ? m : (m.name || m.id || '').replace(/^models\//, ''))).filter(Boolean);
+          models = data
+            .map((m) => {
+              const name = (m && (m.id || m.name)) || (typeof m === 'string' ? m : '');
+              return name.replace(/^models\//, '');
+            })
+            .filter(Boolean);
         }
+
+        models = [...new Set(models)];
+
         if (models.length) {
           provider.models = models;
-          provider.defaultModel = models[0];
-          state.activeModel = models[0];
+          if (!provider.models.includes(provider.defaultModel)) {
+            provider.defaultModel = models[0];
+          }
+          state.activeModel = provider.models.includes(state.activeModel) ? state.activeModel : models[0];
           saveState();
           renderModelSelect(provider);
           el.modelSelect.value = state.activeModel;
           updateStatus();
+          console.log('[AIChat] detectModels: ' + models.length + ' modelos detectados para ' + provider.name, models);
           showToast('Detectados ' + models.length + ' modelos en ' + provider.name);
+          showTryAllButton(provider);
         } else {
+          console.warn('[AIChat] detectModels: respuesta OK pero sin modelos reconocidos', data);
           showToast('Respuesta OK pero sin modelos — formato no reconocido');
         }
       } else {
         const errText = await resp.text().catch(() => '');
-        if (resp.status === 401 || resp.status === 403) {
+        console.error('[AIChat] detectModels error ' + resp.status + ':', errText);
+        if (resp.status === 429) {
+          showToast('Límite de ratio excedido (429 Rate Limit) — espera unos segundos o revisa tu cuota');
+        } else if (resp.status === 401 || resp.status === 403) {
           showToast('API Key inválida o sin permisos (' + resp.status + ')');
         } else {
           showToast('Error ' + resp.status + ': ' + (errText.substring(0, 80) || 'sin detalle'));
@@ -464,6 +661,122 @@ const AIChat = (() => {
     el.detectModelsBtn.textContent = 'Detectar';
     el.detectModelsBtn.disabled = false;
     updateStatus();
+  }
+
+  function showTryAllButton(provider) {
+    let tryBtn = document.getElementById('aiTryAllModels');
+    const targetParent = el.detectModelsBtn ? el.detectModelsBtn.parentElement : null;
+    if (!tryBtn && targetParent) {
+      tryBtn = document.createElement('button');
+      tryBtn.id = 'aiTryAllModels';
+      tryBtn.className = 'chat-api-detect';
+      tryBtn.title = 'Probar disponibilidad de todos los modelos detectados';
+      tryBtn.textContent = 'Probar todos';
+      tryBtn.addEventListener('click', () => {
+        const activeProv = state.providers.find((p) => p.id === state.activeProvider) || provider;
+        if (activeProv) tryAllModels(activeProv);
+      });
+      if (el.rescanLocalBtn && el.rescanLocalBtn.nextSibling) {
+        targetParent.insertBefore(tryBtn, el.rescanLocalBtn.nextSibling);
+      } else if (el.detectModelsBtn.nextSibling) {
+        targetParent.insertBefore(tryBtn, el.detectModelsBtn.nextSibling);
+      } else {
+        targetParent.appendChild(tryBtn);
+      }
+    }
+    if (tryBtn) {
+      tryBtn.style.display = '';
+    }
+  }
+
+  async function tryAllModels(provider) {
+    if (!provider || !provider.models || !provider.models.length) {
+      showToast('No hay modelos para probar');
+      return;
+    }
+    const tryBtn = document.getElementById('aiTryAllModels');
+    if (tryBtn) {
+      tryBtn.disabled = true;
+      tryBtn.textContent = 'Probando...';
+    }
+    showToast('Probando ' + provider.models.length + ' modelos de ' + provider.name + '...');
+    updateStatus('probando modelos...');
+    const workingModels = [];
+    const failedModels = [];
+
+    for (const model of provider.models) {
+      try {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 7000);
+        let ok = false;
+
+        if (provider.id === 'gemini' || (provider.endpoint && provider.endpoint.includes('generativelanguage'))) {
+          let testUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent';
+          if (provider.apiKey) testUrl += '?key=' + encodeURIComponent(provider.apiKey);
+          const r = await fetch(testUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ role: 'user', parts: [{ text: 'ping' }] }],
+              generationConfig: { maxOutputTokens: 5 },
+            }),
+            signal: ctrl.signal,
+          });
+          ok = r.ok;
+        } else {
+          const headers = { 'Content-Type': 'application/json' };
+          if (provider.apiKey) {
+            if (provider.authType === 'x-api-key') headers['x-api-key'] = provider.apiKey;
+            else headers['Authorization'] = 'Bearer ' + provider.apiKey;
+          }
+          if (provider.headers) Object.assign(headers, provider.headers);
+
+          const r = await fetch(provider.endpoint, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+              model,
+              messages: [{ role: 'user', content: 'ping' }],
+              max_tokens: 5,
+            }),
+            signal: ctrl.signal,
+          });
+          ok = r.ok;
+        }
+        clearTimeout(t);
+        if (ok) {
+          workingModels.push(model);
+          console.log('[AIChat] Modelo OK: ' + model);
+        } else {
+          failedModels.push(model);
+          console.warn('[AIChat] Modelo falló: ' + model);
+        }
+      } catch (err) {
+        failedModels.push(model);
+        console.warn('[AIChat] Modelo error (' + model + '):', err.message);
+      }
+    }
+
+    if (tryBtn) {
+      tryBtn.disabled = false;
+      tryBtn.textContent = 'Probar todos';
+    }
+    updateStatus();
+    console.log('[AIChat] Resumen prueba modelos: ' + workingModels.length + ' OK, ' + failedModels.length + ' fallaron');
+    showToast('Prueba: ' + workingModels.length + '/' + provider.models.length + ' modelos funcionales');
+    if (workingModels.length) {
+      appendSystemMsg(
+        '✅ **Prueba de modelos (' +
+          escapeHtml(provider.name) +
+          ')**:\n• **Funcionales (' +
+          workingModels.length +
+          '):** ' +
+          workingModels.join(', ') +
+          (failedModels.length ? '\n• **No disponibles (' + failedModels.length + '):** ' + failedModels.join(', ') : '')
+      );
+    } else {
+      appendSystemMsg('⚠️ **Prueba de modelos (' + escapeHtml(provider.name) + ')**: Ningún modelo respondió exitosamente.');
+    }
   }
 
   function syncProviders() {
@@ -1325,7 +1638,7 @@ const AIChat = (() => {
       let label = m;
       if (m.includes(':free') || m === 'gemini-2.0-flash-lite') {
         label += ' [GRATIS]';
-      } else if (m === 'gemini-2.0-flash') {
+      } else if (m.startsWith('gemini-2.0-flash') || m.startsWith('gemini-2.5-flash')) {
         label += ' [FREE TIER]';
       }
       opt.textContent = label;
@@ -1717,6 +2030,7 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
     saveGeneratedFiles,
     detectLocal,
     detectModels,
+    tryAllModels,
     callGemini,
     openSandbox,
     DEFAULT_PROVIDERS,

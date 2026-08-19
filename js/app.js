@@ -16,24 +16,39 @@
 
 const PLATFORM_SPECS = {
   web: {
-    label: 'WEB',
-    spec: 'Aplicación web en un único archivo HTML/CSS/JavaScript. Responsive mobile-first. Compatible con Chrome, Firefox, Edge y Safari (últimas 2 versiones). Sin dependencias de backend; librerías solo vía CDN con fallback. Debe funcionar al abrir el archivo directamente (file://) o desde cualquier hosting estático.',
+    label: '🌐 Web',
+    icon: '🌐',
+    short: 'Web',
+    spec: 'Single-file HTML/CSS/JS app. Responsive mobile-first. Chrome/Firefox/Edge/Safari (latest 2 versions). No backend dependencies. CDN libraries with local fallback. Works from file:// or any static hosting.',
+    nota: 'Incluye meta viewport, favicon, y manifest.json',
   },
   android: {
-    label: 'ANDROID',
-    spec: 'Instalable como PWA desde Chrome ("Agregar a pantalla de inicio") con manifest.json y service worker para funcionamiento offline. Como alternativa nativa, indicar cómo envolver con Capacitor (@capacitor/cli) para generar un APK. Diseño mobile-first, touch targets mínimos 48x48dp, soporte para notch y navegación por gestos.',
+    label: '🤖 Android',
+    icon: '🤖',
+    short: 'Android',
+    spec: 'PWA installable desde Chrome (A2HS). Service worker con cache-first. Manifest con iconos 192/512px. Touch targets ≥48dp. Soporte notch. Alternativa: Capacitor para APK nativo.',
+    nota: 'Usa Capacitor CLI para generar APK instalable',
   },
   ios: {
-    label: 'IOS',
-    spec: 'Instalable como PWA desde Safari ("Agregar a pantalla de inicio"). Incluir meta tags apple-mobile-web-app-capable=yes, apple-mobile-web-app-status-bar-style=black-translucent y viewport-fit=cover para respetar safe-areas. Como alternativa nativa, indicar empaquetado con Capacitor para IPA. Soporte para iPhone y iPad.',
+    label: '🍎 iOS',
+    icon: '🍎',
+    short: 'iOS',
+    spec: 'PWA installable desde Safari. Meta tags apple-mobile-web-app-capable, viewport-fit=cover, status-bar-style. Safe-area con env(). Soporte iPhone y iPad. Alternativa: Capacitor para IPA.',
+    nota: 'Incluye apple-touch-icon de 180x180px',
   },
   tablet: {
-    label: 'TABLET',
-    spec: 'Layout responsive con breakpoints dedicados para tablets (768px–1280px). Interfaz optimizada para uso en campo: botones grandes (mínimo 56px), alto contraste, operable con guantes. Aprovechar pantalla ancha con layouts de 2-3 columnas. Compatible con iPad (Safari) y tablets Android (Chrome).',
+    label: '📱 Tablet',
+    icon: '📱',
+    short: 'Tablet',
+    spec: 'Layout responsive con breakpoints 768–1280px. Botones ≥56px, operable con guantes. 2-3 columnas en landscape. Compatible iPad (Safari) y Android (Chrome).',
+    nota: 'Optimiza para uso en campo con guantes industriales',
   },
   windows: {
-    label: 'WINDOWS',
-    spec: 'Instalable como PWA desde Edge o Chrome (botón "Instalar" en la barra de direcciones) con acceso offline vía service worker. Como alternativa de escritorio, indicar cómo empaquetar con Electron para generar un ejecutable .exe instalable. Optimizado para resoluciones 1366x768 y superiores, con soporte de teclado y atajos.',
+    label: '🪟 Windows',
+    icon: '🪟',
+    short: 'Windows',
+    spec: 'PWA installable desde Edge/Chrome. Service worker offline. Atajos de teclado. Resoluciones ≥1366×768. Alternativa: Electron para .exe instalable con soporte nativo.',
+    nota: 'Usa Electron para generar .exe con instalador',
   },
 };
 const PLATFORM_KEYS = Object.keys(PLATFORM_SPECS);
@@ -876,29 +891,31 @@ class PromptLibrary {
 
   platformDirective() {
     const sel = PLATFORM_KEYS.filter((k) => this.state.platforms.has(k));
-    if (!sel.length) return '';
+    if (!sel.length || sel.length === PLATFORM_KEYS.length) return ''; // All selected = no directive needed
+
     const lines = sel.map((k) => `• ${PLATFORM_SPECS[k].label}: ${PLATFORM_SPECS[k].spec}`);
+    const icons = sel.map((k) => PLATFORM_SPECS[k].icon).join(' ');
     return [
       '=====================================',
-      'REQUERIMIENTO DE COMPATIBILIDAD MULTIPLATAFORMA',
+      `REQUERIMIENTO MULTIPLATAFORMA ${icons}`,
       '=====================================',
-      `La aplicación generada DEBE ser 100% funcional en: ${sel.map((k) => PLATFORM_SPECS[k].label).join(', ')}.`,
+      `La aplicación debe funcionar en: ${sel.map((k) => PLATFORM_SPECS[k].short).join(', ')}.`,
       '',
-      'ESPECIFICACIONES POR PLATAFORMA:',
+      'ESPECIFICACIONES:',
       ...lines,
       '',
-      'ENTREGABLE ADICIONAL:',
-      'Además del código completo, incluye al final una sección "GUÍA DE INSTALACIÓN MULTIPLATAFORMA" con los pasos exactos para desplegar y ejecutar la aplicación en cada una de las plataformas listadas arriba.',
-      'Si una plataforma requiere empaquetado nativo (APK / IPA / EXE), proporciona los comandos y la configuración necesaria (Capacitor / Electron) lista para ejecutar.',
+      'ENTREGABLE:',
+      'Incluye al final una sección "🌐 GUÍA DE INSTALACIÓN" con pasos para cada plataforma.',
+      'Si requiere empaquetado nativo (APK/IPA/EXE), proporciona comandos Capacitor/Electron.',
     ].join('\n');
   }
 
   renderPlatformChips() {
     if (!this.el.platformChips) return;
-    const allSelected = PLATFORM_KEYS.every((k) => this.state.platforms.has(k));
     this.el.platformChips.querySelectorAll('.pchip').forEach((chip) => {
       const p = chip.dataset.platform;
-      const on = p === 'all' ? allSelected : this.state.platforms.has(p);
+      const on =
+        p === 'all' ? this.state.platforms.size === 0 || this.state.platforms.size === PLATFORM_KEYS.length : this.state.platforms.has(p);
       chip.classList.toggle('is-on', on);
     });
   }
@@ -908,8 +925,9 @@ class PromptLibrary {
     if (!chip) return;
     const p = chip.dataset.platform;
     if (p === 'all') {
-      const allSelected = PLATFORM_KEYS.every((k) => this.state.platforms.has(k));
-      if (allSelected) this.state.platforms.clear();
+      // Toggle all on/off
+      const allOn = PLATFORM_KEYS.every((k) => this.state.platforms.has(k));
+      if (allOn) this.state.platforms.clear();
       else PLATFORM_KEYS.forEach((k) => this.state.platforms.add(k));
     } else {
       if (this.state.platforms.has(p)) this.state.platforms.delete(p);
@@ -917,11 +935,14 @@ class PromptLibrary {
     }
     this.save('platforms', [...this.state.platforms]);
     this.renderPlatformChips();
-    if (this.state.platforms.size) {
-      const names = PLATFORM_KEYS.filter((k) => this.state.platforms.has(k)).map((k) => PLATFORM_SPECS[k].label);
-      this.showToast('Plataforma de salida: ' + names.join(' · '), 'ok');
+    const selCount = this.state.platforms.size;
+    if (selCount === 0) {
+      this.showToast('⊕ Todas las plataformas — sin directiva extra');
+    } else if (selCount === PLATFORM_KEYS.length) {
+      this.showToast('⊕ Todas las plataformas seleccionadas');
     } else {
-      this.showToast('Sin plataforma seleccionada — se usará el prompt original');
+      const names = PLATFORM_KEYS.filter((k) => this.state.platforms.has(k)).map((k) => PLATFORM_SPECS[k].short);
+      this.showToast('Plataformas: ' + names.join(' · '));
     }
   }
 
