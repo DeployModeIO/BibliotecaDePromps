@@ -1109,6 +1109,53 @@ const AIChat = (() => {
     }
     console.log('[AIChat] Events bound — providerSelect:', !!el.providerSelect, 'detectModelsBtn:', !!el.detectModelsBtn);
 
+    // Resize handle for chat drawer
+    const resizeHandle = document.getElementById('chatResizeHandle');
+    if (resizeHandle && el.chatDrawer) {
+      let resizeStartX = 0;
+      let resizeStartWidth = 0;
+      let resizing = false;
+
+      resizeHandle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        resizing = true;
+        resizeStartX = e.clientX;
+        resizeStartWidth = el.chatDrawer.offsetWidth;
+        resizeHandle.classList.add('active');
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = 'ew-resize';
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!resizing) return;
+        const delta = resizeStartX - e.clientX;
+        const newWidth = Math.min(Math.max(resizeStartWidth + delta, 300), window.innerWidth * 0.92);
+        el.chatDrawer.style.width = newWidth + 'px';
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (!resizing) return;
+        resizing = false;
+        resizeHandle.classList.remove('active');
+        document.body.style.userSelect = '';
+        document.body.style.cursor = '';
+        // Persist width preference
+        try {
+          localStorage.setItem('aichat_width', el.chatDrawer.style.width);
+        } catch {
+          /* ignore */
+        }
+      });
+
+      // Restore saved width
+      try {
+        const savedWidth = localStorage.getItem('aichat_width');
+        if (savedWidth) el.chatDrawer.style.width = savedWidth;
+      } catch {
+        /* ignore */
+      }
+    }
+
     // Sandbox events
     const sandboxClose = document.getElementById('sandboxCloseBtn');
     const sandboxFullscreen = document.getElementById('sandboxFullscreenBtn');
