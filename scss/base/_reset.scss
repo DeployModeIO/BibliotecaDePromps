@@ -1,0 +1,160 @@
+/* ============================================================
+   BASE — Variables, reset, typography, scrollbars, utilities
+   ============================================================ */
+
+// ---- dark theme (default) ----
+:root {
+  --bg-0: #070b12;
+  --bg-1: #0c1220;
+  --bg-2: #111a2b;
+  --bg-3: #182338;
+  --bg-4: #1f2d47;
+  --line: #22314b;
+  --line-2: #2f4266;
+  --txt: #e9f0fa;
+  --txt-2: #a9bad2;
+  --txt-3: #5f7396;
+  --amber: #ffb020;
+  --amber-2: #ffca5f;
+  --amber-dim: rgba(255, 176, 32, 0.13);
+  --green: #35d69a;
+  --green-dim: rgba(53, 214, 154, 0.12);
+  --red: #ff5757;
+  --red-dim: rgba(255, 87, 87, 0.13);
+  --cyan: #4cc3ff;
+  --cyan-dim: rgba(76, 195, 255, 0.12);
+  --glow-a: rgba(76, 195, 255, 0.055);
+  --glow-b: rgba(255, 176, 32, 0.05);
+  --grid-line: rgba(120, 165, 230, 0.045);
+  --scan: rgba(255, 255, 255, 0.014);
+  --shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --f-display: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  --f-body: 'Barlow', 'Segoe UI', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', 'Cascadia Mono', Consolas, monospace;
+}
+
+// ---- reset ----
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--f-body);
+  color: var(--txt);
+  background:
+    radial-gradient(1100px 560px at 85% -8%, var(--glow-a), transparent 62%),
+    radial-gradient(900px 520px at 4% 108%, var(--glow-b), transparent 60%),
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+    var(--bg-1);
+  background-size: auto, auto, 46px 46px, 46px 46px, auto;
+  background-attachment: fixed;
+  min-height: 100vh;
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: repeating-linear-gradient(0deg, var(--scan) 0 1px, transparent 1px 3px);
+}
+
+::selection {
+  background: var(--amber);
+  color: #14100a;
+}
+
+// ---- scrollbars ----
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-1);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border-radius: 0;
+  border: 2px solid var(--bg-1);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--amber);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-2) var(--bg-1);
+}
+
+// ---- typography helpers ----
+.mono {
+  font-family: var(--f-mono);
+}
+.display {
+  font-family: var(--f-display);
+}
+
+// ---- interactive defaults ----
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+// ---- skip link ----
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 9999;
+}
+.skip-link:focus {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0.6rem 1.2rem;
+  background: var(--amber);
+  color: #0c1220;
+  z-index: 9999;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  outline: 3px solid var(--bg-0);
+}
+
+// ---- hazard stripes ----
+.hazard-amber {
+  background: repeating-linear-gradient(-45deg, var(--amber) 0 9px, transparent 9px 18px);
+}
+.hazard-red {
+  background: repeating-linear-gradient(-45deg, var(--red) 0 9px, transparent 9px 18px);
+}

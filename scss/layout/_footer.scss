@@ -1,0 +1,35 @@
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+footer {
+  border-top: 1px solid var(--line);
+  background: var(--bg-2);
+  position: relative;
+  z-index: 2;
+
+  .hazard-line {
+    opacity: 0.35;
+  }
+}
+
+.foot-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 1.3rem 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-family: var(--f-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  color: var(--txt-3);
+  text-transform: uppercase;
+
+  b {
+    color: var(--amber);
+    font-weight: 600;
+  }
+}

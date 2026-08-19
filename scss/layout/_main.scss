@@ -1,0 +1,91 @@
+/* ============================================================
+   MAIN — section heads, reveals, empty state
+   ============================================================ */
+
+main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 1.6rem 1.4rem 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.3rem;
+
+  h2 {
+    font-family: var(--f-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--txt);
+    white-space: nowrap;
+
+    &::before {
+      content: '▮ ';
+      color: var(--amber);
+    }
+  }
+
+  .rule {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .count {
+    font-family: var(--f-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    color: var(--txt-3);
+    white-space: nowrap;
+  }
+}
+
+// ---- reveal animations ----
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.45s var(--ease-out),
+    transform 0.45s var(--ease-out);
+
+  &.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ---- empty state ----
+.empty {
+  border: 1px dashed var(--line-2);
+  background: var(--bg-2);
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+
+  .glyph {
+    font-size: 2.4rem;
+    opacity: 0.5;
+    display: block;
+    margin-bottom: 0.8rem;
+  }
+
+  h3 {
+    font-family: var(--f-display);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+  }
+
+  p {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    color: var(--txt-3);
+    letter-spacing: 0.08em;
+  }
+}

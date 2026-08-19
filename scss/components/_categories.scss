@@ -1,0 +1,129 @@
+/* ============================================================
+   CATEGORY PANELS — grid cards for each industry
+   ============================================================ */
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.1rem;
+}
+
+.cat-panel {
+  position: relative;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  padding: 1.3rem 1.3rem 1.1rem;
+  cursor: pointer;
+  transition:
+    transform 0.22s var(--ease-out),
+    border-color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--cat, var(--amber));
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(420px 200px at 100% 0%, rgba(255, 176, 32, 0.09), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    border-color: var(--cat, var(--amber));
+    box-shadow: var(--shadow);
+
+    &::after {
+      opacity: 1;
+    }
+
+    .cat-icon {
+      transform: scale(1.12) rotate(-4deg);
+    }
+
+    .cat-go {
+      transform: translateX(5px);
+    }
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+
+  h3 {
+    font-family: var(--f-display);
+    font-size: 1.18rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: var(--txt-2);
+    min-height: 2.6em;
+  }
+}
+
+.cat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cat-code {
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: var(--txt-3);
+  border: 1px solid var(--line);
+  padding: 0.22rem 0.5rem;
+}
+
+.cat-count {
+  font-family: var(--f-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  color: var(--cat, var(--amber));
+}
+
+.cat-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 0.8rem;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+  transition: transform 0.25s ease;
+}
+
+.cat-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.1rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed var(--line);
+  font-family: var(--f-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  color: var(--txt-3);
+}
+
+.cat-go {
+  color: var(--cat, var(--amber));
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
