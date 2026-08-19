@@ -321,27 +321,54 @@ const AIChat = (() => {
     for (const probe of LOCAL_PROBES) {
       try {
         const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), 5000);
-        const resp = await fetch(probe.url, { signal: ctrl.signal });
+        const t = setTimeout(() => ctrl.abort(), 3000);
+        // Try cors first; Ollama needs OLLAMA_ORIGINS=* env var set on Windows
+        let resp;
+        try {
+          resp = await fetch(probe.url, { signal: ctrl.signal });
+        } catch (corsErr) {
+          // Fallback: try no-cors (opaque response — can't read body, but can check if reachable)
+          if (probe.type === 'ollama') {
+            try {
+              resp = await fetch(probe.url, { signal: ctrl.signal, mode: 'no-cors' });
+              // If we get here, Ollama is reachable but CORS blocks reading the response
+              // Use a pre-defined model list as fallback
+              results.push({
+                ...probe,
+                models: ['deepseek-r1:8b', 'deepseek-r1:14b', 'deepseek-coder', 'llama3.2', 'codellama', 'mistral', 'gemma2'],
+                status: 'online',
+                corsBlocked: true,
+              });
+              console.log('[AIChat] detectLocal found Ollama (CORS-blocked, using fallback model list)');
+              continue;
+            } catch {
+              /* no-cors also failed */
+            }
+          }
+          throw corsErr;
+        }
         clearTimeout(t);
         if (resp.ok) {
           let models = [];
           try {
-            const data = await resp.json();
-            if (probe.type === 'ollama') {
-              models = (data.models || data || []).map((m) => m.name || m.model || m);
-            } else if (probe.type === 'kobold') {
-              models = [data.result || data.model || 'kobold-model'];
-            } else {
-              models = (data.data || data.models || data || []).map((m) => m.id || m.name || m);
+            const data = resp.json ? await resp.json() : null;
+            if (data) {
+              if (probe.type === 'ollama') {
+                models = (data.models || data || []).map((m) => m.name || m.model || m);
+              } else if (probe.type === 'kobold') {
+                models = [data.result || data.model || 'kobold-model'];
+              } else {
+                models = (data.data || data.models || data || []).map((m) => m.id || m.name || m);
+              }
             }
           } catch {
             /* ignore parse errors */
           }
           results.push({ ...probe, models, status: 'online' });
+          console.log('[AIChat] detectLocal found:', probe.name, models.length, 'models');
         }
-      } catch {
-        /* offline or CORS */
+      } catch (err) {
+        console.log('[AIChat] detectLocal probe', probe.name, 'failed:', err.message || 'offline');
       }
     }
     state.autoDetectedLocal = results;
@@ -571,10 +598,12 @@ const AIChat = (() => {
       .map((m) => ({ role: m.role, content: m.content }));
 
     const headers = { 'Content-Type': 'application/json' };
-    if (provider.authType === 'x-api-key') {
-      headers['x-api-key'] = provider.apiKey;
-    } else {
-      headers['Authorization'] = 'Bearer ' + provider.apiKey;
+    if (provider.apiKey) {
+      if (provider.authType === 'x-api-key') {
+        headers['x-api-key'] = provider.apiKey;
+      } else {
+        headers['Authorization'] = 'Bearer ' + provider.apiKey;
+      }
     }
     if (provider.headers) Object.assign(headers, provider.headers);
 
@@ -634,17 +663,29 @@ const AIChat = (() => {
       .filter((m) => m.role !== 'assistant' || !m.content.startsWith('ERROR:'))
       .map((m) => ({ role: m.role, content: m.content }));
 
-    const resp = await fetch(provider.endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: state.activeModel || provider.defaultModel,
-        messages,
-        stream: true,
-        options: { num_predict: state.maxTokens || 16384 },
-      }),
-      signal: abortController.signal,
-    });
+    let resp;
+    try {
+      resp = await fetch(provider.endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: state.activeModel || provider.defaultModel,
+          messages,
+          stream: true,
+          options: { num_predict: state.maxTokens || 16384 },
+        }),
+        signal: abortController.signal,
+      });
+    } catch (fetchErr) {
+      if (fetchErr.message && (fetchErr.message.includes('Failed to fetch') || fetchErr.message.includes('NetworkError'))) {
+        throw new Error(
+          'Ollama no accesible por CORS. En Windows, abre una terminal Admin y ejecuta:\n' +
+            'setx OLLAMA_ORIGINS "*"\n' +
+            'Luego reinicia Ollama. Alternativamente, abre http://localhost:11434 en otra pestaña para verificar.'
+        );
+      }
+      throw fetchErr;
+    }
 
     if (!resp.ok) throw new Error(await resp.text());
 
@@ -717,10 +758,12 @@ const AIChat = (() => {
       .filter((m) => m.role !== 'assistant' || !m.content.startsWith('ERROR:'))
       .map((m) => ({ role: m.role, content: m.content }));
     const headers = { 'Content-Type': 'application/json' };
-    if (provider.authType === 'x-api-key') {
-      headers['x-api-key'] = provider.apiKey;
-    } else {
-      headers['Authorization'] = 'Bearer ' + provider.apiKey;
+    if (provider.apiKey) {
+      if (provider.authType === 'x-api-key') {
+        headers['x-api-key'] = provider.apiKey;
+      } else {
+        headers['Authorization'] = 'Bearer ' + provider.apiKey;
+      }
     }
     if (provider.headers) Object.assign(headers, provider.headers);
 
