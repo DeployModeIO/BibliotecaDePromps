@@ -8,6 +8,7 @@ module.exports = {
     'no-console': ['warn', { allow: ['warn', 'error'] }],
     'prefer-const': 'error',
     'no-var': 'error',
+    'no-constant-condition': 'off',
     'semi': ['error', 'always'],
     'quotes': ['error', 'single', { avoidEscape: true }],
     'indent': ['error', 2, { SwitchCase: 1, ignoredNodes: ['TemplateLiteral *'] }],

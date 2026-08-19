@@ -408,3 +408,89 @@ describe('Escape HTML', () => {
     expect(esc("it's")).toBe('it&#39;s');
   });
 });
+
+describe('AIChat — Providers, Gemini & Free Tiers', () => {
+  let aiChatModule;
+
+  beforeAll(() => {
+    const aiChatCode = fs.readFileSync(path.join(__dirname, '..', 'js', 'ai-chat.js'), 'utf8');
+    vm.runInContext(aiChatCode, context);
+    aiChatModule = context.AIChat || context.window.AIChat;
+  });
+
+  test('AIChat está definido e inicializable', () => {
+    expect(aiChatModule).toBeDefined();
+    expect(typeof aiChatModule.init).toBe('function');
+    expect(typeof aiChatModule.sendMessage).toBe('function');
+  });
+
+  test('DEFAULT_PROVIDERS incluye Google Gemini con modelos requeridos', () => {
+    const providers = aiChatModule.DEFAULT_PROVIDERS;
+    expect(providers).toBeDefined();
+    const gemini = providers.find((p) => p.id === 'gemini');
+    expect(gemini).toBeDefined();
+    expect(gemini.name).toContain('Google Gemini');
+    expect(gemini.models).toContain('gemini-2.0-flash');
+    expect(gemini.models).toContain('gemini-2.0-flash-lite');
+    expect(gemini.models).toContain('gemini-2.0-pro');
+    expect(gemini.models).toContain('gemini-2.5-pro');
+    expect(gemini.tier).toBe('both');
+    expect(gemini.endpoint).toContain('generativelanguage.googleapis.com');
+  });
+
+  test('Todos los DEFAULT_PROVIDERS tienen campo tier válido', () => {
+    const providers = aiChatModule.DEFAULT_PROVIDERS;
+    const validTiers = ['free', 'paid', 'both'];
+    providers.forEach((p) => {
+      expect(validTiers).toContain(p.tier);
+    });
+  });
+
+  test('LOCAL_PROBES incluye LiteLLM, llama.cpp y Jan AI', () => {
+    const probes = aiChatModule.LOCAL_PROBES;
+    expect(probes).toBeDefined();
+    const litellm = probes.find((p) => p.name.toLowerCase().includes('litellm'));
+    const llamacpp = probes.find((p) => p.name.toLowerCase().includes('llama.cpp'));
+    const jan = probes.find((p) => p.name.toLowerCase().includes('jan ai'));
+
+    expect(litellm).toBeDefined();
+    expect(litellm.url).toBe('http://localhost:4000/v1/models');
+    expect(llamacpp).toBeDefined();
+    expect(llamacpp.url).toBe('http://localhost:8080/v1/models');
+    expect(jan).toBeDefined();
+    expect(jan.url).toBe('http://localhost:1337/v1/models');
+
+    probes.forEach((probe) => {
+      expect(probe.tier).toBe('free');
+    });
+  });
+
+  test('FREE_TIER_PROVIDERS documenta proveedores con tier gratuito', () => {
+    const freeProviders = aiChatModule.FREE_TIER_PROVIDERS;
+    expect(freeProviders).toBeDefined();
+    expect(freeProviders.length).toBeGreaterThanOrEqual(4);
+
+    const ids = freeProviders.map((p) => p.id);
+    expect(ids).toContain('gemini_free');
+    expect(ids).toContain('groq_free');
+    expect(ids).toContain('openrouter_free');
+    expect(ids).toContain('deepseek_free');
+  });
+
+  test('MODEL_SCANNER_SOURCES incluye fuentes de modelos gratuitos', () => {
+    const sources = aiChatModule.MODEL_SCANNER_SOURCES;
+    expect(sources).toBeDefined();
+    const openrouter = sources.find((s) => s.url.includes('openrouter.ai'));
+    const github = sources.find((s) => s.url.includes('free-llm-api-resources'));
+
+    expect(openrouter).toBeDefined();
+    expect(openrouter.url).toContain('free=true');
+    expect(github).toBeDefined();
+  });
+
+  test('callGemini maneja errores de validación si no hay mensajes', async () => {
+    expect(typeof aiChatModule.callGemini).toBe('function');
+    const provider = aiChatModule.DEFAULT_PROVIDERS.find((p) => p.id === 'gemini');
+    await expect(aiChatModule.callGemini(provider, { messages: [] })).rejects.toThrow();
+  });
+});

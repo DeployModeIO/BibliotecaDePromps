@@ -1117,3 +1117,292 @@ window.addEventListener('unhandledrejection', (event) => {
     window.promptLibrary.showToast('⚠ Error de red o procesamiento — reintente', 'error');
   }
 });
+
+/* ============================================================
+   KEYBOARD SHORTCUTS
+   ============================================================ */
+(function initKeyboardShortcuts() {
+  const SHORTCUTS = [
+    { keys: 'Ctrl+K', macKeys: '⌘K', desc: 'Foco en búsqueda', action: () => document.getElementById('searchInput')?.focus() },
+    { keys: 'Ctrl+Shift+F', macKeys: '⌘⇧F', desc: 'Favoritos', action: () => document.getElementById('favToggle')?.click() },
+    { keys: 'Ctrl+Shift+H', macKeys: '⌘⇧H', desc: 'Historial', action: () => document.getElementById('histToggle')?.click() },
+    { keys: 'Ctrl+Shift+C', macKeys: '⌘⇧C', desc: 'Chat IA', action: () => document.getElementById('chatToggle')?.click() },
+    { keys: 'Ctrl+Shift+D', macKeys: '⌘⇧D', desc: 'Panel de Control', action: () => toggleDashboard() },
+    { keys: 'Ctrl+/', macKeys: '⌘/', desc: 'Mostrar atajos', action: () => toggleShortcutsModal() },
+    { keys: 'Escape', macKeys: 'Esc', desc: 'Cerrar modales/paneles', action: () => closeAllPanels() },
+  ];
+
+  // Build shortcuts help modal content
+  function buildShortcutsTable() {
+    const tbody = document.getElementById('shortcutsList');
+    if (!tbody) return;
+    const isMac = /Mac/i.test(navigator.platform || '');
+    tbody.innerHTML = SHORTCUTS.map((s) => {
+      const display = isMac ? s.macKeys || s.keys : s.keys;
+      return `<tr style="border-bottom:1px solid var(--line)">
+        <td style="padding:0.5rem;font-family:var(--f-mono);font-size:0.75rem;color:var(--amber);white-space:nowrap">${display}</td>
+        <td style="padding:0.5rem;color:var(--txt-2)">${s.desc}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function toggleShortcutsModal() {
+    const modal = document.getElementById('shortcutsModal');
+    if (!modal) return;
+    buildShortcutsTable();
+    modal.classList.toggle('active');
+  }
+
+  function toggleDashboard() {
+    const overlay = document.getElementById('dashboardOverlay');
+    if (!overlay) return;
+    if (overlay.classList.contains('active')) {
+      overlay.classList.remove('active');
+    } else {
+      renderDashboard();
+      overlay.classList.add('active');
+    }
+  }
+
+  function closeAllPanels() {
+    // Close all modals, drawers, sandbox, dashboard
+    const modal = document.getElementById('promptModal');
+    if (modal && modal.classList.contains('active')) {
+      document.getElementById('modalClose')?.click();
+      return;
+    }
+    const sandbox = document.getElementById('sandboxDrawer');
+    if (sandbox && sandbox.classList.contains('active')) {
+      sandbox.classList.remove('active');
+      return;
+    }
+    const dashboard = document.getElementById('dashboardOverlay');
+    if (dashboard && dashboard.classList.contains('active')) {
+      dashboard.classList.remove('active');
+      return;
+    }
+    const shortcuts = document.getElementById('shortcutsModal');
+    if (shortcuts && shortcuts.classList.contains('active')) {
+      shortcuts.classList.remove('active');
+      return;
+    }
+    // Close drawers
+    ['favDrawer', 'histDrawer', 'chatDrawer'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el && el.classList.contains('active')) {
+        el.classList.remove('active');
+        document.getElementById(id === 'chatDrawer' ? 'chatScrim' : 'drawerScrim')?.classList.remove('active');
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
+    const mod = e.ctrlKey || e.metaKey;
+
+    // / (slash) focuses search when not in input
+    if (e.key === '/' && !isInput) {
+      e.preventDefault();
+      document.getElementById('searchInput')?.focus();
+      return;
+    }
+
+    // Escape closes everything
+    if (e.key === 'Escape' && !isInput) {
+      e.preventDefault();
+      closeAllPanels();
+      return;
+    }
+
+    if (!mod) return;
+
+    // Ctrl/Cmd + K: focus search
+    if (e.key === 'k' || e.key === 'K') {
+      e.preventDefault();
+      document.getElementById('searchInput')?.focus();
+      return;
+    }
+
+    // Ctrl/Cmd + Shift + letter shortcuts
+    if (e.shiftKey) {
+      switch (e.key.toLowerCase()) {
+        case 'f':
+          e.preventDefault();
+          document.getElementById('favToggle')?.click();
+          break;
+        case 'h':
+          e.preventDefault();
+          document.getElementById('histToggle')?.click();
+          break;
+        case 'c':
+          e.preventDefault();
+          document.getElementById('chatToggle')?.click();
+          break;
+        case 'd':
+          e.preventDefault();
+          toggleDashboard();
+          break;
+        case '/':
+          e.preventDefault();
+          toggleShortcutsModal();
+          break;
+      }
+    }
+  });
+
+  // Shortcuts modal close
+  document.addEventListener('click', (e) => {
+    if (e.target.id === 'shortcutsModal') {
+      e.target.classList.remove('active');
+    }
+    if (e.target.id === 'shortcutsClose') {
+      document.getElementById('shortcutsModal')?.classList.remove('active');
+    }
+  });
+})();
+
+/* ============================================================
+   DASHBOARD RENDERER
+   ============================================================ */
+/* eslint-disable indent */
+function renderDashboard() {
+  const body = document.getElementById('dashboardBody');
+  if (!body || !window.UsageTracker) return;
+
+  const stats = window.UsageTracker.getStats();
+  const topPrompts = window.UsageTracker.getTopPrompts(5);
+  const _topIndustries = window.UsageTracker.getTopIndustries();
+  const timeline = window.UsageTracker.getTimeline();
+
+  const maxViews = Math.max(1, ...topPrompts.map((p) => p.score));
+
+  const timelineHTML = timeline.length
+    ? // prettier-ignore
+      timeline
+        .slice(0, 10)
+        .map((t) => {
+          const icons = { view: '👁', copy: '📋', favorite: '⭐', unfavorite: '☆', export: '📤', chat: '💬' };
+          const time = new Date(t.time);
+          const timeStr = time.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+          return `<div class="dash-timeline-item">
+        <span class="dash-timeline-icon">${icons[t.type] || '•'}</span>
+        <span class="dash-timeline-text">${t.label}</span>
+        <span class="dash-timeline-time">${timeStr}</span>
+      </div>`;
+        })
+        .join('')
+    : '<div class="dash-timeline-item" style="color:var(--txt-3)">Sin actividad reciente</div>';
+
+  body.innerHTML = `
+    <div class="dash-stat">
+      <div class="dash-num">${stats.totalPromptViews}</div>
+      <div class="dash-label">Prompts Vistos</div>
+    </div>
+    <div class="dash-stat">
+      <div class="dash-num">${stats.totalPromptCopies}</div>
+      <div class="dash-label">Copias Realizadas</div>
+    </div>
+    <div class="dash-stat">
+      <div class="dash-num">${stats.totalExports}</div>
+      <div class="dash-label">Exportaciones</div>
+    </div>
+    <div class="dash-stat">
+      <div class="dash-num">${stats.chatMessagesSent}</div>
+      <div class="dash-label">Mensajes Chat IA</div>
+    </div>
+    <div class="dash-stat">
+      <div class="dash-num">${(stats.chatWordsGenerated / 1000).toFixed(1)}k</div>
+      <div class="dash-label">Palabras Generadas</div>
+    </div>
+    <div class="dash-stat">
+      <div class="dash-num">${stats.sessionCount}</div>
+      <div class="dash-label">Sesiones</div>
+    </div>
+    <div class="dash-chart">
+      <h4>🏆 Top Prompts Más Usados</h4>
+      ${
+        topPrompts.length
+          ? topPrompts
+              .map((p) => {
+                const w = Math.round((p.score / maxViews) * 100);
+                return `<div class="dash-bar">
+            <span class="dash-bar-label">${p.titulo}</span>
+            <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${w}%"></div></div>
+            <span class="dash-bar-count">${p.score}</span>
+          </div>`;
+              })
+              .join('')
+          : '<div class="dash-empty">Usa algunos prompts para ver estadísticas</div>'
+      }
+    </div>
+    <div class="dash-timeline">
+      <h4>⏱ Actividad Reciente</h4>
+      ${timelineHTML}
+    </div>
+  `;
+}
+/* eslint-enable indent */
+
+/* Dashboard overlay click-to-close and button handler */
+(function initDashboard() {
+  document.addEventListener('click', (e) => {
+    if (e.target.id === 'dashboardOverlay') {
+      e.target.classList.remove('active');
+    }
+    if (e.target.id === 'dashboardClose') {
+      document.getElementById('dashboardOverlay')?.classList.remove('active');
+    }
+    if (e.target.id === 'dashboardToggle') {
+      const overlay = document.getElementById('dashboardOverlay');
+      if (!overlay) return;
+      if (overlay.classList.contains('active')) {
+        overlay.classList.remove('active');
+      } else {
+        renderDashboard();
+        overlay.classList.add('active');
+      }
+    }
+  });
+})();
+
+/* ============================================================
+   PWA INSTALL BANNER
+   ============================================================ */
+(function initInstallBanner() {
+  let deferredPrompt = null;
+  const BANNER_DISMISS_KEY = 'bpi_install_banner_dismissed';
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    // Check if dismissed in last 7 days
+    const dismissed = localStorage.getItem(BANNER_DISMISS_KEY);
+    if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) return;
+
+    // Don't show if already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) return;
+
+    const banner = document.getElementById('installBanner');
+    if (!banner) return;
+
+    setTimeout(() => banner.classList.add('visible'), 2000);
+
+    document.getElementById('installBannerBtn')?.addEventListener('click', async () => {
+      banner.classList.remove('visible');
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          localStorage.setItem(BANNER_DISMISS_KEY, String(Date.now() + 365 * 24 * 60 * 60 * 1000));
+        }
+        deferredPrompt = null;
+      }
+    });
+
+    document.getElementById('installDismissBtn')?.addEventListener('click', () => {
+      banner.classList.remove('visible');
+      localStorage.setItem(BANNER_DISMISS_KEY, String(Date.now()));
+    });
+  });
+})();

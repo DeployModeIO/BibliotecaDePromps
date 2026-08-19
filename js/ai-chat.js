@@ -1,93 +1,252 @@
 /* ============================================================
-   IA CHAT PANEL v1.0 — Auto-detección local + cloud genérico
+   IA CHAT PANEL v1.1 — Auto-detección local + cloud genérico + Gemini API & Free Tiers
    ============================================================ */
 /* global JSZip, marked */
 
 const AIChat = (() => {
   const LS_PREFIX = 'aichat_';
 
+  /* ============================================================
+     LOCAL PROBES — Servidores locales y proxys compatibles
+     ============================================================ */
   const LOCAL_PROBES = [
-    { name: 'Ollama', url: 'http://localhost:11434/api/tags', type: 'ollama', chatEndpoint: 'http://localhost:11434/api/chat' },
+    {
+      name: 'Ollama',
+      url: 'http://localhost:11434/api/tags',
+      type: 'ollama',
+      chatEndpoint: 'http://localhost:11434/api/chat',
+      tier: 'free',
+    },
     {
       name: 'LM Studio',
       url: 'http://localhost:1234/v1/models',
       type: 'openai',
       chatEndpoint: 'http://localhost:1234/v1/chat/completions',
+      tier: 'free',
     },
-    { name: 'vLLM', url: 'http://localhost:8000/v1/models', type: 'openai', chatEndpoint: 'http://localhost:8000/v1/chat/completions' },
-    { name: 'LocalAI', url: 'http://localhost:8080/v1/models', type: 'openai', chatEndpoint: 'http://localhost:8080/v1/chat/completions' },
-    { name: 'KoboldCpp', url: 'http://localhost:5001/api/v1/model', type: 'kobold', chatEndpoint: 'http://localhost:5001/api/v1/generate' },
+    {
+      name: 'vLLM',
+      url: 'http://localhost:8000/v1/models',
+      type: 'openai',
+      chatEndpoint: 'http://localhost:8000/v1/chat/completions',
+      tier: 'free',
+    },
+    {
+      name: 'LocalAI',
+      url: 'http://localhost:8080/v1/models',
+      type: 'openai',
+      chatEndpoint: 'http://localhost:8080/v1/chat/completions',
+      tier: 'free',
+    },
+    {
+      name: 'llama.cpp server',
+      url: 'http://localhost:8080/v1/models',
+      type: 'openai',
+      chatEndpoint: 'http://localhost:8080/v1/chat/completions',
+      tier: 'free',
+    },
+    {
+      name: 'LiteLLM proxy',
+      url: 'http://localhost:4000/v1/models',
+      type: 'openai',
+      chatEndpoint: 'http://localhost:4000/v1/chat/completions',
+      tier: 'free',
+    },
+    {
+      name: 'Jan AI',
+      url: 'http://localhost:1337/v1/models',
+      type: 'openai',
+      chatEndpoint: 'http://localhost:1337/v1/chat/completions',
+      tier: 'free',
+    },
+    {
+      name: 'KoboldCpp',
+      url: 'http://localhost:5001/api/v1/model',
+      type: 'kobold',
+      chatEndpoint: 'http://localhost:5001/api/v1/generate',
+      tier: 'free',
+    },
     {
       name: 'Text-Gen-WebUI',
       url: 'http://localhost:5000/v1/models',
       type: 'openai',
       chatEndpoint: 'http://localhost:5000/v1/chat/completions',
+      tier: 'free',
     },
-    { name: 'GPT4All', url: 'http://localhost:4891/v1/models', type: 'openai', chatEndpoint: 'http://localhost:4891/v1/chat/completions' },
+    {
+      name: 'GPT4All',
+      url: 'http://localhost:4891/v1/models',
+      type: 'openai',
+      chatEndpoint: 'http://localhost:4891/v1/chat/completions',
+      tier: 'free',
+    },
   ];
 
+  /* ============================================================
+     DEFAULT PROVIDERS — Proveedores Cloud (Free Tier & Paid)
+     ============================================================ */
   const DEFAULT_PROVIDERS = [
     {
-      id: 'openai',
-      name: 'OpenAI',
-      endpoint: 'https://api.openai.com/v1/chat/completions',
+      id: 'gemini',
+      name: 'Google Gemini',
+      endpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
       type: 'cloud',
+      tier: 'both',
       apiKey: '',
-      models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'],
-      defaultModel: 'gpt-4o-mini',
-      modelsEndpoint: 'https://api.openai.com/v1/models',
-    },
-    {
-      id: 'anthropic',
-      name: 'Anthropic',
-      endpoint: 'https://api.anthropic.com/v1/messages',
-      type: 'cloud',
-      apiKey: '',
-      models: ['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229', 'claude-3-haiku-20240307'],
-      defaultModel: 'claude-3-5-sonnet-20241022',
-      headers: { 'anthropic-version': '2023-06-01' },
-      modelsEndpoint: 'https://api.anthropic.com/v1/models',
-      authType: 'x-api-key',
+      models: ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-2.0-pro', 'gemini-2.5-pro'],
+      defaultModel: 'gemini-2.0-flash',
+      modelsEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
+      authType: 'query',
+      note: 'Tier gratuito: 1500 req/día para gemini-2.0-flash. Sin costo para flash-lite o con API key gratuita de Google AI Studio.',
     },
     {
       id: 'groq',
       name: 'Groq',
       endpoint: 'https://api.groq.com/openai/v1/chat/completions',
       type: 'cloud',
+      tier: 'free',
       apiKey: '',
       models: ['llama-3.1-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'],
       defaultModel: 'llama-3.1-70b-versatile',
       modelsEndpoint: 'https://api.groq.com/openai/v1/models',
-    },
-    {
-      id: 'deepseek',
-      name: 'DeepSeek',
-      endpoint: 'https://api.deepseek.com/v1/chat/completions',
-      type: 'cloud',
-      apiKey: '',
-      models: ['deepseek-chat', 'deepseek-reasoner'],
-      defaultModel: 'deepseek-chat',
-      modelsEndpoint: 'https://api.deepseek.com/v1/models',
+      note: 'Tier gratuito con límites de ratio (RPM/TPM). Inferencia LPU de ultra-baja latencia.',
     },
     {
       id: 'openrouter',
       name: 'OpenRouter',
       endpoint: 'https://openrouter.ai/api/v1/chat/completions',
       type: 'cloud',
+      tier: 'both',
       apiKey: '',
-      models: ['openai/gpt-4o', 'anthropic/claude-3.5-sonnet', 'google/gemini-2.0-flash'],
+      models: [
+        'openai/gpt-4o',
+        'anthropic/claude-3.5-sonnet',
+        'google/gemini-2.0-flash',
+        'meta-llama/llama-3.2-3b-instruct:free',
+        'google/gemini-2.0-flash-exp:free',
+      ],
       defaultModel: 'openai/gpt-4o',
       modelsEndpoint: 'https://openrouter.ai/api/v1/models',
+      note: 'Modelos con sufijo :free (ej. meta-llama/llama-3.2-3b-instruct:free) son gratuitos vía OpenRouter.',
+    },
+    {
+      id: 'deepseek',
+      name: 'DeepSeek',
+      endpoint: 'https://api.deepseek.com/v1/chat/completions',
+      type: 'cloud',
+      tier: 'both',
+      apiKey: '',
+      models: ['deepseek-chat', 'deepseek-reasoner'],
+      defaultModel: 'deepseek-chat',
+      modelsEndpoint: 'https://api.deepseek.com/v1/models',
+      note: 'deepseek-chat y deepseek-reasoner cuentan con tier gratuito / créditos iniciales con registro.',
+    },
+    {
+      id: 'openai',
+      name: 'OpenAI',
+      endpoint: 'https://api.openai.com/v1/chat/completions',
+      type: 'cloud',
+      tier: 'paid',
+      apiKey: '',
+      models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'],
+      defaultModel: 'gpt-4o-mini',
+      modelsEndpoint: 'https://api.openai.com/v1/models',
+      note: 'API oficial de pago por tokens consumidos.',
+    },
+    {
+      id: 'anthropic',
+      name: 'Anthropic',
+      endpoint: 'https://api.anthropic.com/v1/messages',
+      type: 'cloud',
+      tier: 'paid',
+      apiKey: '',
+      models: ['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229', 'claude-3-haiku-20240307'],
+      defaultModel: 'claude-3-5-sonnet-20241022',
+      headers: { 'anthropic-version': '2023-06-01' },
+      modelsEndpoint: 'https://api.anthropic.com/v1/models',
+      authType: 'x-api-key',
+      note: 'API de pago por tokens consumidos.',
     },
     {
       id: 'alibaba',
       name: 'Alibaba Token Plan',
       endpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions',
       type: 'cloud',
+      tier: 'both',
       apiKey: '',
       models: ['qwen-max', 'qwen-plus', 'qwen-turbo', 'deepseek-r1', 'deepseek-v3', 'llama3-70b', 'qwen2.5-72b'],
       defaultModel: 'qwen-plus',
       modelsEndpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/models',
+      note: 'Plan de tokens gratuitos con registro en Alibaba Cloud Model Studio.',
+    },
+  ];
+
+  /* ============================================================
+     FREE TIER CATALOG & MODEL SCANNER SOURCES
+     ============================================================ */
+  const FREE_TIER_PROVIDERS = [
+    {
+      id: 'gemini_free',
+      name: 'Google Gemini Free Tier',
+      endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+      models: ['gemini-2.0-flash', 'gemini-2.0-flash-lite'],
+      tier: 'free',
+      description: 'Sin API key requerida para modelos lite o API key gratuita desde Google AI Studio (1500 req/día).',
+      url: 'https://aistudio.google.com/',
+    },
+    {
+      id: 'groq_free',
+      name: 'Groq Free Tier',
+      endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+      models: ['llama-3.1-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'],
+      tier: 'free',
+      description: 'Inferencia ultra rápida con tier gratuito sujeto a límites de ratio.',
+      url: 'https://console.groq.com/',
+    },
+    {
+      id: 'openrouter_free',
+      name: 'OpenRouter Free Models',
+      endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+      models: ['meta-llama/llama-3.2-3b-instruct:free', 'google/gemini-2.0-flash-exp:free'],
+      tier: 'free',
+      description: 'Modelos con sufijo :free accesibles sin costo.',
+      url: 'https://openrouter.ai/models?free=true',
+    },
+    {
+      id: 'deepseek_free',
+      name: 'DeepSeek Free Tier',
+      endpoint: 'https://api.deepseek.com/v1/chat/completions',
+      models: ['deepseek-chat', 'deepseek-reasoner'],
+      tier: 'free',
+      description: 'deepseek-chat incluye tier gratuito / créditos iniciales al registrarse.',
+      url: 'https://platform.deepseek.com/',
+    },
+  ];
+
+  const MODEL_SCANNER_SOURCES = [
+    {
+      name: 'OpenRouter Free Models API',
+      url: 'https://openrouter.ai/api/v1/models?free=true',
+      type: 'api',
+      description: 'Endpoint de OpenRouter que lista modelos con tier gratuito (:free) en tiempo real.',
+    },
+    {
+      name: 'Free LLM API Resources (GitHub)',
+      url: 'https://raw.githubusercontent.com/cheahjs/free-llm-api-resources/main/README.md',
+      type: 'document',
+      description: 'Lista comunitaria curada de APIs y proveedores LLM con opciones gratuitas.',
+    },
+    {
+      name: 'Google AI Studio Gemini Free',
+      url: 'https://ai.google.dev/pricing',
+      type: 'portal',
+      description: 'Documentación oficial del tier gratuito de Gemini (1500 req/día para Gemini 2.0 Flash).',
+    },
+    {
+      name: 'Groq Cloud Rate Limits',
+      url: 'https://console.groq.com/docs/rate-limits',
+      type: 'portal',
+      description: 'Límites y cuotas de inferencia gratuita de Groq Cloud.',
     },
   ];
 
@@ -209,11 +368,14 @@ const AIChat = (() => {
       showToast('Proveedor local — modelos ya detectados automáticamente');
       return;
     }
-    if (!provider.apiKey) {
+    if (!provider.apiKey && provider.id !== 'gemini') {
       showToast('Ingrese una API Key primero');
       return;
     }
-    const modelsUrl = provider.modelsEndpoint || provider.endpoint.replace('/chat/completions', '/models').replace('/messages', '/models');
+    let modelsUrl = provider.modelsEndpoint || provider.endpoint.replace('/chat/completions', '/models').replace('/messages', '/models');
+    if (provider.authType === 'query' && provider.apiKey) {
+      modelsUrl += (modelsUrl.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(provider.apiKey);
+    }
     el.detectModelsBtn.textContent = '...';
     el.detectModelsBtn.disabled = true;
     updateStatus('detectando modelos...');
@@ -221,7 +383,7 @@ const AIChat = (() => {
       const headers = {};
       if (provider.authType === 'x-api-key') {
         headers['x-api-key'] = provider.apiKey;
-      } else {
+      } else if (provider.authType !== 'query' && provider.apiKey) {
         headers['Authorization'] = 'Bearer ' + provider.apiKey;
       }
       if (provider.headers) Object.assign(headers, provider.headers);
@@ -233,9 +395,18 @@ const AIChat = (() => {
       if (resp.ok) {
         const data = await resp.json();
         let models = [];
-        if (Array.isArray(data.data)) models = data.data.map((m) => m.id || m.name || '').filter(Boolean);
-        else if (Array.isArray(data.models)) models = data.models.map((m) => m.id || m.name || '').filter(Boolean);
-        else if (Array.isArray(data)) models = data.map((m) => (typeof m === 'string' ? m : m.id || m.name || '')).filter(Boolean);
+        if (Array.isArray(data.data)) {
+          models = data.data.map((m) => m.id || m.name || '').filter(Boolean);
+        } else if (Array.isArray(data.models)) {
+          models = data.models
+            .map((m) => {
+              const name = m.name || m.id || '';
+              return name.replace(/^models\//, '');
+            })
+            .filter(Boolean);
+        } else if (Array.isArray(data)) {
+          models = data.map((m) => (typeof m === 'string' ? m : (m.name || m.id || '').replace(/^models\//, ''))).filter(Boolean);
+        }
         if (models.length) {
           provider.models = models;
           provider.defaultModel = models[0];
@@ -272,10 +443,11 @@ const AIChat = (() => {
 
   function syncProviders() {
     const localProviders = state.autoDetectedLocal.map((l) => ({
-      id: 'local_' + l.name.toLowerCase().replace(/\s+/g, '_'),
+      id: 'local_' + l.name.toLowerCase().replace(/[^a-z0-9]+/g, '_'),
       name: l.name + ' (Local)',
       endpoint: l.chatEndpoint,
       type: 'local',
+      tier: 'free',
       apiKey: 'local',
       models: l.models.length ? l.models : ['default'],
       defaultModel: l.models[0] || 'default',
@@ -292,7 +464,11 @@ const AIChat = (() => {
     DEFAULT_PROVIDERS.forEach((def) => {
       const saved = state.providers.find((p) => p.id === def.id);
       if (saved) {
-        merged.push({ ...def, apiKey: saved.apiKey || '', models: saved.models && saved.models.length > 1 ? saved.models : def.models });
+        merged.push({
+          ...def,
+          apiKey: saved.apiKey !== undefined ? saved.apiKey : def.apiKey,
+          models: saved.models && saved.models.length > 1 ? saved.models : def.models,
+        });
       } else {
         merged.push({ ...def });
       }
@@ -304,6 +480,8 @@ const AIChat = (() => {
   }
 
   /* ---------- API calls ---------- */
+
+  let abortController = null;
 
   async function sendMessage(content) {
     const conv = getActiveConv();
@@ -319,30 +497,190 @@ const AIChat = (() => {
 
     updateStatus('generando...');
     const msgEl = appendAssistantPlaceholder();
+    showStopButton();
 
     try {
       let response;
-      if (provider.isLocal && provider.localType === 'ollama') {
-        response = await callOllama(provider, conv);
+
+      // Try streaming first for OpenAI-compatible providers (not gemini, not ollama, not kobold)
+      if (
+        !provider.isLocal &&
+        provider.id !== 'gemini' &&
+        !(provider.endpoint && provider.endpoint.includes('generativelanguage')) &&
+        provider.type === 'cloud' &&
+        provider.id !== 'anthropic'
+      ) {
+        response = await streamOpenAI(provider, conv, msgEl);
+      } else if (provider.id === 'gemini' || (provider.endpoint && provider.endpoint.includes('generativelanguage'))) {
+        response = await callGemini(provider, conv);
+      } else if (provider.isLocal && provider.localType === 'ollama') {
+        response = await streamOllama(provider, conv, msgEl);
       } else if (provider.isLocal && provider.localType === 'kobold') {
         response = await callKobold(provider, conv);
       } else {
         response = await callOpenAICompatible(provider, conv);
       }
-      msgEl.innerHTML = renderMarkdown(response);
+
+      if (!msgEl.dataset.streamed) {
+        msgEl.innerHTML = renderMarkdown(response);
+      }
       conv.messages.push({ role: 'assistant', content: response, time: Date.now() });
       saveState();
     } catch (err) {
-      msgEl.innerHTML = '<span class="chat-err">Error: ' + escapeHtml(err.message) + '</span>';
-      conv.messages.push({ role: 'assistant', content: 'ERROR: ' + err.message, time: Date.now() });
+      if (err.name === 'AbortError') {
+        msgEl.innerHTML += '<div class="chat-stopped">⏹ Generación detenida</div>';
+      } else {
+        msgEl.innerHTML = '<span class="chat-err">Error: ' + escapeHtml(err.message) + '</span>';
+      }
+      conv.messages.push({ role: 'assistant', content: msgEl.textContent || 'ERROR: ' + err.message, time: Date.now() });
       saveState();
     }
 
+    hideStopButton();
     updateStatus();
     scrollChat();
   }
 
-  async function callOllama(provider, conv) {
+  function showStopButton() {
+    el.chatSend.style.display = 'none';
+    if (!document.getElementById('chatStop')) {
+      const btn = document.createElement('button');
+      btn.id = 'chatStop';
+      btn.className = 'chat-stop';
+      btn.textContent = '⏹';
+      btn.title = 'Detener generación';
+      btn.addEventListener('click', () => {
+        if (abortController) abortController.abort();
+      });
+      el.chatSend.parentElement.appendChild(btn);
+    }
+    document.getElementById('chatStop').style.display = '';
+  }
+
+  function hideStopButton() {
+    el.chatSend.style.display = '';
+    const stopBtn = document.getElementById('chatStop');
+    if (stopBtn) stopBtn.style.display = 'none';
+    abortController = null;
+  }
+
+  async function streamOpenAI(provider, conv, msgEl) {
+    abortController = new AbortController();
+    const messages = conv.messages
+      .filter((m) => m.role !== 'assistant' || !m.content.startsWith('ERROR:'))
+      .map((m) => ({ role: m.role, content: m.content }));
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (provider.authType === 'x-api-key') {
+      headers['x-api-key'] = provider.apiKey;
+    } else {
+      headers['Authorization'] = 'Bearer ' + provider.apiKey;
+    }
+    if (provider.headers) Object.assign(headers, provider.headers);
+
+    const resp = await fetch(provider.endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model: state.activeModel || provider.defaultModel,
+        messages,
+        max_tokens: state.maxTokens || 16384,
+        temperature: 0.7,
+        stream: true,
+      }),
+      signal: abortController.signal,
+    });
+
+    if (!resp.ok) throw new Error(await resp.text());
+
+    let fullText = '';
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      // eslint-disable-line no-constant-condition
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data: ')) continue;
+        const data = trimmed.slice(6);
+        if (data === '[DONE]') break;
+        try {
+          const json = JSON.parse(data);
+          const delta = json.choices?.[0]?.delta?.content;
+          if (delta) {
+            fullText += delta;
+            msgEl.innerHTML = renderMarkdown(fullText) + '<span class="typing-cursor">|</span>';
+            msgEl.dataset.streamed = '1';
+            scrollChat();
+          }
+        } catch {
+          /* ignore partial */
+        }
+      }
+    }
+    msgEl.innerHTML = renderMarkdown(fullText);
+    return fullText;
+  }
+
+  async function streamOllama(provider, conv, msgEl) {
+    abortController = new AbortController();
+    const messages = conv.messages
+      .filter((m) => m.role !== 'assistant' || !m.content.startsWith('ERROR:'))
+      .map((m) => ({ role: m.role, content: m.content }));
+
+    const resp = await fetch(provider.endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: state.activeModel || provider.defaultModel,
+        messages,
+        stream: true,
+        options: { num_predict: state.maxTokens || 16384 },
+      }),
+      signal: abortController.signal,
+    });
+
+    if (!resp.ok) throw new Error(await resp.text());
+
+    let fullText = '';
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      // eslint-disable-line no-constant-condition
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const json = JSON.parse(line);
+          const delta = json.message?.content || json.response;
+          if (delta) {
+            fullText += delta;
+            msgEl.innerHTML = renderMarkdown(fullText) + '<span class="typing-cursor">|</span>';
+            msgEl.dataset.streamed = '1';
+            scrollChat();
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    msgEl.innerHTML = renderMarkdown(fullText);
+    return fullText;
+  }
+
+  async function _callOllama(provider, conv) {
     const messages = conv.messages
       .filter((m) => m.role !== 'assistant' || !m.content.startsWith('ERROR:'))
       .map((m) => ({ role: m.role, content: m.content }));
@@ -398,9 +736,121 @@ const AIChat = (() => {
       headers,
       body: JSON.stringify(body),
     });
+
     if (!resp.ok) throw new Error(await resp.text());
     const data = await resp.json();
     return data.choices?.[0]?.message?.content || data.content?.[0]?.text || JSON.stringify(data);
+  }
+
+  async function callGemini(provider, conv) {
+    const model = state.activeModel || provider.defaultModel || 'gemini-2.0-flash';
+    const apiKey = provider.apiKey || '';
+
+    let streamUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
+    let generateUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+    if (apiKey) {
+      streamUrl += `&key=${encodeURIComponent(apiKey)}`;
+      generateUrl += `?key=${encodeURIComponent(apiKey)}`;
+    }
+
+    const contents = [];
+    for (const m of conv.messages) {
+      if (m.role === 'assistant' && m.content.startsWith('ERROR:')) continue;
+      const role = m.role === 'assistant' ? 'model' : 'user';
+      if (contents.length > 0 && contents[contents.length - 1].role === role) {
+        contents[contents.length - 1].parts.push({ text: m.content });
+      } else {
+        contents.push({ role, parts: [{ text: m.content }] });
+      }
+    }
+
+    if (!contents.length) {
+      throw new Error('No hay mensajes válidos para enviar a Gemini.');
+    }
+
+    const payload = {
+      contents,
+      generationConfig: {
+        maxOutputTokens: state.maxTokens || 16384,
+        temperature: 0.7,
+      },
+    };
+
+    // Try SSE streaming first
+    try {
+      const resp = await fetch(streamUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (resp.ok && resp.body && typeof resp.body.getReader === 'function') {
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let done = false;
+        let fullText = '';
+        let buffer = '';
+
+        while (!done) {
+          const { value, done: readerDone } = await reader.read();
+          done = readerDone;
+          if (value) {
+            buffer += decoder.decode(value, { stream: !done });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('data: ')) {
+                const jsonStr = trimmed.slice(6);
+                try {
+                  const data = JSON.parse(jsonStr);
+                  const candidates = data.candidates || [];
+                  for (const cand of candidates) {
+                    const parts = cand.content?.parts || [];
+                    for (const part of parts) {
+                      if (part.text) fullText += part.text;
+                    }
+                  }
+                } catch {
+                  /* ignore partial json */
+                }
+              }
+            }
+          }
+        }
+        if (fullText) return fullText;
+      } else if (!resp.ok) {
+        const errText = await resp.text().catch(() => '');
+        throw new Error(errText || `Gemini API error (${resp.status})`);
+      }
+    } catch (err) {
+      if (
+        err.message.includes('API key not valid') ||
+        err.message.includes('API_KEY_INVALID') ||
+        err.message.includes('Gemini API error')
+      ) {
+        throw err;
+      }
+    }
+
+    // Standard generateContent fallback
+    const resp = await fetch(generateUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!resp.ok) {
+      const errText = await resp.text().catch(() => '');
+      throw new Error(errText || `Gemini API error (${resp.status})`);
+    }
+
+    const data = await resp.json();
+    const parts = data.candidates?.[0]?.content?.parts || [];
+    const text = parts.map((p) => p.text || '').join('');
+    if (text) return text;
+    return JSON.stringify(data);
   }
 
   /* ---------- file saving ---------- */
@@ -585,6 +1035,27 @@ const AIChat = (() => {
         removeProvider(id);
       }
     });
+
+    // Sandbox events
+    const sandboxClose = document.getElementById('sandboxCloseBtn');
+    const sandboxFullscreen = document.getElementById('sandboxFullscreenBtn');
+    const sandboxDownload = document.getElementById('sandboxDownloadBtn');
+    if (sandboxClose)
+      sandboxClose.addEventListener('click', () => {
+        document.getElementById('sandboxDrawer')?.classList.remove('active');
+      });
+    if (sandboxFullscreen)
+      sandboxFullscreen.addEventListener('click', () => {
+        const body = document.querySelector('.sandbox-body');
+        body?.classList.toggle('fullscreen');
+      });
+    if (sandboxDownload)
+      sandboxDownload.addEventListener('click', () => {
+        const iframe = document.getElementById('sandboxIframe');
+        if (iframe && iframe.srcdoc) {
+          downloadFile('codigo_generado.html', iframe.srcdoc);
+        }
+      });
   }
 
   function openDrawer() {
@@ -620,6 +1091,13 @@ const AIChat = (() => {
       if (provider.type === 'cloud') {
         el.apiKeyInput.value = provider.apiKey || '';
         el.apiKeyInput.parentElement.style.display = '';
+        if (provider.id === 'gemini') {
+          el.apiKeyInput.placeholder = 'API Key (Google AI Studio / opcional para flash-lite)...';
+        } else if (provider.tier === 'free') {
+          el.apiKeyInput.placeholder = 'API Key (gratuita / según proveedor)...';
+        } else {
+          el.apiKeyInput.placeholder = 'API Key...';
+        }
       } else {
         el.apiKeyInput.parentElement.style.display = 'none';
       }
@@ -633,13 +1111,20 @@ const AIChat = (() => {
     saveState();
   }
 
+  function getTierBadgeText(tier) {
+    if (tier === 'free') return ' [GRATIS]';
+    if (tier === 'both') return ' [FREE TIER]';
+    return '';
+  }
+
   function renderProviderSelect() {
     el.providerSelect.innerHTML = '<option value="">-- Seleccionar IA --</option>';
     state.providers.forEach((p) => {
       const opt = document.createElement('option');
       opt.value = p.id;
       const icon = p.isLocal ? '🖥️' : '☁️';
-      opt.textContent = icon + ' ' + p.name;
+      const badge = getTierBadgeText(p.tier);
+      opt.textContent = icon + ' ' + p.name + badge;
       el.providerSelect.appendChild(opt);
     });
     if (state.activeProvider) {
@@ -654,7 +1139,13 @@ const AIChat = (() => {
     provider.models.forEach((m) => {
       const opt = document.createElement('option');
       opt.value = m;
-      opt.textContent = m;
+      let label = m;
+      if (m.includes(':free') || m === 'gemini-2.0-flash-lite') {
+        label += ' [GRATIS]';
+      } else if (m === 'gemini-2.0-flash') {
+        label += ' [FREE TIER]';
+      }
+      opt.textContent = label;
       el.modelSelect.appendChild(opt);
     });
     if (state.activeModel && provider.models.includes(state.activeModel)) {
@@ -705,9 +1196,57 @@ const AIChat = (() => {
 
   function renderMarkdown(text) {
     if (typeof marked !== 'undefined') {
-      return marked.parse(text);
+      const html = marked.parse(text);
+      // Add "Run" buttons after code blocks
+      return addRunButtons(html);
     }
     return escapeHtml(text).replace(/\n/g, '<br>');
+  }
+
+  function addRunButtons(html) {
+    // Add a "▶ Run" button after each code block
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    const codeBlocks = div.querySelectorAll('pre code');
+    codeBlocks.forEach((code) => {
+      const lang = code.className.replace('language-', '').replace('lang-', '');
+      if (['html', 'css', 'javascript', 'js', 'ts', 'typescript'].includes(lang)) {
+        const btn = document.createElement('button');
+        btn.className = 'code-run-btn';
+        btn.textContent = '▶ Run';
+        btn.addEventListener('click', () => {
+          openSandbox(code.textContent, lang);
+        });
+        code.parentElement.appendChild(btn);
+      }
+    });
+    return div.innerHTML;
+  }
+
+  function openSandbox(code, lang) {
+    const sandbox = document.getElementById('sandboxDrawer');
+    const iframe = document.getElementById('sandboxIframe');
+    const empty = document.getElementById('sandboxEmpty');
+    const badge = document.getElementById('sandboxBadge');
+
+    if (!sandbox || !iframe) return;
+
+    let html = code;
+    if (lang === 'html') {
+      html = code;
+    } else if (lang === 'css' || lang === 'javascript' || lang === 'js' || lang === 'ts') {
+      html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>body{font-family:system-ui,sans-serif;padding:20px;background:#0c1220;color:#e9f0fa;}</style></head><body>
+${lang === 'css' ? `<style>${code}</style><p>CSS preview</p>` : ''}
+${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` + 'script><p>JS output in console</p>' : ''}
+</body></html>`;
+    }
+
+    iframe.srcdoc = html;
+    iframe.style.display = '';
+    if (empty) empty.style.display = 'none';
+    if (badge) badge.textContent = lang.toUpperCase();
+    sandbox.classList.add('active');
   }
 
   function scrollChat() {
@@ -837,6 +1376,7 @@ const AIChat = (() => {
       name,
       endpoint,
       type: 'custom',
+      tier: 'paid',
       apiKey,
       models: models.split(',').map((s) => s.trim()),
       defaultModel: models.split(',')[0].trim(),
@@ -868,13 +1408,10 @@ const AIChat = (() => {
   function renderConfigList() {
     if (!el.configList) return;
     el.configList.innerHTML = '';
-    const cloudPresets = state.providers.filter(
-      (p) => p.type === 'cloud' && ['openai', 'anthropic', 'groq', 'deepseek', 'openrouter', 'alibaba'].includes(p.id)
-    );
+    const presetIds = DEFAULT_PROVIDERS.map((p) => p.id);
+    const cloudPresets = state.providers.filter((p) => p.type === 'cloud' && presetIds.includes(p.id));
     const custom = state.providers.filter((p) => p.type === 'custom');
-    const otherCloud = state.providers.filter(
-      (p) => p.type === 'cloud' && !['openai', 'anthropic', 'groq', 'deepseek', 'openrouter', 'alibaba'].includes(p.id)
-    );
+    const otherCloud = state.providers.filter((p) => p.type === 'cloud' && !presetIds.includes(p.id));
     const all = [...cloudPresets, ...otherCloud, ...custom];
     if (!all.length) {
       el.configList.innerHTML = '<div class="ai-cfg-empty">Agregue proveedores personalizados con el botón +</div>';
@@ -883,19 +1420,30 @@ const AIChat = (() => {
     all.forEach((p) => {
       const div = document.createElement('div');
       div.className = 'ai-cfg-item';
+      const tierBadge = p.tier
+        ? '<span class="ai-cfg-tier tier-' + escapeHtml(p.tier) + '">' + escapeHtml(p.tier.toUpperCase()) + '</span>'
+        : '';
+      const noteHtml = p.note ? '<div class="ai-cfg-note">' + escapeHtml(p.note) + '</div>' : '';
       div.innerHTML =
         '<div class="ai-cfg-info">' +
+        '<div class="ai-cfg-header">' +
         '<span class="ai-cfg-name">' +
         escapeHtml(p.name) +
         '</span>' +
+        tierBadge +
+        '</div>' +
         '<span class="ai-cfg-endpoint">' +
-        escapeHtml(p.endpoint.substring(0, 35)) +
-        '...</span>' +
+        escapeHtml(p.endpoint.substring(0, 45)) +
+        (p.endpoint.length > 45 ? '...' : '') +
+        '</span>' +
+        noteHtml +
         '</div>' +
         '<div class="ai-cfg-key-row">' +
         '<input type="password" class="ai-cfg-key" data-id="' +
         p.id +
-        '" placeholder="API Key..." value="' +
+        '" placeholder="API Key' +
+        (p.tier === 'free' || p.id === 'gemini' ? ' (opcional/gratis)...' : '...') +
+        '" value="' +
         escapeHtml(p.apiKey || '') +
         '" autocomplete="off">' +
         '<button class="ai-cfg-remove" data-id="' +
@@ -954,6 +1502,13 @@ const AIChat = (() => {
     selectSaveDir,
     saveGeneratedFiles,
     detectLocal,
+    detectModels,
+    callGemini,
+    openSandbox,
+    DEFAULT_PROVIDERS,
+    LOCAL_PROBES,
+    FREE_TIER_PROVIDERS,
+    MODEL_SCANNER_SOURCES,
   };
 })();
 
