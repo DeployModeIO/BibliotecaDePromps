@@ -1,0 +1,7 @@
+# Exclude Docker build context from git
+Dockerfile
+.dockerignore
+node_modules/
+dist/
+.git/
+*.br

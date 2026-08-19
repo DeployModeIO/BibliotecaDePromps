@@ -19,3 +19,7 @@ desktop.ini
 *.bak
 .cache/
 .parcel-cache/
+playwright-report/
+e2e-report/
+test-results/
+*.br

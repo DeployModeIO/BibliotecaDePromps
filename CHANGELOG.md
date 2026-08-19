@@ -9,32 +9,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- GitHub Actions CI pipeline (lint + format + test on push/PR)
-- GitHub Actions deploy pipeline (auto-deploy to GitHub Pages)
+- GitHub Actions CI pipeline (lint + format + test + validate on push/PR, Node 20.x/22.x)
+- GitHub Actions deploy pipeline (auto-deploy to GitHub Pages on merge to main)
 - Sass SCSS modularization (12 component files in `scss/`)
 - `build:css`, `build:css:watch`, `build:css:prod` npm scripts
-- `precommit` npm script (format check + lint + test)
-- `test:coverage` npm script
-- SRI integrity hashes for CDN scripts (jszip, marked)
-- Local fallback scripts in `js/vendor/` for offline CDN resilience
+- esbuild-based build script (`scripts/build.js`) — JS minification 28-46%
+- Brotli compression in build output (17 .br files in `dist/`)
+- `precommit`, `validate`, `dev`, `preview` npm scripts
+- `test:integration`, `test:e2e`, `test:e2e:ui`, `test:e2e:report` npm scripts
+- SRI integrity hashes for CDN scripts (jszip, marked) with local fallback in `js/vendor/`
 - JSDoc type annotations for `app.js` public API
 - Global error boundary (`window.onerror` + `unhandledrejection`)
+- 14 unit tests: SafeStore, PlatformTests, data merge, wordCount, escHTML
+- 28 integration tests: DOM, CSP, SRI, SW, manifest, SCSS, GitHub Actions, build artifacts
+- `CHANGELOG.md` with Keep a Changelog format
+- Docker support with multi-stage build (Node 22 Alpine + Nginx 1.27 with Brotli)
+- `nginx.conf` with Brotli, Gzip, security headers, immutable caching, CSP
+- Web Worker (`js/bpi-worker.js`) for off-main-thread search indexing, word count, highlighting
+- Playwright E2E test suite (4 browsers: Chromium, Firefox, Mobile Chrome, Mobile Safari)
+- 20 E2E tests: homepage, search, categories, modal, drawers, chat, offline/PWA, responsive
+- Landing page (`landing.html`) with marketing design, stats, features grid, industries grid
+- `.editorconfig` for consistent cross-editor formatting
+- `.dockerignore` for lean Docker builds
 - `.prettierignore` to exclude vendor files and generated CSS
-- `CHANGELOG.md`
 - `prompts-data-fullstack.js` added to `.eslintignore`
 
 ### Changed
 
-- `sw.js`: Complete rewrite with stale-while-revalidate strategy, all assets cached, CDN font/script caching, `Promise.allSettled` for resilient install
-- `manifest.json`: Added PNG icon entry for iOS compatibility
-- `index.html`: CDN scripts now include `integrity`, `crossorigin`, and `onerror` fallback
-- `.eslintrc.cjs`: Template literal indentation excluded from `indent` rule (Prettier compatibility)
-- `package.json`: Added `sass` devDependency, new build scripts
-- `app.js`: Version bump to v3.3, JSDoc typedefs, error boundary
+- `sw.js`: Complete rewrite with stale-while-revalidate strategy, all assets cached, CDN fonts, `Promise.allSettled`
+- `manifest.json`: Added PNG icon entry for iOS
+- `index.html`: SRI + crossorigin + onerror fallback on CDN scripts, hardened CSP, Apple touch icon
+- `.eslintrc.cjs`: Template literal indent excluded (Prettier compat)
+- `package.json`: Added sass, esbuild, Playwright, jsdom devDependencies; new scripts
+- `app.js`: v3.2 → v3.3, JSDoc typedefs, error boundary
+- `.gitignore`: Added `e2e-report/`, `playwright-report/`, `test-results/`, `*.br`
+- `.eslintignore`: Added `bpi-worker.js`, `coverage/`, `e2e/`, `scripts/`
 
 ### Fixed
 
-- Service Worker was missing 5 JS files and 2 HTML files from precache
+- Service Worker missing 5 JS files and 2 HTML files from precache
 - CDN scripts had no integrity verification (security risk)
 - CSS was a single 2000+ line unmaintainable file
 - ESLint/Prettier conflict on template literal indentation

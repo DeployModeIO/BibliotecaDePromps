@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Biblioteca de Promps Industriales — 80+ mega-prompts para ingeniería. Oil & Gas, Minería, Energía, Automatización. Genera aplicaciones completas con IA."
+    />
+    <meta name="theme-color" content="#0c1220" />
+    <title>Biblioteca de Promps Industriales — Mega-Prompts para Ingeniería</title>
+    <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0c1220;
+        --bg2: #111a2b;
+        --bg3: #182338;
+        --line: #22314b;
+        --txt: #e9f0fa;
+        --txt2: #a9bad2;
+        --amber: #ffb020;
+        --amber2: #ffca5f;
+        --cyan: #4cc3ff;
+        --green: #35d69a;
+        --red: #ff5c5c;
+        --f-display: 'Chakra Petch', sans-serif;
+        --f-body: 'Barlow', sans-serif;
+        --f-mono: 'IBM Plex Mono', monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: var(--f-body);
+        background: var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        background:
+          radial-gradient(ellipse 900px 500px at 50% 0%, rgba(76, 195, 255, 0.06), transparent 60%),
+          radial-gradient(ellipse 700px 400px at 80% 100%, rgba(255, 176, 32, 0.05), transparent 60%);
+        position: relative;
+      }
+      .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.012) 0 1px, transparent 1px 3px);
+        pointer-events: none;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 1rem;
+        border: 1px solid var(--amber);
+        border-radius: 100px;
+        font-family: var(--f-mono);
+        font-size: 0.8rem;
+        color: var(--amber);
+        background: rgba(255, 176, 32, 0.08);
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.6s ease;
+      }
+      .hero-badge .dot {
+        width: 8px;
+        height: 8px;
+        background: var(--green);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+      .hero h1 {
+        font-family: var(--f-display);
+        font-size: clamp(2.2rem, 6vw, 4rem);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+        animation: fadeInUp 0.6s ease 0.1s both;
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: var(--amber);
+      }
+      .hero .subtitle {
+        font-size: 1.15rem;
+        color: var(--txt2);
+        max-width: 600px;
+        margin-bottom: 2.5rem;
+        animation: fadeInUp 0.6s ease 0.2s both;
+      }
+      .hero .cta-group {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        animation: fadeInUp 0.6s ease 0.3s both;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.8rem;
+        border-radius: 8px;
+        font-family: var(--f-display);
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background: var(--amber);
+        color: #14100a;
+        border: none;
+      }
+      .btn-primary:hover {
+        background: var(--amber2);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(255, 176, 32, 0.3);
+      }
+      .btn-outline {
+        border: 1.5px solid var(--line);
+        color: var(--txt);
+      }
+      .btn-outline:hover {
+        border-color: var(--amber);
+        background: rgba(255, 176, 32, 0.06);
+      }
+      .btn-ghost {
+        border: none;
+        color: var(--txt2);
+        background: none;
+      }
+      .btn-ghost:hover {
+        color: var(--txt);
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* Stats */
+      .stats-row {
+        display: flex;
+        gap: 3rem;
+        justify-content: center;
+        padding: 3rem 2rem;
+        flex-wrap: wrap;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: var(--bg2);
+      }
+      .stat-item {
+        text-align: center;
+      }
+      .stat-item .num {
+        font-family: var(--f-display);
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--amber);
+      }
+      .stat-item .label {
+        font-size: 0.8rem;
+        color: var(--txt2);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 0.3rem;
+      }
+      /* Features */
+      .section {
+        padding: 5rem 2rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .section h2 {
+        font-family: var(--f-display);
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .section .section-sub {
+        text-align: center;
+        color: var(--txt2);
+        margin-bottom: 3rem;
+      }
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+      .feature-card {
+        background: var(--bg2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 2rem;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+      }
+      .feature-card:hover {
+        border-color: var(--amber);
+        transform: translateY(-2px);
+      }
+      .feature-card .icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+      .feature-card h3 {
+        font-family: var(--f-display);
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.03em;
+      }
+      .feature-card p {
+        font-size: 0.9rem;
+        color: var(--txt2);
+      }
+      /* Industries */
+      .industries {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 1rem;
+      }
+      .ind-card {
+        background: var(--bg2);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        transition: border-color 0.2s;
+      }
+      .ind-card:hover {
+        border-color: var(--amber);
+      }
+      .ind-card .ind-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .ind-card .ind-name {
+        font-family: var(--f-display);
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+      }
+      .ind-card .ind-count {
+        font-size: 0.7rem;
+        color: var(--txt2);
+        margin-top: 0.2rem;
+      }
+      /* CTAs */
+      .cta-section {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--bg2);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      .cta-section h2 {
+        font-family: var(--f-display);
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+      }
+      .cta-section p {
+        color: var(--txt2);
+        max-width: 500px;
+        margin: 0 auto 2rem;
+      }
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 2rem;
+        font-size: 0.8rem;
+        color: var(--txt2);
+        border-top: 1px solid var(--line);
+      }
+      footer a {
+        color: var(--amber);
+        text-decoration: none;
+      }
+      /* Responsive */
+      @media (max-width: 640px) {
+        .hero {
+          padding: 4rem 1rem;
+          min-height: auto;
+        }
+        .section {
+          padding: 3rem 1rem;
+        }
+        .stats-row {
+          gap: 1.5rem;
+        }
+        .stat-item .num {
+          font-size: 1.6rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        <span>v3.3 · PWA Ready · 100% Offline</span>
+      </div>
+      <h1>Biblioteca de <em>Promps</em> Industriales</h1>
+      <p class="subtitle">
+        La colección más completa de mega-prompts de ingeniería en español. 80+ prompts profesionales para generar aplicaciones industriales
+        completas con IA.
+      </p>
+      <div class="cta-group">
+        <a href="index.html" class="btn btn-primary">⚡ Abrir Biblioteca</a>
+        <a href="#features" class="btn btn-outline">📋 Ver Funcionalidades</a>
+        <a href="https://github.com/DeployModeIO/BibliotecaDePromps" class="btn btn-ghost" target="_blank" rel="noopener">⌂ GitHub</a>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="num">80+</div>
+        <div class="label">Mega-Prompts</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">8</div>
+        <div class="label">Industrias</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">5</div>
+        <div class="label">Plataformas</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">100%</div>
+        <div class="label">Offline</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">3.3</div>
+        <div class="label">Versión</div>
+      </div>
+    </div>
+
+    <section class="section" id="features">
+      <h2>Funcionalidades</h2>
+      <p class="section-sub">Todo lo que necesitas para generar software industrial con IA</p>
+      <div class="features">
+        <div class="feature-card">
+          <div class="icon">🏭</div>
+          <h3>Prompts de Ingeniería</h3>
+          <p>SCADA, PLC, DCS, HMI, MES, IoT Industrial, Oil & Gas, Minería, Desalinización, Energía.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📱</div>
+          <h3>Multi-Plataforma</h3>
+          <p>
+            Cada prompt incluye directivas para Web, Android, iOS, Tablet y Windows. La IA genera código específico para cada plataforma.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">💬</div>
+          <h3>Chat IA Integrado</h3>
+          <p>
+            Chat lateral con soporte para OpenAI, Anthropic, Groq, DeepSeek, Ollama, LM Studio y más. Detecta automáticamente servidores
+            locales.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📡</div>
+          <h3>100% Offline · PWA</h3>
+          <p>
+            Instalable como app nativa. Funciona sin internet. Service Worker con estrategia stale-while-revalidate para carga instantánea.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📤</div>
+          <h3>Exportación Multi-Formato</h3>
+          <p>Exporta prompts a PDF, Excel, Email. Copia con un click. Enlace directo a ChatGPT, Claude y otras IAs.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🔍</div>
+          <h3>Búsqueda y Filtros</h3>
+          <p>
+            Búsqueda instantánea por título, tag, contenido o norma. Filtros por prioridad (Crítica, Alta, Media) y tipo (App, Herramienta).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Industrias Cubiertas</h2>
+      <p class="section-sub">Mega-prompts especializados para cada sector</p>
+      <div class="industries">
+        <div class="ind-card">
+          <div class="ind-icon">🛢️</div>
+          <div class="ind-name">Oil & Gas</div>
+          <div class="ind-count">12+ prompts</div>
+        </div>
+        <div class="ind-card">
+          <div class="ind-icon">⛏️</div>
+          <div class="ind-name">Minería</div>
+          <div class="ind-count">10+ prompts</div>
+        </div>
+        <div class="ind-card">
+          <div class="ind-icon">💧</div>
+          <div class="ind-name">Desalinización</div>
+          <div class="ind-count">8+ prompts</div>
+        </div>
+        <div class="ind-card">
+          <div class="ind-icon">⚡</div>
+          <div class="ind-name">Energía</div>
+          <div class="ind-count">10+ prompts</div>
+        </div>
+        <div class="ind-card">
+          <div class="ind-icon">🤖</div>
+          <div class="ind-name">Automatización</div>
+          <div class="ind-count">15+ prompts</div>
+        </div>
+        <div class="ind-card">
+          <div class="ind-icon">📚</div>
+          <div class="ind-name">Capacitación</div>
+          <div class="ind-count">8+ prompts</div>
+        </div>
+        <div class="ind-card">
+          <div class="ind-icon">🏗️</div>
+          <div class="ind-name">Full-Stack</div>
+          <div class="ind-count">10+ prompts</div>
+        </div>
+        <div class="ind-card">
+          <div class="ind-icon">🔧</div>
+          <div class="ind-name">Herramientas</div>
+          <div class="ind-count">7+ prompts</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta-section">
+      <h2>¿Listo para acelerar tu desarrollo?</h2>
+      <p>Abre la biblioteca, elige un prompt, y deja que la IA genere la aplicación completa por ti.</p>
+      <a href="index.html" class="btn btn-primary">⚡ Abrir Biblioteca Ahora</a>
+    </div>
+
+    <footer>
+      <p>
+        <strong>Biblioteca de Promps Industriales</strong> · v3.3 ·
+        <a href="https://github.com/DeployModeIO/BibliotecaDePromps" target="_blank" rel="noopener">GitHub</a> · MIT License
+      </p>
+      <p style="margin-top: 0.5rem">Web · Android · iOS · Tablet · Windows</p>
+    </footer>
+  </body>
+</html>

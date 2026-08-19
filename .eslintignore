@@ -3,3 +3,7 @@ js/prompts-data-extra.js
 js/prompts-data-v2.js
 js/prompts-data-fullstack.js
 js/vendor/
+js/bpi-worker.js
+coverage/
+e2e/
+scripts/
