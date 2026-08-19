@@ -88,4 +88,32 @@ for (const f of jsToCopy) {
 }
 
 console.log('\n✓ Build complete → dist/');
+
+// Brotli compress text assets for production serving
+const zlib = require('zlib');
+const textExts = ['.html', '.css', '.js', '.svg', '.json', '.md'];
+let brCount = 0;
+function compressDir(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      compressDir(full);
+    } else if (textExts.includes(path.extname(entry.name))) {
+      const content = fs.readFileSync(full);
+      // Only compress if > 1KB and not already compressed
+      if (content.length > 1024) {
+        const compressed = zlib.brotliCompressSync(content, {
+          params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11 },
+        });
+        if (compressed.length < content.length) {
+          fs.writeFileSync(full + '.br', compressed);
+          brCount++;
+        }
+      }
+    }
+  }
+}
+compressDir(DIST);
+console.log(`  ${brCount} .br (Brotli) compressed files`);
+
 console.log('  Open index.html from dist/ or serve with: npx serve dist/');
