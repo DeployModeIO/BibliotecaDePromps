@@ -1,0 +1,472 @@
+/* ============================================================
+   CHAT PANEL — AI chat drawer, messages, input, config
+   ============================================================ */
+
+.chat-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 440px;
+  max-width: 92vw;
+  background: var(--bg-1);
+  border-left: 1px solid var(--line);
+  z-index: 210;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.32s var(--ease-drawer);
+  box-shadow: var(--shadow);
+
+  &.active {
+    transform: translateX(0);
+  }
+}
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-2);
+  flex-shrink: 0;
+}
+
+.chat-head-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+
+  h3 {
+    font-family: var(--f-display);
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}
+
+.chat-status {
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--line);
+  color: var(--txt-3);
+
+  &.local {
+    color: var(--green);
+    border-color: var(--green-dim);
+  }
+  &.cloud {
+    color: var(--cyan);
+    border-color: var(--cyan-dim);
+  }
+  &.detecting {
+    color: var(--amber);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+}
+
+.chat-head-right {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.chat-head-btn {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--txt-2);
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-3);
+    color: var(--amber);
+  }
+}
+
+.chat-select-row {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-2);
+  flex-shrink: 0;
+}
+
+.chat-select {
+  flex: 1;
+  font-family: var(--f-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.4rem;
+  background: var(--bg-1);
+  color: var(--txt);
+  border: 1px solid var(--line);
+}
+
+.chat-api-row {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-2);
+  flex-shrink: 0;
+}
+
+.chat-api-key {
+  flex: 1;
+  font-family: var(--f-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.4rem;
+  background: var(--bg-1);
+  color: var(--txt);
+  border: 1px solid var(--line);
+
+  &:focus {
+    outline: 1px solid var(--amber);
+  }
+}
+
+.chat-api-detect {
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.6rem;
+  background: var(--bg-3);
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--amber-dim);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.chat-conv-list {
+  display: flex;
+  gap: 0.3rem;
+  overflow-x: auto;
+  padding: 0.4rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.ai-conv-item {
+  flex-shrink: 0;
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  padding: 0.3rem 0.55rem;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  color: var(--txt-3);
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+
+  &:hover {
+    color: var(--amber);
+  }
+
+  &.active {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+}
+
+.ai-conv-time {
+  opacity: 0.5;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chat-empty {
+  color: var(--txt-3);
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.chat-msg {
+  font-family: var(--f-body);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0;
+  max-width: 88%;
+  word-wrap: break-word;
+}
+
+.chat-user {
+  align-self: flex-end;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  color: var(--txt);
+}
+
+.chat-assistant {
+  align-self: flex-start;
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  color: var(--txt);
+  max-width: 95%;
+
+  pre {
+    background: var(--bg-0);
+    border: 1px solid var(--line);
+    padding: 0.6rem;
+    font-family: var(--f-mono);
+    font-size: 0.68rem;
+    overflow-x: auto;
+    margin: 0.4rem 0;
+  }
+
+  code {
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    background: var(--bg-0);
+    padding: 0.1rem 0.3rem;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+  }
+}
+
+.chat-system {
+  align-self: center;
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  color: var(--txt-3);
+  padding: 0.3rem 0.6rem;
+}
+
+.chat-err {
+  color: var(--red);
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+}
+
+.chat-typing {
+  animation: blink 1s step-end infinite;
+  color: var(--amber);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.6rem 0.7rem;
+  border-top: 1px solid var(--line);
+  background: var(--bg-2);
+  flex-shrink: 0;
+}
+
+.chat-input {
+  flex: 1;
+  font-family: var(--f-body);
+  font-size: 0.76rem;
+  padding: 0.5rem;
+  background: var(--bg-1);
+  color: var(--txt);
+  border: 1px solid var(--line);
+  resize: none;
+
+  &:focus {
+    outline: 1px solid var(--amber);
+  }
+}
+
+.chat-send {
+  background: var(--amber);
+  color: var(--bg-0);
+  border: none;
+  font-size: 1.1rem;
+  padding: 0 0.85rem;
+  cursor: pointer;
+  font-weight: 700;
+
+  &:hover {
+    background: var(--amber-2);
+  }
+}
+
+.chat-config {
+  border-top: 1px solid var(--line);
+  flex-shrink: 0;
+
+  summary {
+    font-family: var(--f-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    padding: 0.5rem 0.7rem;
+    cursor: pointer;
+    color: var(--txt-3);
+    background: var(--bg-2);
+
+    &:hover {
+      color: var(--amber);
+    }
+  }
+}
+
+.chat-config-body {
+  padding: 0.6rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  background: var(--bg-1);
+}
+
+.ai-cfg-section {
+  label {
+    font-family: var(--f-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--txt-3);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+}
+
+.ai-cfg-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ai-cfg-label {
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  color: var(--txt-2);
+}
+
+.ai-cfg-btn {
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.6rem;
+  background: var(--bg-2);
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--amber-dim);
+  }
+}
+
+.ai-cfg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.4rem;
+}
+
+.ai-cfg-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  padding: 0.4rem 0.5rem;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  color: var(--txt-2);
+}
+
+.ai-cfg-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.ai-cfg-name {
+  font-weight: 700;
+  color: var(--txt);
+}
+
+.ai-cfg-endpoint {
+  color: var(--txt-3);
+  font-size: 0.56rem;
+}
+
+.ai-cfg-key-row {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.ai-cfg-key {
+  flex: 1;
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  padding: 0.25rem 0.35rem;
+  background: var(--bg-1);
+  color: var(--txt);
+  border: 1px solid var(--line);
+
+  &:focus {
+    outline: 1px solid var(--amber);
+  }
+}
+
+.ai-cfg-remove {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--red);
+  cursor: pointer;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.4rem;
+}
+
+.ai-cfg-empty {
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  color: var(--txt-3);
+  padding: 0.5rem;
+}
+
+.ai-conv-del-all {
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--red);
+  background: none;
+  border: 1px solid var(--line);
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  margin: 0.2rem 0.7rem 0.4rem;
+  justify-content: center;
+  display: flex;
+
+  &:hover {
+    background: var(--red-dim);
+  }
+}

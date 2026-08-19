@@ -1,7 +1,18 @@
 /* ============================================================
-   BIBLIOTECA DE PROMPS INDUSTRIALES — APP CORE v3.2
+   BIBLIOTECA DE PROMPS INDUSTRIAL — APP CORE v3.3
+   JSDoc type annotations for DX. TypeScript not required.
    ============================================================ */
 /* global PROMPTS_DB, PROMPTS_DB_EXTRA, PROMPTS_DB_V2, PROMPTS_DB_FULLSTACK */
+
+/**
+ * @typedef {{"label": string, "spec": string}} PlatformSpec
+ * @typedef {{"id": string, "titulo": string, "categoria": string, "prioridad": string,
+ *            "prompt": string, "tags": string[], "uso": string}} Prompt
+ * @typedef {{"id": string, "nombre": string, "icono": string, "color": string,
+ *            "descripcion": string, "subcategorias": Subcategoria[]}} Categoria
+ * @typedef {{"id": string, "nombre": string, "prompts": Prompt[]}} Subcategoria
+ * @typedef {{"prompt": Prompt, "cat": Categoria, "sub": Subcategoria}} PromptEntry
+ */
 
 const PLATFORM_SPECS = {
   web: {
@@ -617,9 +628,9 @@ class PromptLibrary {
         </div>
         <div class="pcard-tags">
           ${p.tags
-    .slice(0, 4)
-    .map((t) => `<span class="tag">${this.esc(t)}</span>`)
-    .join('')}
+            .slice(0, 4)
+            .map((t) => `<span class="tag">${this.esc(t)}</span>`)
+            .join('')}
         </div>
       </div>
       <div class="pcard-cta">VER PROMPT →</div>`;
@@ -1090,4 +1101,19 @@ document.addEventListener('DOMContentLoaded', () => {
      on the missing UI DOM. */
   if (!document.getElementById('searchInput')) return;
   window.promptLibrary = new PromptLibrary();
+});
+
+/* Global error boundary — logs to console and shows toast if UI is booted */
+window.addEventListener('error', (event) => {
+  console.error('[BPI] Unhandled error:', event.error?.message || event.message, event);
+  if (window.promptLibrary && typeof window.promptLibrary.showToast === 'function') {
+    window.promptLibrary.showToast('⚠ Error interno — recargue la página si persiste', 'error');
+  }
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('[BPI] Unhandled rejection:', event.reason?.message || event.reason, event);
+  if (window.promptLibrary && typeof window.promptLibrary.showToast === 'function') {
+    window.promptLibrary.showToast('⚠ Error de red o procesamiento — reintente', 'error');
+  }
 });

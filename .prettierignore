@@ -1,0 +1,6 @@
+js/vendor/
+css/styles.css
+css/styles.min.css
+node_modules/
+coverage/
+dist/

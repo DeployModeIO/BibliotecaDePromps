@@ -56,11 +56,14 @@ body {
   color: var(--txt);
   background:
     radial-gradient(1100px 560px at 85% -8%, var(--glow-a), transparent 62%),
-    radial-gradient(900px 520px at 4% 108%, var(--glow-b), transparent 60%),
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
-    var(--bg-1);
-  background-size: auto, auto, 46px 46px, 46px 46px, auto;
+    radial-gradient(900px 520px at 4% 108%, var(--glow-b), transparent 60%), linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px), var(--bg-1);
+  background-size:
+    auto,
+    auto,
+    46px 46px,
+    46px 46px,
+    auto;
   background-attachment: fixed;
   min-height: 100vh;
   line-height: 1.55;

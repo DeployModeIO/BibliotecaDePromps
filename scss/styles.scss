@@ -1,0 +1,26 @@
+/* ============================================================
+   BIBLIOTECA DE PROMPS INDUSTRIALES — HMI CONTROL ROOM UI
+   Generated from SCSS modules. Edit source files in scss/ and
+   compile with: npx sass scss/styles.scss css/styles.css
+   ============================================================ */
+
+// ---- Base ----
+@use 'base/reset';
+
+// ---- Themes ----
+@use 'themes/light';
+
+// ---- Layout ----
+@use 'layout/topbar';
+@use 'layout/stats';
+@use 'layout/commandbar';
+@use 'layout/main';
+@use 'layout/footer';
+@use 'layout/responsive';
+
+// ---- Components ----
+@use 'components/categories';
+@use 'components/prompt-cards';
+@use 'components/modal';
+@use 'components/drawers';
+@use 'components/chat';
