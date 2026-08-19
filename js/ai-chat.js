@@ -967,8 +967,11 @@ const AIChat = (() => {
     renderConfigList();
     if (el.maxTokensSelect) el.maxTokensSelect.value = String(state.maxTokens || 16384);
     bindEvents();
-    if (!state.providers.length || state.autoDetectedLocal.length === 0) detectLocal();
+    if (!state.providers.length || state.autoDetectedLocal.length === 0) {
+      detectLocal().catch((err) => console.error('[AIChat] detectLocal failed:', err));
+    }
     initialized = true;
+    console.log('[AIChat] Initialized — providers:', state.providers.length, 'active:', state.activeProvider);
   }
 
   function cacheDom() {
@@ -998,43 +1001,66 @@ const AIChat = (() => {
   }
 
   function bindEvents() {
-    el.chatToggle.addEventListener('click', () => openDrawer());
-    el.chatClose.addEventListener('click', () => closeDrawer());
-    el.chatScrim.addEventListener('click', () => closeDrawer());
-    el.providerSelect.addEventListener('change', onProviderChange);
-    el.modelSelect.addEventListener('change', onModelChange);
-    el.chatSend.addEventListener('click', () => sendCurrentMessage());
-    el.chatInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendCurrentMessage();
-      }
-    });
-    el.configAdd.addEventListener('click', () => addCustomProvider());
-    el.saveDirBtn.addEventListener('click', () => selectSaveDir());
-    el.newConvBtn.addEventListener('click', () => newConversation());
-    el.saveFilesBtn.addEventListener('click', () => saveCurrentFiles());
+    if (el.chatToggle) el.chatToggle.addEventListener('click', () => openDrawer());
+    if (el.chatClose) el.chatClose.addEventListener('click', () => closeDrawer());
+    if (el.chatScrim) el.chatScrim.addEventListener('click', () => closeDrawer());
+    if (el.providerSelect) el.providerSelect.addEventListener('change', onProviderChange);
+    if (el.modelSelect) el.modelSelect.addEventListener('change', onModelChange);
+    if (el.chatSend) el.chatSend.addEventListener('click', () => sendCurrentMessage());
+    if (el.chatInput) {
+      el.chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendCurrentMessage();
+        }
+      });
+    }
+    if (el.configAdd) el.configAdd.addEventListener('click', () => addCustomProvider());
+    if (el.saveDirBtn) el.saveDirBtn.addEventListener('click', () => selectSaveDir());
+    if (el.newConvBtn) el.newConvBtn.addEventListener('click', () => newConversation());
+    if (el.saveFilesBtn) el.saveFilesBtn.addEventListener('click', () => saveCurrentFiles());
     if (el.convDelAll) el.convDelAll.addEventListener('click', () => deleteAllConversations());
-    el.apiKeyInput.addEventListener('input', () => {
-      const provider = state.providers.find((p) => p.id === state.activeProvider);
-      if (provider && provider.type === 'cloud') {
-        provider.apiKey = el.apiKeyInput.value;
+    if (el.apiKeyInput) {
+      el.apiKeyInput.addEventListener('input', () => {
+        const provider = state.providers.find((p) => p.id === state.activeProvider);
+        if (provider && provider.type === 'cloud') {
+          provider.apiKey = el.apiKeyInput.value;
+          saveState();
+        }
+      });
+    }
+    if (el.detectModelsBtn) {
+      el.detectModelsBtn.addEventListener('click', () => {
+        console.log('[AIChat] detectModels clicked');
+        detectModels().catch((err) => console.error('[AIChat] detectModels error:', err));
+      });
+    } else {
+      console.warn('[AIChat] detectModelsBtn not found in DOM');
+    }
+    if (el.rescanLocalBtn) {
+      el.rescanLocalBtn.addEventListener('click', () => {
+        console.log('[AIChat] rescanLocal clicked');
+        detectLocal().catch((err) => console.error('[AIChat] detectLocal error:', err));
+      });
+    } else {
+      console.warn('[AIChat] rescanLocalBtn not found in DOM');
+    }
+    if (el.maxTokensSelect) {
+      el.maxTokensSelect.addEventListener('change', () => {
+        state.maxTokens = parseInt(el.maxTokensSelect.value, 10);
         saveState();
-      }
-    });
-    el.detectModelsBtn.addEventListener('click', () => detectModels());
-    el.rescanLocalBtn.addEventListener('click', () => detectLocal());
-    el.maxTokensSelect.addEventListener('change', () => {
-      state.maxTokens = parseInt(el.maxTokensSelect.value, 10);
-      saveState();
-      showToast('Max tokens: ' + state.maxTokens.toLocaleString());
-    });
-    el.configPanel.addEventListener('click', (e) => {
-      if (e.target.closest('.ai-cfg-remove')) {
-        const id = e.target.closest('.ai-cfg-remove').dataset.id;
-        removeProvider(id);
-      }
-    });
+        showToast('Max tokens: ' + state.maxTokens.toLocaleString());
+      });
+    }
+    if (el.configPanel) {
+      el.configPanel.addEventListener('click', (e) => {
+        if (e.target.closest('.ai-cfg-remove')) {
+          const id = e.target.closest('.ai-cfg-remove').dataset.id;
+          removeProvider(id);
+        }
+      });
+    }
+    console.log('[AIChat] Events bound — providerSelect:', !!el.providerSelect, 'detectModelsBtn:', !!el.detectModelsBtn);
 
     // Sandbox events
     const sandboxClose = document.getElementById('sandboxCloseBtn');
