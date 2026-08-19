@@ -955,6 +955,28 @@ const AIChat = (() => {
     a.download = name;
     a.click();
     URL.revokeObjectURL(url);
+    showToast('Descargado: ' + name);
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
   }
 
   async function downloadAsZip(files) {
@@ -1067,6 +1089,47 @@ const AIChat = (() => {
     if (el.newConvBtn) el.newConvBtn.addEventListener('click', () => newConversation());
     if (el.saveFilesBtn) el.saveFilesBtn.addEventListener('click', () => saveCurrentFiles());
     if (el.convDelAll) el.convDelAll.addEventListener('click', () => deleteAllConversations());
+
+    // Delegate code block actions (Run, Copy, Save) — event listeners survive innerHTML
+    if (el.chatMessages) {
+      el.chatMessages.addEventListener('click', (e) => {
+        const runBtn = e.target.closest('.code-run-btn');
+        const copyBtn = e.target.closest('.code-copy-btn');
+        const saveBtn = e.target.closest('.code-save-btn');
+        if (runBtn && runBtn.dataset.lang && runBtn.dataset.code) {
+          openSandbox(runBtn.dataset.code, runBtn.dataset.lang);
+        }
+        if (copyBtn && copyBtn.dataset.code) {
+          copyToClipboard(copyBtn.dataset.code);
+          copyBtn.textContent = '✓ Copiado!';
+          setTimeout(() => {
+            copyBtn.textContent = '📋 Copiar';
+          }, 2000);
+        }
+        if (saveBtn && saveBtn.dataset.code) {
+          const extMap = {
+            html: 'html',
+            css: 'css',
+            javascript: 'js',
+            js: 'js',
+            json: 'json',
+            python: 'py',
+            bash: 'sh',
+            sh: 'sh',
+            yaml: 'yml',
+            xml: 'xml',
+            md: 'md',
+          };
+          const ext = extMap[saveBtn.dataset.lang] || 'txt';
+          const fname = 'archivo.' + ext;
+          saveGeneratedFiles([{ name: fname, content: saveBtn.dataset.code }]);
+          saveBtn.textContent = '✓ Guardado!';
+          setTimeout(() => {
+            saveBtn.textContent = '💾 Guardar';
+          }, 2000);
+        }
+      });
+    }
     if (el.apiKeyInput) {
       el.apiKeyInput.addEventListener('input', () => {
         const provider = state.providers.find((p) => p.id === state.activeProvider);
@@ -1317,28 +1380,59 @@ const AIChat = (() => {
   function renderMarkdown(text) {
     if (typeof marked !== 'undefined') {
       const html = marked.parse(text);
-      // Add "Run" buttons after code blocks
-      return addRunButtons(html);
+      return addCodeButtons(html);
     }
     return escapeHtml(text).replace(/\n/g, '<br>');
   }
 
-  function addRunButtons(html) {
-    // Add a "▶ Run" button after each code block
+  function addCodeButtons(html) {
+    // Wrap code blocks in a container with action buttons (Run + Copy + Save)
     const div = document.createElement('div');
     div.innerHTML = html;
     const codeBlocks = div.querySelectorAll('pre code');
     codeBlocks.forEach((code) => {
       const lang = code.className.replace('language-', '').replace('lang-', '');
+      const pre = code.parentElement;
+
+      // Inject wrapper with header bar
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block-wrapper';
+      const header = document.createElement('div');
+      header.className = 'code-block-header';
+      header.innerHTML = '<span class="code-block-lang">' + (lang || 'code') + '</span>';
+
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'code-block-actions';
+
+      // Run button
       if (['html', 'css', 'javascript', 'js', 'ts', 'typescript'].includes(lang)) {
-        const btn = document.createElement('button');
-        btn.className = 'code-run-btn';
-        btn.textContent = '▶ Run';
-        btn.addEventListener('click', () => {
-          openSandbox(code.textContent, lang);
-        });
-        code.parentElement.appendChild(btn);
+        const runBtn = document.createElement('button');
+        runBtn.className = 'code-run-btn';
+        runBtn.textContent = '▶ Run';
+        runBtn.dataset.lang = lang;
+        runBtn.dataset.code = code.textContent;
+        btnGroup.appendChild(runBtn);
       }
+
+      // Copy button
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'code-copy-btn';
+      copyBtn.textContent = '📋 Copiar';
+      copyBtn.dataset.code = code.textContent;
+      btnGroup.appendChild(copyBtn);
+
+      // Save file button
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'code-save-btn';
+      saveBtn.textContent = '💾 Guardar';
+      saveBtn.dataset.code = code.textContent;
+      saveBtn.dataset.lang = lang;
+      btnGroup.appendChild(saveBtn);
+
+      header.appendChild(btnGroup);
+      wrapper.appendChild(header);
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
     });
     return div.innerHTML;
   }

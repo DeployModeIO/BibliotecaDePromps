@@ -257,7 +257,7 @@
     font-family: var(--f-mono);
     font-size: 0.68rem;
     overflow-x: auto;
-    margin: 0.4rem 0;
+    margin: 0;
   }
 
   code {
@@ -270,6 +270,84 @@
   pre code {
     background: none;
     padding: 0;
+  }
+
+  .code-block-wrapper {
+    margin: 0.5rem 0;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+
+    .code-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.3rem 0.5rem;
+      background: var(--bg-0);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .code-block-lang {
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .code-block-actions {
+      display: flex;
+      gap: 0.3rem;
+    }
+
+    .code-run-btn,
+    .code-copy-btn,
+    .code-save-btn {
+      font-family: var(--f-mono);
+      font-size: 0.58rem;
+      padding: 0.15rem 0.45rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--bg-1);
+      color: var(--txt-dim);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+
+      &:hover {
+        background: var(--amber-dim);
+        color: var(--amber);
+        border-color: var(--amber);
+      }
+    }
+
+    .code-run-btn {
+      color: var(--green);
+
+      &:hover {
+        background: rgba(35, 209, 96, 0.12);
+        color: var(--green);
+        border-color: var(--green);
+      }
+    }
+
+    .code-copy-btn {
+      color: var(--blue);
+
+      &:hover {
+        background: rgba(64, 150, 255, 0.12);
+        color: var(--blue);
+        border-color: var(--blue);
+      }
+    }
+
+    .code-save-btn {
+      &:hover {
+        background: rgba(255, 193, 7, 0.12);
+        color: var(--amber);
+        border-color: var(--amber);
+      }
+    }
   }
 }
 
