@@ -40,6 +40,12 @@ for (const dir of dirsToCopy) {
 const cssDir = path.join(DIST, 'css');
 fs.mkdirSync(cssDir, { recursive: true });
 
+// Copy new highlight.css file to dist/css
+const newCssSrc = path.join(ROOT, 'css', 'highlight-github-dark.min.css');
+if (fs.existsSync(newCssSrc)) {
+  fs.copyFileSync(newCssSrc, path.join(cssDir, 'highlight-github-dark.min.css'));
+}
+
 const cssSrc = path.join(ROOT, 'css', 'styles.css');
 if (fs.existsSync(cssSrc)) {
   const cssResult = esbuild.transformSync(fs.readFileSync(cssSrc, 'utf8'), {
@@ -60,7 +66,7 @@ if (fs.existsSync(cssMinSrc)) {
 const jsDir = path.join(DIST, 'js');
 fs.mkdirSync(jsDir, { recursive: true });
 
-const jsToMinify = ['app.js', 'ai-chat.js', 'platform-tests.js'];
+const jsToMinify = ['app.js', 'ai-chat.js', 'platform-tests.js', 'store.js'];
 const jsToCopy = ['prompts-data.js', 'prompts-data-extra.js', 'prompts-data-v2.js', 'prompts-data-fullstack.js'];
 
 for (const f of jsToMinify) {

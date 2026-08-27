@@ -2,7 +2,7 @@
    RESPONSIVE — breakpoints from 1024px down
    ============================================================ */
 
-@media (max-width: 1024px) {
+@media (width <= 1024px) {
   .stats-strip {
     grid-template-columns: repeat(3, 1fr);
 
@@ -25,7 +25,7 @@
   }
 }
 
-@media (max-width: 720px) {
+@media (width <= 720px) {
   .topbar-inner {
     justify-content: center;
   }

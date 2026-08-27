@@ -1,7 +1,7 @@
 /* ============================================================
    IA CHAT PANEL v1.1 — Auto-detección local + cloud genérico + Gemini API & Free Tiers
    ============================================================ */
-/* global JSZip, marked */
+/* global JSZip, marked, BPDStore */
 
 const AIChat = (() => {
   const LS_PREFIX = 'aichat_';
@@ -454,7 +454,6 @@ const AIChat = (() => {
     state.providers = safeGet('providers', []);
     state.activeProvider = safeGet('activeProvider', null);
     state.activeModel = safeGet('activeModel', '');
-    state.conversations = safeGet('conversations', {});
     state.activeConvId = safeGet('activeConvId', null);
     state.autoDetectedLocal = safeGet('autoDetectedLocal', []);
     state.maxTokens = safeGet('maxTokens', 16384);
@@ -464,10 +463,38 @@ const AIChat = (() => {
     safeSet('providers', state.providers);
     safeSet('activeProvider', state.activeProvider);
     safeSet('activeModel', state.activeModel);
-    safeSet('conversations', state.conversations);
+    persistConversations();
     safeSet('activeConvId', state.activeConvId);
     safeSet('autoDetectedLocal', state.autoDetectedLocal);
     safeSet('maxTokens', state.maxTokens);
+  }
+
+  function persistConversations() {
+    if (window.BPDStore) BPDStore.set('conversations', state.conversations);
+    else safeSet('conversations', state.conversations);
+  }
+
+  function loadConversations(cb) {
+    const legacy = safeGet('conversations', null);
+    const done = (data) => {
+      state.conversations = data && typeof data === 'object' ? data : legacy || {};
+      if (cb) cb();
+    };
+    if (window.BPDStore) {
+      BPDStore.get('conversations', null)
+        .then((v) => {
+          if (v && typeof v === 'object' && Object.keys(v).length) done(v);
+          else {
+            if (legacy && typeof legacy === 'object') {
+              BPDStore.set('conversations', legacy);
+            }
+            done(legacy);
+          }
+        })
+        .catch(() => done(legacy));
+    } else {
+      done(legacy);
+    }
   }
 
   function getActiveConv() {
@@ -802,12 +829,14 @@ const AIChat = (() => {
     DEFAULT_PROVIDERS.forEach((def) => {
       const saved = state.providers.find((p) => p.id === def.id);
       if (saved) {
+        // @ts-ignore error de inferencia de tipo por falta de isLocal/localType
         merged.push({
           ...def,
           apiKey: saved.apiKey !== undefined ? saved.apiKey : def.apiKey,
           models: saved.models && saved.models.length > 1 ? saved.models : def.models,
         });
       } else {
+        // @ts-ignore error de inferencia de tipo por falta de isLocal/localType
         merged.push({ ...def });
       }
     });
@@ -862,6 +891,7 @@ const AIChat = (() => {
       if (!msgEl.dataset.streamed) {
         msgEl.innerHTML = renderMarkdown(response);
       }
+      processMermaid(msgEl);
       conv.messages.push({ role: 'assistant', content: response, time: Date.now() });
       saveState();
     } catch (err) {
@@ -1345,14 +1375,25 @@ const AIChat = (() => {
     loadState();
     syncProviders();
     renderProviderSelect();
-    renderMessages();
     renderConfigList();
     if (el.maxTokensSelect) el.maxTokensSelect.value = String(state.maxTokens || 16384);
     bindEvents();
+    loadConversations(() => {
+      renderMessages();
+      renderConversations();
+      scrollChat();
+    });
     if (!state.providers.length || state.autoDetectedLocal.length === 0) {
       detectLocal().catch((err) => console.error('[AIChat] detectLocal failed:', err));
     }
     initialized = true;
+    if (window.mermaid) {
+      try {
+        window.mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'strict' });
+      } catch (e) {
+        /* ignore */
+      }
+    }
     console.log('[AIChat] Initialized — providers:', state.providers.length, 'active:', state.activeProvider);
   }
 
@@ -1668,6 +1709,7 @@ const AIChat = (() => {
         const div = document.createElement('div');
         div.className = 'chat-msg chat-assistant';
         div.innerHTML = renderMarkdown(m.content);
+        processMermaid(div);
         el.chatMessages.appendChild(div);
       }
     });
@@ -1693,7 +1735,8 @@ const AIChat = (() => {
   function renderMarkdown(text) {
     if (typeof marked !== 'undefined') {
       const html = marked.parse(text);
-      return addCodeButtons(html);
+      const clean = typeof window.DOMPurify !== 'undefined' ? window.DOMPurify.sanitize(html, { ADD_ATTR: ['target'] }) : html;
+      return addCodeButtons(clean);
     }
     return escapeHtml(text).replace(/\n/g, '<br>');
   }
@@ -1746,8 +1789,41 @@ const AIChat = (() => {
       wrapper.appendChild(header);
       pre.parentNode.insertBefore(wrapper, pre);
       wrapper.appendChild(pre);
+
+      if (window.hljs) {
+        try {
+          window.hljs.highlightElement(code);
+        } catch (e) {
+          /* ignore */
+        }
+      }
     });
     return div.innerHTML;
+  }
+
+  function processMermaid(containerEl) {
+    if (!containerEl || !window.mermaid) return;
+    const blocks = containerEl.querySelectorAll('code.language-mermaid');
+    blocks.forEach((code, i) => {
+      const wrapper = code.closest('.code-block-wrapper');
+      const id = 'mermaid_' + Date.now() + '_' + i;
+      try {
+        window.mermaid
+          .render(id, code.textContent)
+          .then((res) => {
+            const holder = document.createElement('div');
+            holder.className = 'mermaid-block';
+            holder.innerHTML = res.svg;
+            if (wrapper && wrapper.parentNode) wrapper.parentNode.replaceChild(holder, wrapper);
+            else if (code.parentNode) code.parentNode.replaceChild(holder, code);
+          })
+          .catch((err) => {
+            console.warn('[mermaid] render error:', err && err.message);
+          });
+      } catch (e) {
+        /* ignore */
+      }
+    });
   }
 
   function openSandbox(code, lang) {

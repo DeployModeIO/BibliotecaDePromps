@@ -7,7 +7,7 @@
   position: fixed;
   inset: 0;
   z-index: 400;
-  background: rgba(4, 8, 15, 0.6);
+  background: rgb(4 8 15 / 60%);
   opacity: 0;
   visibility: hidden;
   transition:
@@ -34,7 +34,7 @@
   transition: transform 0.32s var(--ease-drawer);
   display: flex;
   flex-direction: column;
-  box-shadow: -18px 0 50px rgba(0, 0, 0, 0.45);
+  box-shadow: -18px 0 50px rgb(0 0 0 / 45%);
 
   &.active {
     transform: translateX(0);
@@ -118,7 +118,6 @@
   }
 
   .di-title {
-    display: block;
     font-size: 0.82rem;
     font-weight: 600;
     line-height: 1.3;

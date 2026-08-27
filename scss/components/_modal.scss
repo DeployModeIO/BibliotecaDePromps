@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0;
   z-index: 500;
-  background: rgba(4, 8, 15, 0.78);
+  background: rgb(4 8 15 / 78%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,7 +40,7 @@
   border: 1px solid var(--line-2);
   box-shadow:
     var(--shadow),
-    0 0 0 1px rgba(255, 176, 32, 0.08);
+    0 0 0 1px rgb(255 176 32 / 8%);
   transform: translateY(16px) scale(0.985);
   transition: transform 0.24s var(--ease-out);
 }
@@ -52,9 +52,11 @@
   &.p-critica {
     background: repeating-linear-gradient(-45deg, var(--red) 0 10px, #2b0f0f 10px 20px);
   }
+
   &.p-alta {
     background: repeating-linear-gradient(-45deg, var(--amber) 0 10px, #2b1e05 10px 20px);
   }
+
   &.p-media {
     background: repeating-linear-gradient(-45deg, var(--green) 0 10px, #0a2b1e 10px 20px);
   }
@@ -165,7 +167,7 @@
   line-height: 1.75;
   color: var(--txt-2);
   white-space: pre-wrap;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
   background: var(--bg-0);
   border: 1px solid var(--line);
   border-left: 3px solid var(--amber);

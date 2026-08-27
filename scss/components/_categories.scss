@@ -34,7 +34,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(420px 200px at 100% 0%, rgba(255, 176, 32, 0.09), transparent 70%);
+    background: radial-gradient(420px 200px at 100% 0%, rgb(255 176 32 / 9%), transparent 70%);
     opacity: 0;
     transition: opacity 0.25s ease;
     pointer-events: none;
@@ -105,7 +105,7 @@
   font-size: 2.5rem;
   line-height: 1;
   margin-bottom: 0.8rem;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 4px 10px rgb(0 0 0 / 35%));
   transition: transform 0.25s ease;
 }
 

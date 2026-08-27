@@ -8,9 +8,7 @@ function P(id, titulo, categoria, prioridad, uso, tags, skills, herramientas, pr
   return { id, titulo, categoria, prioridad, uso, tags, skills, herramientas, prompt };
 }
 
-const categorias = [
-__CATEGORIAS__
-];
+const categorias = [__CATEGORIAS__];
 
 const data = { categorias };
 

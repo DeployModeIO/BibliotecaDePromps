@@ -115,6 +115,7 @@
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.35;
   }
@@ -156,6 +157,7 @@
     background: var(--amber-dim);
     transform: translateY(-2px);
   }
+
   &:active {
     transform: translateY(0) scale(0.96);
   }

@@ -98,6 +98,7 @@ class PromptLibrary {
     this.data = this.mergeData();
     this.index = new Map();
     this.buildIndex();
+    this.initSearchWorker();
 
     this.state = {
       q: '',
@@ -182,6 +183,33 @@ class PromptLibrary {
         });
       });
     });
+  }
+
+  initSearchWorker() {
+    this.worker = null;
+    this.workerReady = false;
+    this._searchSeq = 0;
+    if (typeof Worker === 'undefined') return;
+    try {
+      const worker = new Worker('js/bpi-worker.js');
+      worker.onmessage = (e) => {
+        const msg = e.data || {};
+        if (msg.type === 'buildIndex' && msg.ok) this.workerReady = true;
+        else if (msg.type === 'search' && msg.ok && msg.id === this._searchSeq) this.renderRankedResults(msg.result || []);
+      };
+      const payload = this.allPrompts().map(({ p, cat }) => ({
+        id: p.id,
+        titulo: p.titulo || '',
+        categoria: cat.nombre || '',
+        tags: p.tags || [],
+        prompt: p.prompt || '',
+        uso: p.uso || '',
+      }));
+      worker.postMessage({ type: 'buildIndex', payload, id: 1 });
+      this.worker = worker;
+    } catch (err) {
+      this.worker = null;
+    }
   }
 
   allPrompts() {
@@ -445,16 +473,22 @@ class PromptLibrary {
   }
 
   matches(entry) {
+    if (!this.matchesFilters(entry)) return false;
     const { p, cat } = entry;
+    if (this.state.q) {
+      const hay = (p.titulo + ' ' + p.tags.join(' ') + ' ' + p.prompt + ' ' + cat.nombre).toLowerCase();
+      if (!hay.includes(this.state.q)) return false;
+    }
+    return true;
+  }
+
+  matchesFilters(entry) {
+    const { p } = entry;
     if (this.state.priority && p.prioridad !== this.state.priority) return false;
     if (this.state.type) {
       const c = (p.categoria || '').toLowerCase();
       if (this.state.type === 'app' && !c.includes('aplicaci')) return false;
       if (this.state.type === 'tool' && !c.includes('herramienta')) return false;
-    }
-    if (this.state.q) {
-      const hay = (p.titulo + ' ' + p.tags.join(' ') + ' ' + p.prompt + ' ' + cat.nombre).toLowerCase();
-      if (!hay.includes(this.state.q)) return false;
     }
     return true;
   }
@@ -604,7 +638,16 @@ class PromptLibrary {
   }
 
   renderResults() {
+    if (this.state.q && this.workerReady && this.worker) {
+      this._searchSeq += 1;
+      this.worker.postMessage({ type: 'search', payload: this.state.q, id: this._searchSeq });
+      return;
+    }
     const matches = this.allPrompts().filter((e) => this.matches(e));
+    this.renderResultsList(matches);
+  }
+
+  renderResultsList(matches) {
     this.el.resultsCount.textContent = matches.length + ' COINCIDENCIAS';
     this.el.resultsList.innerHTML = '';
 
@@ -619,6 +662,15 @@ class PromptLibrary {
     }
     matches.forEach((e, i) => this.el.resultsList.appendChild(this.buildCard(e.p, i, e.cat)));
     this.observeReveals(this.el.resultsList);
+  }
+
+  renderRankedResults(ids) {
+    const entries = ids
+      .map((id) => this.index.get(id))
+      .filter(Boolean)
+      .map((entry) => ({ p: entry.prompt, cat: entry.cat, sub: entry.sub }))
+      .filter((e) => this.matchesFilters(e));
+    this.renderResultsList(entries);
   }
 
   buildCard(p, i, cat) {
@@ -797,59 +849,77 @@ class PromptLibrary {
 
   exportToPDF(prompt) {
     const meta = this.currentMeta;
-    const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${this.esc(prompt.titulo)}</title>
-<style>
-  body{font-family:'Segoe UI',Arial,sans-serif;color:#14202e;margin:0;padding:2.2rem;line-height:1.6}
-  .stripe{height:8px;background:repeating-linear-gradient(-45deg,#ffb020 0 12px,#14202e 12px 24px);margin:-2.2rem -2.2rem 1.6rem}
-  h1{font-size:1.35rem;margin:0 0 .2rem;letter-spacing:.02em}
-  .id{font-family:Consolas,monospace;font-size:.72rem;letter-spacing:.2em;color:#7a8aa0}
-  table{width:100%;border-collapse:collapse;margin:1.1rem 0;font-size:.8rem}
-  td{border:1px solid #ccd6e2;padding:.5rem .7rem}
-  td.k{background:#eef2f7;font-family:Consolas,monospace;font-size:.68rem;letter-spacing:.1em;color:#5a6b82;width:26%}
-  .prompt{font-family:Consolas,monospace;font-size:.76rem;line-height:1.7;white-space:pre-wrap;border:1px solid #ccd6e2;border-left:5px solid #ffb020;background:#f7f9fc;padding:1.2rem}
-  .foot{margin-top:1.6rem;font-family:Consolas,monospace;font-size:.66rem;letter-spacing:.12em;color:#7a8aa0;border-top:2px solid #ffb020;padding-top:.7rem;display:flex;justify-content:space-between}
-</style></head><body>
-  <div class="stripe"></div>
-  <div class="id">PRM-${prompt.id.toUpperCase().replace(/_/g, '-')} · PRIORIDAD ${prompt.prioridad.toUpperCase()}</div>
-  <h1>${this.esc(prompt.titulo)}</h1>
-  <table>
-    <tr><td class="k">SISTEMA</td><td>${this.esc(meta ? meta.cat.nombre : '')}</td></tr>
-    <tr><td class="k">MÓDULO</td><td>${this.esc(meta ? meta.sub.nombre : '')}</td></tr>
-    <tr><td class="k">FRECUENCIA DE USO</td><td>${this.esc(prompt.uso)}</td></tr>
-    <tr><td class="k">TAGS</td><td>${this.esc(prompt.tags.join(', '))}</td></tr>
-  </table>
-  <div class="prompt">${this.esc(this.getFullPrompt())}</div>
-  <div class="foot"><span>BIBLIOTECA DE PROMPS INDUSTRIALES · REV 3.2</span><span>${new Date().toLocaleString('es-CL')}</span></div>
-  <script>window.onload=function(){setTimeout(function(){window.print()},350)}</script>
-</body></html>`;
-    this.printViaIframe(doc);
-    this.showToast('✓ Generando PDF — use "Guardar como PDF" en el diálogo', 'ok');
-  }
-
-  printViaIframe(doc) {
-    let iframe = document.getElementById('pdfFrame');
-    if (!iframe) {
-      iframe = document.createElement('iframe');
-      iframe.id = 'pdfFrame';
-      iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:900px;height:700px;border:0';
-      document.body.appendChild(iframe);
+    const lib = window.jspdf || {};
+    const jsPDF = lib.jsPDF;
+    if (!jsPDF) {
+      this.showToast('✕ jsPDF no disponible', 'error');
+      return;
     }
-    const idoc = iframe.contentDocument || iframe.contentWindow.document;
-    idoc.open();
-    idoc.write(doc);
-    idoc.close();
-    setTimeout(() => {
-      try {
-        iframe.contentWindow.focus();
-        iframe.contentWindow.print();
-      } catch (err) {
-        this.showToast('✕ No se pudo abrir la vista de impresión', 'error');
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 48;
+    let y = margin;
+    doc.setFillColor(255, 176, 32);
+    doc.rect(0, 0, pageW, 10, 'F');
+    doc.setFillColor(20, 32, 46);
+    doc.rect(0, 10, pageW, 4, 'F');
+    doc.setFont('courier', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(122, 138, 160);
+    doc.text('PRM-' + prompt.id.toUpperCase().replace(/_/g, '-') + ' · PRIORIDAD ' + prompt.prioridad.toUpperCase(), margin, y);
+    y += 18;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(20, 32, 46);
+    const titleLines = doc.splitTextToSize(prompt.titulo, pageW - margin * 2);
+    doc.text(titleLines, margin, y);
+    y += titleLines.length * 20 + 8;
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(90, 107, 130);
+    [
+      'SISTEMA: ' + (meta ? meta.cat.nombre : ''),
+      'MÓDULO: ' + (meta ? meta.sub.nombre : ''),
+      'FRECUENCIA DE USO: ' + prompt.uso,
+      'TAGS: ' + prompt.tags.join(', '),
+    ].forEach((r) => {
+      doc.text(r, margin, y);
+      y += 13;
+    });
+    y += 6;
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(40, 50, 66);
+    const full = this.getFullPrompt();
+    const lines = doc.splitTextToSize(full, pageW - margin * 2);
+    for (const line of lines) {
+      if (y > pageH - margin) {
+        doc.addPage();
+        y = margin;
       }
-    }, 450);
+      doc.text(line, margin, y);
+      y += 11;
+    }
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFont('courier', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor(122, 138, 160);
+      doc.text('BIBLIOTECA DE PROMPS INDUSTRIALES · REV 3.5', margin, pageH - 24);
+      doc.text('Página ' + i + ' de ' + pageCount, pageW - margin, pageH - 24, { align: 'right' });
+    }
+    doc.save('prompt_' + prompt.id + '.pdf');
+    this.showToast('✓ PDF generado', 'ok');
   }
 
   exportToExcel(prompt) {
     const meta = this.currentMeta;
+    if (typeof window.XLSX === 'undefined') {
+      this.showToast('✕ SheetJS no disponible', 'error');
+      return;
+    }
     const full = this.getFullPrompt();
     const platforms = PLATFORM_KEYS.filter((k) => this.state.platforms.has(k))
       .map((k) => PLATFORM_SPECS[k].label)
@@ -870,15 +940,24 @@ class PromptLibrary {
         full,
       ],
     ];
-    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
-    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `prompt_${prompt.id}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    this.showToast('✓ Exportado a Excel (CSV)', 'ok');
+    const ws = window.XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [
+      { wch: 12 },
+      { wch: 40 },
+      { wch: 24 },
+      { wch: 24 },
+      { wch: 18 },
+      { wch: 12 },
+      { wch: 18 },
+      { wch: 20 },
+      { wch: 30 },
+      { wch: 10 },
+      { wch: 80 },
+    ];
+    const wb = window.XLSX.utils.book_new();
+    window.XLSX.utils.book_append_sheet(wb, ws, 'Prompt');
+    window.XLSX.writeFile(wb, 'prompt_' + prompt.id + '.xlsx');
+    this.showToast('✓ Exportado a Excel (.xlsx)', 'ok');
   }
 
   /* ---------- plataforma de salida ---------- */

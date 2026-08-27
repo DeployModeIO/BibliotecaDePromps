@@ -77,10 +77,12 @@
     color: var(--green);
     border-color: var(--green-dim);
   }
+
   &.cloud {
     color: var(--cyan);
     border-color: var(--cyan-dim);
   }
+
   &.detecting {
     color: var(--amber);
     animation: pulse 1.2s ease-in-out infinite;
@@ -233,7 +235,7 @@
   padding: 0.55rem 0.7rem;
   border-radius: 0;
   max-width: 88%;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .chat-user {
@@ -325,7 +327,7 @@
       color: var(--green);
 
       &:hover {
-        background: rgba(35, 209, 96, 0.12);
+        background: rgb(35 209 96 / 12%);
         color: var(--green);
         border-color: var(--green);
       }
@@ -335,7 +337,7 @@
       color: var(--blue);
 
       &:hover {
-        background: rgba(64, 150, 255, 0.12);
+        background: rgb(64 150 255 / 12%);
         color: var(--blue);
         border-color: var(--blue);
       }
@@ -343,7 +345,7 @@
 
     .code-save-btn {
       &:hover {
-        background: rgba(255, 193, 7, 0.12);
+        background: rgb(255 193 7 / 12%);
         color: var(--amber);
         border-color: var(--amber);
       }
@@ -525,19 +527,19 @@
   font-weight: 600;
 
   &.tier-free {
-    background: rgba(53, 214, 154, 0.15);
+    background: rgb(53 214 154 / 15%);
     color: var(--green);
     border: 1px solid var(--green-dim);
   }
 
   &.tier-both {
-    background: rgba(76, 195, 255, 0.15);
+    background: rgb(76 195 255 / 15%);
     color: var(--cyan);
     border: 1px solid var(--cyan-dim);
   }
 
   &.tier-paid {
-    background: rgba(255, 176, 32, 0.15);
+    background: rgb(255 176 32 / 15%);
     color: var(--amber);
     border: 1px solid var(--amber-dim);
   }

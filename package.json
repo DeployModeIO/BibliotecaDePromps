@@ -1,14 +1,19 @@
 {
   "name": "biblioteca-de-promps-industriales",
-  "version": "3.2.0",
+  "version": "3.5.0",
   "private": true,
   "description": "Biblioteca profesional de mega-prompts industriales para generar aplicaciones completas con IA.",
   "license": "MIT",
+  "lint-staged": {
+    "**/*.{js,css,scss,html,md,json}": "prettier --write",
+    "js/**/*.js": "eslint --fix"
+  },
   "scripts": {
     "build:css": "sass --no-source-map scss/styles.scss css/styles.css",
     "build:css:watch": "sass --watch scss/styles.scss css/styles.css",
     "build:css:prod": "sass --no-source-map --style=compressed scss/styles.scss css/styles.min.css",
     "lint": "eslint js/",
+    "lint:css": "stylelint \"scss/**/*.scss\"",
     "lint:fix": "eslint js/ --fix",
     "format": "prettier --write \"**/*.{js,json,css,html,md,scss}\"",
     "format:check": "prettier --check \"**/*.{js,json,css,html,md,scss}\"",
@@ -19,20 +24,36 @@
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
     "test:e2e:report": "npx playwright show-report e2e-report",
+    "typecheck": "tsc --noEmit",
     "validate": "npm run lint && npm run test",
     "precommit": "npm run format:check && npm run lint && npm run test",
     "build": "npm run build:css && npm run build:css:prod && node scripts/build.js",
     "dev": "npx serve . -p 3000",
-    "preview": "npx serve dist -p 3000"
+    "preview": "npx serve dist -p 3000",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
     "@playwright/test": "^1.62.1",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/git": "^11.0.1",
+    "@semantic-release/npm": "^13.1.5",
+    "conventional-changelog-conventionalcommits": "^10.4.0",
+    "dexie": "^4.4.5",
     "esbuild": "^0.28.2",
     "eslint": "^8.57.0",
+    "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jsdom": "^30.0.1",
+    "lint-staged": "^17.3.0",
     "prettier": "^3.2.5",
     "sass": "^1.102.0",
+    "semantic-release": "^25.0.9",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard-scss": "^17.0.0",
+    "typescript": "^7.0.2",
     "vite": "^8.2.1"
   }
 }

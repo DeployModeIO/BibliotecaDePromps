@@ -1,4 +1,4 @@
-const CACHE_NAME = 'biblioteca-promps-v3.4';
+const CACHE_NAME = 'biblioteca-promps-v3.5';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -7,11 +7,20 @@ const ASSETS_TO_CACHE = [
   '/css/styles.css',
   '/js/app.js',
   '/js/ai-chat.js',
+  '/js/store.js',
   '/js/prompts-data.js',
   '/js/prompts-data-extra.js',
   '/js/prompts-data-v2.js',
   '/js/prompts-data-fullstack.js',
   '/js/platform-tests.js',
+  '/js/bpi-worker.js',
+  '/js/vendor/dompurify.min.js',
+  '/js/vendor/dexie.min.js',
+  '/js/vendor/jspdf.umd.min.js',
+  '/js/vendor/xlsx.full.min.js',
+  '/js/vendor/highlight.min.js',
+  '/js/vendor/mermaid.min.js',
+  '/css/highlight-github-dark.min.css',
   '/manifest.json',
   '/icons/icon-192.svg',
   '/icons/icon-512.svg',

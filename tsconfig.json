@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true
+  },
+  "include": ["js/**/*.js", "js/**/*.d.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "backup_origen_20260821_204247",
+    "js/vendor/**",
+    "js/prompts-data.js",
+    "js/prompts-data-extra.js",
+    "js/prompts-data-v2.js",
+    "js/prompts-data-fullstack.js",
+    "js/bpi-worker.js"
+  ]
+}

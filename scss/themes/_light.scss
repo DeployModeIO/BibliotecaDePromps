@@ -6,7 +6,7 @@
   --bg-0: #dfe6ef;
   --bg-1: #e9eef5;
   --bg-2: #f4f7fb;
-  --bg-3: #ffffff;
+  --bg-3: #fff;
   --bg-4: #eef3f9;
   --line: #ccd7e5;
   --line-2: #b3c2d6;
@@ -15,18 +15,18 @@
   --txt-3: #7d90ac;
   --amber: #e08e00;
   --amber-2: #b87400;
-  --amber-dim: rgba(224, 142, 0, 0.12);
+  --amber-dim: rgb(224 142 0 / 12%);
   --green: #0d9f6e;
-  --green-dim: rgba(13, 159, 110, 0.12);
+  --green-dim: rgb(13 159 110 / 12%);
   --red: #dc2626;
-  --red-dim: rgba(220, 38, 38, 0.1);
+  --red-dim: rgb(220 38 38 / 10%);
   --cyan: #0369a1;
-  --cyan-dim: rgba(3, 105, 161, 0.1);
-  --glow-a: rgba(3, 105, 161, 0.06);
-  --glow-b: rgba(224, 142, 0, 0.06);
-  --grid-line: rgba(30, 64, 120, 0.06);
-  --scan: rgba(0, 0, 0, 0.012);
-  --shadow: 0 14px 34px rgba(30, 45, 70, 0.16);
+  --cyan-dim: rgb(3 105 161 / 10%);
+  --glow-a: rgb(3 105 161 / 6%);
+  --glow-b: rgb(224 142 0 / 6%);
+  --grid-line: rgb(30 64 120 / 6%);
+  --scan: rgb(0 0 0 / 1.2%);
+  --shadow: 0 14px 34px rgb(30 45 70 / 16%);
 
   .modal-prompt {
     background: var(--bg-4);

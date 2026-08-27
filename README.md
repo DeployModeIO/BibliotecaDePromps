@@ -1,4 +1,4 @@
-# 🏭 Biblioteca de Promps Industriales v3.3
+# 🏭 Biblioteca de Promps Industriales v3.5
 
 [![CI](https://github.com/DeployModeIO/BibliotecaDePromps/actions/workflows/ci.yml/badge.svg)](https://github.com/DeployModeIO/BibliotecaDePromps/actions/workflows/ci.yml)
 [![GitHub Pages](https://github.com/DeployModeIO/BibliotecaDePromps/actions/workflows/deploy.yml/badge.svg)](https://github.com/DeployModeIO/BibliotecaDePromps/actions/workflows/deploy.yml)
@@ -133,7 +133,7 @@ BibliotecaDePromps/
 └── README.md
 ```
 
-## 📊 Estadísticas (v3.3)
+## 📊 Estadísticas (v3.5)
 
 | Métrica               | Valor              |
 | --------------------- | ------------------ |
@@ -176,4 +176,4 @@ MIT License — uso libre para fines profesionales y educativos.
 
 ---
 
-**Desarrollado con estándares industriales** ⚙️ · v3.3 · Agosto 2026
+**Desarrollo con estándares industriales** ⚙️ · v3.5 · Agosto 2026

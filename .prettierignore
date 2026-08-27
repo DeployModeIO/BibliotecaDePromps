@@ -1,6 +1,7 @@
 js/vendor/
-css/styles.css
-css/styles.min.css
+css/
 node_modules/
 coverage/
 dist/
+backup_origen_20260821_204247/
+js/prompts-data*.js
