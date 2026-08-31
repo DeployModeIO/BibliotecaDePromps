@@ -9,12 +9,15 @@ COPY . .
 RUN npm run build
 
 # ---- Runtime stage ----
+# Nota: el módulo nginx-mod-http-brotli de apk NO es binario-compatible con la
+# imagen oficial de nginx (distintos flags de compilación). Se usa solo gzip.
 FROM nginx:1.27-alpine
 
-# Install brotli module for nginx
-RUN apk add --no-cache nginx-mod-http-brotli
-
 COPY nginx.conf /etc/nginx/nginx.conf
+
+# Eliminar las directivas brotli del conf (gzip sigue activo)
+RUN sed -i -e '/^[[:space:]]*brotli_types/,/;/d' \
+           -e '/^[[:space:]]*brotli[[:space:]_]/d' /etc/nginx/nginx.conf
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 

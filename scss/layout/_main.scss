@@ -20,14 +20,20 @@ main {
     font-family: var(--f-display);
     font-size: 1.05rem;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--txt);
     white-space: nowrap;
 
     &::before {
-      content: '▮ ';
-      color: var(--amber);
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 1em;
+      margin-right: 0.6rem;
+      vertical-align: -0.1em;
+      border-radius: 2px;
+      background: var(--brand);
     }
   }
 
@@ -40,13 +46,13 @@ main {
   .count {
     font-family: var(--f-mono);
     font-size: 0.68rem;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.08em;
     color: var(--txt-3);
     white-space: nowrap;
   }
 }
 
-// ---- reveal animations ----
+/* ---- reveal animations ---- */
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -60,9 +66,10 @@ main {
   }
 }
 
-// ---- empty state ----
+/* ---- empty state ---- */
 .empty {
   border: 1px dashed var(--line-2);
+  border-radius: 10px;
   background: var(--bg-2);
   padding: 3.5rem 1.5rem;
   text-align: center;
@@ -76,7 +83,7 @@ main {
 
   h3 {
     font-family: var(--f-display);
-    letter-spacing: 0.14em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     font-size: 0.95rem;
     margin-bottom: 0.3rem;
@@ -86,6 +93,6 @@ main {
     font-family: var(--f-mono);
     font-size: 0.72rem;
     color: var(--txt-3);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.04em;
   }
 }

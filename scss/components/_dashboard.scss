@@ -5,7 +5,7 @@
 .dashboard-overlay {
   position: fixed;
   inset: 0;
-  background: rgb(7 11 18 / 85%);
+  background: rgb(2 6 23 / 60%);
   z-index: 250;
   display: flex;
   align-items: center;
@@ -26,11 +26,11 @@
   max-height: 85vh;
   background: var(--bg-1);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgb(0 0 0 / 60%);
+  box-shadow: var(--shadow-lg);
 }
 
 .dashboard-head {
@@ -47,7 +47,7 @@
   font-family: var(--f-display);
   font-size: 1.1rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -60,7 +60,7 @@
   border: 1px solid var(--line);
   background: var(--bg-3);
   color: var(--txt-2);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
   display: flex;
@@ -70,8 +70,8 @@
 }
 
 .dashboard-close:hover {
-  border-color: var(--red, #ff5c5c);
-  color: var(--red, #ff5c5c);
+  border-color: var(--err);
+  color: var(--err);
 }
 
 .dashboard-body {
@@ -87,16 +87,17 @@
 .dash-stat {
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 1.2rem;
   text-align: center;
+  box-shadow: var(--shadow);
 }
 
 .dash-stat .dash-num {
   font-family: var(--f-display);
   font-size: 2rem;
   font-weight: 700;
-  color: var(--amber);
+  color: var(--brand);
   line-height: 1;
 }
 
@@ -104,7 +105,7 @@
   font-size: 0.7rem;
   color: var(--txt-3);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   margin-top: 0.4rem;
 }
 
@@ -112,7 +113,7 @@
   grid-column: 1 / -1;
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 1.2rem;
 }
 
@@ -120,7 +121,7 @@
   font-family: var(--f-display);
   font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   margin-bottom: 1rem;
   color: var(--txt-2);
@@ -155,7 +156,7 @@
 
 .dash-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--amber), var(--amber-2));
+  background: linear-gradient(90deg, var(--brand), var(--info));
   border-radius: 4px;
   transition: width 0.5s var(--ease-out);
   min-width: 2px;
@@ -174,7 +175,7 @@
   grid-column: 1 / -1;
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 1.2rem;
 }
 
@@ -182,7 +183,7 @@
   font-family: var(--f-display);
   font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   margin-bottom: 0.8rem;
   color: var(--txt-2);
@@ -193,7 +194,7 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.35rem 0;
-  border-bottom: 1px solid rgb(34 49 75 / 50%);
+  border-bottom: 1px solid var(--line);
   font-size: 0.75rem;
 }
 
@@ -242,7 +243,7 @@
   z-index: 300;
   transform: translateY(100%);
   transition: transform 0.3s var(--ease-out);
-  box-shadow: 0 -4px 20px rgb(0 0 0 / 40%);
+  box-shadow: 0 -4px 20px rgb(2 6 23 / 35%);
 }
 
 .install-banner.visible {
@@ -260,7 +261,7 @@
 }
 
 .install-banner-text strong {
-  color: var(--amber);
+  color: var(--brand);
 }
 
 .install-banner-btns {
@@ -272,6 +273,17 @@
 .install-banner .btn {
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
+}
+
+.btn-outline {
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  color: var(--txt-2);
+}
+
+.btn-outline:hover {
+  border-color: var(--line-2);
+  color: var(--txt);
 }
 
 @media (width <= 640px) {

@@ -268,6 +268,7 @@ class PromptLibrary {
       modalStripe: $('modalStripe'),
       modalId: $('modalId'),
       modalPriority: $('modalPriority'),
+      modalCategory: $('modalCategory'),
       modalTitle: $('modalTitle'),
       modalMeta: $('modalMeta'),
       modalPromptText: $('modalPromptText'),
@@ -507,6 +508,14 @@ class PromptLibrary {
     return String(s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
   }
 
+  /* Resalta variables `$...$` y ecuaciones `$$...$$` del prompt
+     como bloques monospace destacados (solo presentación visual). */
+  renderPrompt(text) {
+    return this.esc(text)
+      .replace(/\$\$([\s\S]+?)\$\$/g, '<span class="var var-block">$1</span>')
+      .replace(/\$([^$\n]+?)\$/g, '<span class="var">$1</span>');
+  }
+
   fmt(n) {
     return n.toLocaleString('es-CL');
   }
@@ -685,7 +694,10 @@ class PromptLibrary {
       <div class="pcard-body">
         <div class="pcard-top">
           <span class="pcard-id">PRM-${p.id.toUpperCase().replace(/_/g, '-')}</span>
-          <span class="ptag p-${p.prioridad}">${p.prioridad.toUpperCase()}</span>
+          <span class="pcard-badges">
+            <span class="pill pill-neutral">${this.esc(p.categoria)}</span>
+            <span class="ptag p-${p.prioridad}">${p.prioridad.toUpperCase()}</span>
+          </span>
         </div>
         <h3 class="pcard-title">${this.esc(p.titulo)}</h3>
         <div class="pcard-meta">
@@ -724,8 +736,10 @@ class PromptLibrary {
     this.el.modalId.textContent = 'PRM-' + prompt.id.toUpperCase().replace(/_/g, '-');
     this.el.modalPriority.className = 'ptag p-' + prompt.prioridad;
     this.el.modalPriority.textContent = 'PRIORIDAD ' + prompt.prioridad.toUpperCase();
+    this.el.modalCategory.className = 'pill pill-neutral';
+    this.el.modalCategory.textContent = prompt.categoria;
     this.el.modalTitle.textContent = prompt.titulo;
-    this.el.modalPromptText.textContent = prompt.prompt;
+    this.el.modalPromptText.innerHTML = this.renderPrompt(prompt.prompt);
 
     this.el.modalMeta.innerHTML = `
       <div class="meta-cell"><span class="k">Sistema</span><span class="v">${this.esc(entry.cat.nombre)}</span></div>

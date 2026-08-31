@@ -2,12 +2,12 @@
    DRAWERS — favorites, history, chat panel
    ============================================================ */
 
-// ---- scrim ----
+/* ---- scrim ---- */
 .drawer-scrim {
   position: fixed;
   inset: 0;
   z-index: 400;
-  background: rgb(4 8 15 / 60%);
+  background: rgb(2 6 23 / 55%);
   opacity: 0;
   visibility: hidden;
   transition:
@@ -20,7 +20,7 @@
   }
 }
 
-// ---- fav/hist drawer ----
+/* ---- fav/hist drawer ---- */
 .drawer {
   position: fixed;
   top: 0;
@@ -34,7 +34,7 @@
   transition: transform 0.32s var(--ease-drawer);
   display: flex;
   flex-direction: column;
-  box-shadow: -18px 0 50px rgb(0 0 0 / 45%);
+  box-shadow: -18px 0 50px rgb(2 6 23 / 45%);
 
   &.active {
     transform: translateX(0);
@@ -53,11 +53,11 @@
     font-family: var(--f-display);
     font-size: 0.95rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
 
     span {
-      color: var(--amber);
+      color: var(--brand);
     }
   }
 }
@@ -69,6 +69,7 @@
   place-items: center;
   background: transparent;
   border: 1px solid var(--line);
+  border-radius: 8px;
   color: var(--txt-2);
   transition:
     border-color 0.18s var(--ease-out),
@@ -78,8 +79,9 @@
     transform 0.16s var(--ease-out);
 
   &:hover {
-    border-color: var(--red);
-    color: var(--red);
+    border-color: var(--err);
+    color: var(--err);
+    background: var(--err-dim);
   }
 }
 
@@ -97,6 +99,7 @@
   text-align: left;
   background: var(--bg-3);
   border: 1px solid var(--line);
+  border-radius: 10px;
   padding: 0.75rem 0.85rem;
   margin-bottom: 0.55rem;
   color: var(--txt);
@@ -108,7 +111,7 @@
     transform 0.16s var(--ease-out);
 
   &:hover {
-    border-color: var(--amber);
+    border-color: var(--brand);
     transform: translateX(-4px);
   }
 
@@ -131,7 +134,7 @@
   .di-sub {
     font-family: var(--f-mono);
     font-size: 0.6rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.04em;
     color: var(--txt-3);
   }
 
@@ -143,13 +146,14 @@
     place-items: center;
     background: transparent;
     border: 1px solid transparent;
+    border-radius: 6px;
     color: var(--txt-3);
     font-size: 0.8rem;
     transition: all 0.15s ease;
 
     &:hover {
-      border-color: var(--red);
-      color: var(--red);
+      border-color: var(--err);
+      color: var(--err);
     }
   }
 }
@@ -159,11 +163,11 @@
   padding: 3rem 1rem;
   font-family: var(--f-mono);
   font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   color: var(--txt-3);
 }
 
-// ---- toast ----
+/* ---- toast ---- */
 .toast {
   position: fixed;
   bottom: 1.6rem;
@@ -172,13 +176,14 @@
   transform: translate(-50%, 90px);
   background: var(--bg-3);
   border: 1px solid var(--line-2);
-  border-left: 4px solid var(--amber);
+  border-left: 4px solid var(--brand);
+  border-radius: 10px;
   color: var(--txt);
   font-family: var(--f-mono);
   font-size: 0.74rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.03em;
   padding: 0.85rem 1.3rem;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-lg);
   opacity: 0;
   transition:
     transform 0.3s var(--ease-out),
@@ -191,10 +196,10 @@
   }
 
   &.error {
-    border-left-color: var(--red);
+    border-left-color: var(--err);
   }
 
   &.ok {
-    border-left-color: var(--green);
+    border-left-color: var(--ok);
   }
 }

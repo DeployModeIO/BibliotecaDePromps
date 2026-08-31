@@ -8,54 +8,41 @@
   padding: 0 1.4rem;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
+  gap: 0.75rem;
 }
 
 .stat {
   background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
   padding: 0.9rem 1.1rem;
   position: relative;
   overflow: hidden;
-  transition: background 0.2s ease;
+  box-shadow: var(--shadow);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
-    background: var(--bg-3);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 2px;
-    background: var(--amber);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.35s ease;
-  }
-
-  &:hover::after {
-    transform: scaleX(1);
+    border-color: var(--line-2);
+    box-shadow: var(--shadow-lg);
   }
 }
 
 .stat-val {
   display: block;
   font-family: var(--f-mono);
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-weight: 600;
-  color: var(--amber);
+  color: var(--brand);
   line-height: 1.15;
   white-space: nowrap;
 
   &.small {
-    font-size: 0.82rem;
-    letter-spacing: 0.06em;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
     padding-top: 0.4rem;
-    color: var(--cyan);
+    color: var(--info);
   }
 }
 
@@ -63,7 +50,7 @@
   display: block;
   font-family: var(--f-mono);
   font-size: 0.6rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.08em;
   color: var(--txt-3);
   text-transform: uppercase;
   margin-top: 0.25rem;

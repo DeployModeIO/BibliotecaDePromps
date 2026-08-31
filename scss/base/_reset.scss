@@ -1,42 +1,85 @@
 /* ============================================================
-   BASE — Variables, reset, typography, scrollbars, utilities
+   BASE — Design tokens (SLDS / Field Service, enterprise B2B),
+   reset, typography, scrollbars, pills, utilities
    ============================================================ */
 
-// ---- dark theme (default) ----
+/* ---- dark theme (default) ---- */
 :root {
-  --bg-0: #070b12;
-  --bg-1: #0c1220;
-  --bg-2: #111a2b;
-  --bg-3: #182338;
-  --bg-4: #1f2d47;
-  --line: #22314b;
-  --line-2: #2f4266;
-  --txt: #e9f0fa;
-  --txt-2: #a9bad2;
-  --txt-3: #5f7396;
-  --amber: #ffb020;
-  --amber-2: #ffca5f;
-  --amber-dim: rgb(255 176 32 / 13%);
-  --green: #35d69a;
-  --green-dim: rgb(53 214 154 / 12%);
-  --red: #ff5757;
-  --red-dim: rgb(255 87 87 / 13%);
-  --cyan: #4cc3ff;
-  --cyan-dim: rgb(76 195 255 / 12%);
-  --glow-a: rgb(76 195 255 / 5.5%);
-  --glow-b: rgb(255 176 32 / 5%);
-  --grid-line: rgb(120 165 230 / 4.5%);
-  --scan: rgb(255 255 255 / 1.4%);
-  --shadow: 0 14px 40px rgb(0 0 0 / 50%);
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  /* surfaces */
+  --bg-0: #0b1222; /* deepest inset: prompt / code blocks */
+  --bg-1: #0f172a; /* canvas */
+  --bg-2: #1e293b; /* card */
+  --bg-3: #25324a; /* raised / hover / chip */
+  --bg-4: #16233b; /* alternate surface */
+  --prompt-bg: #0b1222;
+
+  /* lines */
+  --line: #334155;
+  --line-2: #475569;
+
+  /* text */
+  --txt: #e2e8f0;
+  --txt-2: #94a3b8;
+  --txt-3: #64748b;
+
+  /* brand / primary action */
+  --brand: #0070d2;
+  --brand-hover: #005fb2;
+  --brand-fg: #fff;
+  --brand-dim: rgb(0 112 210 / 16%);
+
+  /* info / secondary accent */
+  --info: #38bdf8;
+  --info-dim: rgb(56 189 248 / 14%);
+
+  /* semantic states */
+  --ok: #22c55e;
+  --ok-bg: #064e3b;
+  --ok-fg: #a7f3d0;
+  --ok-dim: rgb(34 197 94 / 14%);
+  --warn: #fbbf24;
+  --warn-bg: #78350f;
+  --warn-fg: #fde68a;
+  --warn-dim: rgb(251 191 36 / 14%);
+  --err: #f87171;
+  --err-bg: #7f1d1d;
+  --err-fg: #fecaca;
+  --err-dim: rgb(248 113 113 / 14%);
+  --neutral-bg: #334155;
+  --neutral-fg: #cbd5e1;
+
+  /* prompt variables */
+  --var-bg: rgb(30 58 138 / 55%);
+  --var-fg: #93c5fd;
+  --var-border: rgb(147 197 253 / 28%);
+
+  /* legacy aliases (kept so older references render sensibly) */
+  --amber: var(--warn);
+  --amber-2: #f59e0b;
+  --amber-dim: var(--warn-dim);
+  --green: var(--ok);
+  --green-dim: var(--ok-dim);
+  --red: var(--err);
+  --red-dim: var(--err-dim);
+  --cyan: var(--info);
+  --cyan-dim: var(--info-dim);
+
+  /* effects */
+  --glow-a: rgb(56 189 248 / 6%);
+  --glow-b: rgb(0 112 210 / 6%);
+  --shadow: 0 1px 3px rgb(2 6 23 / 45%);
+  --shadow-lg: 0 12px 32px rgb(2 6 23 / 55%);
+
+  /* motion + type */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --f-display: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
   --f-body: 'Barlow', 'Segoe UI', system-ui, sans-serif;
   --f-mono: 'IBM Plex Mono', 'Cascadia Mono', consolas, monospace;
 }
 
-// ---- reset ----
+/* ---- reset ---- */
 * {
   margin: 0;
   padding: 0;
@@ -54,54 +97,35 @@ html {
 body {
   font-family: var(--f-body);
   color: var(--txt);
-  background:
-    radial-gradient(1100px 560px at 85% -8%, var(--glow-a), transparent 62%),
-    radial-gradient(900px 520px at 4% 108%, var(--glow-b), transparent 60%), linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px), var(--bg-1);
-  background-size:
-    auto,
-    auto,
-    46px 46px,
-    46px 46px,
-    auto;
-  background-attachment: fixed;
+  background: var(--bg-1);
   min-height: 100vh;
   line-height: 1.55;
   overflow-x: hidden;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  background: repeating-linear-gradient(0deg, var(--scan) 0 1px, transparent 1px 3px);
-}
-
 ::selection {
-  background: var(--amber);
-  color: #14100a;
+  background: var(--brand);
+  color: #fff;
 }
 
-// ---- scrollbars ----
+/* ---- scrollbars ---- */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-1);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--line-2);
-  border-radius: 0;
+  border-radius: 999px;
   border: 2px solid var(--bg-1);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--amber);
+  background: var(--brand);
 }
 
 * {
@@ -109,7 +133,7 @@ body::before {
   scrollbar-color: var(--line-2) var(--bg-1);
 }
 
-// ---- typography helpers ----
+/* ---- typography helpers ---- */
 .mono {
   font-family: var(--f-mono);
 }
@@ -118,7 +142,7 @@ body::before {
   font-family: var(--f-display);
 }
 
-// ---- interactive defaults ----
+/* ---- interactive defaults ---- */
 button {
   font-family: inherit;
   cursor: pointer;
@@ -126,12 +150,14 @@ button {
 
 button:focus-visible,
 input:focus-visible,
-a:focus-visible {
-  outline: 2px solid var(--amber);
+a:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
 
-// ---- skip link ----
+/* ---- skip link ---- */
 .skip-link {
   position: absolute;
   left: -9999px;
@@ -149,23 +175,60 @@ a:focus-visible {
   width: auto;
   height: auto;
   padding: 0.6rem 1.2rem;
-  background: var(--amber);
-  color: #0c1220;
+  background: var(--brand);
+  color: #fff;
   z-index: 9999;
   font-family: var(--f-display);
   font-weight: 700;
   font-size: 0.85rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   text-decoration: none;
-  outline: 3px solid var(--bg-0);
+  border-radius: 8px;
 }
 
-// ---- hazard stripes ----
-.hazard-amber {
-  background: repeating-linear-gradient(-45deg, var(--amber) 0 9px, transparent 9px 18px);
+/* ---- accent divider (replaces hazard stripes) ---- */
+.hazard-line {
+  height: 3px;
+  background: linear-gradient(90deg, var(--brand), var(--info));
+  opacity: 0.9;
 }
 
-.hazard-red {
-  background: repeating-linear-gradient(-45deg, var(--red) 0 9px, transparent 9px 18px);
+/* ---- pills (semantic, pastel / desaturated) ---- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--f-mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  padding: 0.34rem 0.62rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.pill-ok {
+  background: var(--ok-bg);
+  color: var(--ok-fg);
+  border: 1px solid rgb(34 197 94 / 24%);
+}
+
+.pill-warn {
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+  border: 1px solid rgb(251 191 36 / 22%);
+}
+
+.pill-err {
+  background: var(--err-bg);
+  color: var(--err-fg);
+  border: 1px solid rgb(248 113 113 / 22%);
+}
+
+.pill-neutral {
+  background: var(--neutral-bg);
+  color: var(--neutral-fg);
+  border: 1px solid var(--line);
 }

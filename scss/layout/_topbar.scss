@@ -6,8 +6,9 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+  background: var(--bg-2);
   border-bottom: 1px solid var(--line);
+  box-shadow: var(--shadow);
 }
 
 .topbar-inner {
@@ -28,41 +29,32 @@
 }
 
 .brand-mark {
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
-  color: var(--amber);
-  border: 1.5px solid var(--amber);
-  background: var(--amber-dim);
-  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
-  animation: markSpin 24s linear infinite;
+  color: var(--brand-fg);
+  background: linear-gradient(135deg, var(--brand), var(--brand-hover));
+  border-radius: 10px;
+  box-shadow: 0 2px 8px var(--brand-dim);
 
   svg {
     width: 24px;
     height: 24px;
-    animation: markSpin 24s linear infinite reverse;
-  }
-}
-
-@keyframes markSpin {
-  to {
-    transform: rotate(360deg);
   }
 }
 
 .brand-text {
   h1 {
     font-family: var(--f-display);
-    font-size: 1.28rem;
+    font-size: 1.22rem;
     font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    letter-spacing: 0.02em;
     line-height: 1.1;
 
     em {
       font-style: normal;
-      color: var(--amber);
+      color: var(--brand);
     }
   }
 }
@@ -70,9 +62,8 @@
 .brand-sub {
   font-family: var(--f-mono);
   font-size: 0.62rem;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.08em;
   color: var(--txt-3);
-  text-transform: uppercase;
 }
 
 .topbar-status {
@@ -82,31 +73,33 @@
   flex-wrap: wrap;
 }
 
-// ---- status pill ----
+/* ---- status pill ---- */
 .status-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
   font-family: var(--f-mono);
   font-size: 0.66rem;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   padding: 0.42rem 0.75rem;
   border: 1px solid var(--line);
-  background: var(--bg-2);
+  border-radius: 999px;
+  background: var(--bg-3);
   color: var(--txt-2);
 
   .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 8px var(--green);
+    background: var(--ok);
+    box-shadow: 0 0 8px var(--ok);
     animation: pulse 1.8s ease-in-out infinite;
   }
 
   &.offline .dot {
-    background: var(--red);
-    box-shadow: 0 0 8px var(--red);
+    background: var(--err);
+    box-shadow: 0 0 8px var(--err);
   }
 }
 
@@ -121,20 +114,21 @@
   }
 }
 
-// ---- clock ----
+/* ---- clock ---- */
 .clock {
   font-family: var(--f-mono);
   font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  color: var(--cyan);
+  letter-spacing: 0.06em;
+  color: var(--info);
   padding: 0.42rem 0.7rem;
   border: 1px solid var(--line);
-  background: var(--bg-2);
+  border-radius: 8px;
+  background: var(--bg-3);
   min-width: 96px;
   text-align: center;
 }
 
-// ---- icon buttons ----
+/* ---- icon buttons ---- */
 .icon-btn {
   position: relative;
   width: 40px;
@@ -142,7 +136,8 @@
   display: grid;
   place-items: center;
   border: 1px solid var(--line);
-  background: var(--bg-2);
+  border-radius: 8px;
+  background: var(--bg-3);
   color: var(--txt-2);
   font-size: 1.05rem;
   transition:
@@ -152,9 +147,9 @@
     background 0.18s ease;
 
   &:hover {
-    border-color: var(--amber);
-    color: var(--amber);
-    background: var(--amber-dim);
+    border-color: var(--brand);
+    color: var(--brand);
+    background: var(--brand-dim);
     transform: translateY(-2px);
   }
 
@@ -171,12 +166,12 @@
     padding: 0 4px;
     display: grid;
     place-items: center;
-    background: var(--amber);
-    color: #171004;
+    background: var(--brand);
+    color: var(--brand-fg);
     font-family: var(--f-mono);
     font-size: 0.6rem;
     font-weight: 600;
-    border-radius: 9px;
+    border-radius: 999px;
 
     &:empty,
     &[data-zero] {
@@ -185,12 +180,7 @@
   }
 }
 
-.hazard-line {
-  height: 4px;
-  opacity: 0.5;
-}
-
-// ---- platform chips ----
+/* ---- platform chips (in modal) ---- */
 .pchips {
   display: flex;
   align-items: center;
@@ -201,7 +191,7 @@
 .pchip-label {
   font-family: var(--f-mono);
   font-size: 0.65rem;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--txt-3);
   white-space: nowrap;
@@ -212,11 +202,12 @@
   align-items: center;
   font-family: var(--f-mono);
   font-size: 0.7rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   color: var(--txt-2);
-  background: var(--bg-2);
+  background: var(--bg-3);
   border: 1px solid var(--line);
-  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  padding: 0.38rem 0.7rem;
   cursor: pointer;
   transition:
     transform 0.16s var(--ease-out),
@@ -227,9 +218,9 @@
   white-space: nowrap;
 
   &:hover {
-    border-color: var(--amber);
-    color: var(--amber);
-    background: var(--amber-dim);
+    border-color: var(--brand);
+    color: var(--brand);
+    background: var(--brand-dim);
     transform: translateY(-1px);
   }
 
@@ -238,11 +229,11 @@
   }
 
   &.is-on {
-    background: var(--amber);
-    border-color: var(--amber);
-    color: #171004;
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-fg);
     font-weight: 600;
-    box-shadow: 0 2px 10px var(--amber-dim);
+    box-shadow: 0 2px 10px var(--brand-dim);
   }
 
   &[data-platform='all'] {
@@ -251,9 +242,9 @@
 
     &.is-on {
       border-style: solid;
-      background: var(--amber);
-      border-color: var(--amber);
-      color: #171004;
+      background: var(--brand);
+      border-color: var(--brand);
+      color: var(--brand-fg);
     }
   }
 }

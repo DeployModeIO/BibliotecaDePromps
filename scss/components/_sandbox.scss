@@ -18,7 +18,7 @@
   flex-direction: column;
   transform: translateX(100%);
   transition: transform 0.3s var(--ease-out);
-  box-shadow: -8px 0 30px rgb(0 0 0 / 50%);
+  box-shadow: -8px 0 30px rgb(2 6 23 / 45%);
 }
 
 .sandbox-drawer.active {
@@ -45,19 +45,19 @@
   font-family: var(--f-display);
   font-size: 0.95rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
 .sandbox-badge {
   font-family: var(--f-mono);
   font-size: 0.65rem;
-  padding: 0.2rem 0.6rem;
-  background: var(--amber-dim);
-  color: var(--amber);
-  border: 1px solid var(--amber);
-  border-radius: 4px;
-  letter-spacing: 0.04em;
+  padding: 0.22rem 0.6rem;
+  background: var(--brand-dim);
+  color: var(--info);
+  border: 1px solid var(--brand-dim);
+  border-radius: 999px;
+  letter-spacing: 0.03em;
 }
 
 .sandbox-head-right {
@@ -73,21 +73,22 @@
   background: var(--bg-3);
   color: var(--txt-2);
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
 }
 
 .sandbox-btn:hover {
-  border-color: var(--amber);
-  color: var(--amber);
-  background: var(--amber-dim);
+  border-color: var(--brand);
+  color: var(--brand);
+  background: var(--brand-dim);
 }
 
 .sandbox-close:hover {
-  border-color: var(--red, #ff5c5c);
-  color: var(--red, #ff5c5c);
+  border-color: var(--err);
+  color: var(--err);
+  background: var(--err-dim);
 }
 
 .sandbox-body {
@@ -155,7 +156,7 @@
 
 .sandbox-resize:hover,
 .sandbox-resize:active {
-  background: var(--amber);
+  background: var(--brand);
   opacity: 0.6;
 }
 
@@ -168,24 +169,23 @@
   font-size: 0.65rem;
   padding: 0.2rem 0.5rem;
   margin-top: 0.4rem;
-  background: var(--green);
-  background: rgb(53 214 154 / 15%);
-  color: var(--green);
-  border: 1px solid rgb(53 214 154 / 30%);
-  border-radius: 3px;
+  background: var(--ok-dim);
+  color: var(--ok);
+  border: 1px solid rgb(34 197 94 / 30%);
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .code-run-btn:hover {
-  background: rgb(53 214 154 / 25%);
-  border-color: var(--green);
+  background: var(--ok-bg);
+  border-color: var(--ok);
 }
 
 /* Typing cursor animation */
 .typing-cursor {
   animation: blink 1s step-end infinite;
-  color: var(--amber);
+  color: var(--brand);
 }
 
 @keyframes blink {
@@ -204,9 +204,9 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  border: 1.5px solid var(--red, #ff5c5c);
-  background: rgb(255 92 92 / 10%);
-  color: var(--red, #ff5c5c);
+  border: 1.5px solid var(--err);
+  background: var(--err-dim);
+  color: var(--err);
   font-size: 1.2rem;
   cursor: pointer;
   display: flex;
@@ -216,7 +216,7 @@
 }
 
 .chat-stop:hover {
-  background: rgb(255 92 92 / 20%);
+  background: var(--err-bg);
 }
 
 .chat-stopped {

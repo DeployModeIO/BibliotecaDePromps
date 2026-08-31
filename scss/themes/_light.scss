@@ -1,34 +1,70 @@
 /* ============================================================
-   LIGHT THEME
+   LIGHT THEME — SLDS / Field Service enterprise
    ============================================================ */
 
 [data-theme='light'] {
-  --bg-0: #dfe6ef;
-  --bg-1: #e9eef5;
-  --bg-2: #f4f7fb;
-  --bg-3: #fff;
-  --bg-4: #eef3f9;
-  --line: #ccd7e5;
-  --line-2: #b3c2d6;
-  --txt: #131c2b;
-  --txt-2: #45587a;
-  --txt-3: #7d90ac;
-  --amber: #e08e00;
-  --amber-2: #b87400;
-  --amber-dim: rgb(224 142 0 / 12%);
-  --green: #0d9f6e;
-  --green-dim: rgb(13 159 110 / 12%);
-  --red: #dc2626;
-  --red-dim: rgb(220 38 38 / 10%);
-  --cyan: #0369a1;
-  --cyan-dim: rgb(3 105 161 / 10%);
-  --glow-a: rgb(3 105 161 / 6%);
-  --glow-b: rgb(224 142 0 / 6%);
-  --grid-line: rgb(30 64 120 / 6%);
-  --scan: rgb(0 0 0 / 1.2%);
-  --shadow: 0 14px 34px rgb(30 45 70 / 16%);
+  /* surfaces */
+  --bg-0: #eef4f9; /* deepest inset */
+  --bg-1: #eef4f9; /* canvas */
+  --bg-2: #fff; /* card */
+  --bg-3: #f6f9fc; /* raised / hover / chip */
+  --bg-4: #e9f1f8; /* alternate surface */
+  --prompt-bg: #fff;
 
-  .modal-prompt {
-    background: var(--bg-4);
-  }
+  /* lines */
+  --line: #e5e7eb;
+  --line-2: #d1d5db;
+
+  /* text */
+  --txt: #181b25;
+  --txt-2: #5c5c5c;
+  --txt-3: #8a94a6;
+
+  /* brand / primary action */
+  --brand: #0070d2;
+  --brand-hover: #005fb2;
+  --brand-fg: #fff;
+  --brand-dim: rgb(0 112 210 / 10%);
+
+  /* info / secondary accent */
+  --info: #0284c7;
+  --info-dim: rgb(2 132 199 / 10%);
+
+  /* semantic states */
+  --ok: #059669;
+  --ok-bg: #def7ec;
+  --ok-fg: #03543f;
+  --ok-dim: rgb(5 150 105 / 10%);
+  --warn: #d97706;
+  --warn-bg: #fef08a;
+  --warn-fg: #713f12;
+  --warn-dim: rgb(217 119 6 / 10%);
+  --err: #dc2626;
+  --err-bg: #fde8e8;
+  --err-fg: #9b1c1c;
+  --err-dim: rgb(220 38 38 / 10%);
+  --neutral-bg: #f3f4f6;
+  --neutral-fg: #4b5563;
+
+  /* prompt variables */
+  --var-bg: #f0f7ff;
+  --var-fg: #0a47a3;
+  --var-border: rgb(10 71 163 / 18%);
+
+  /* legacy aliases */
+  --amber: var(--warn);
+  --amber-2: #b45309;
+  --amber-dim: var(--warn-dim);
+  --green: var(--ok);
+  --green-dim: var(--ok-dim);
+  --red: var(--err);
+  --red-dim: var(--err-dim);
+  --cyan: var(--info);
+  --cyan-dim: var(--info-dim);
+
+  /* effects */
+  --glow-a: rgb(2 132 199 / 6%);
+  --glow-b: rgb(0 112 210 / 6%);
+  --shadow: 0 1px 3px rgb(24 27 37 / 5%);
+  --shadow-lg: 0 12px 32px rgb(24 27 37 / 12%);
 }

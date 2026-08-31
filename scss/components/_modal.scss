@@ -1,12 +1,12 @@
 /* ============================================================
-   MODAL — prompt detail overlay, platform chips, actions
+   MODAL — prompt detail overlay, platform bar, actions
    ============================================================ */
 
 .modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 500;
-  background: rgb(4 8 15 / 78%);
+  background: rgb(2 6 23 / 60%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,27 +38,27 @@
   flex-direction: column;
   background: var(--bg-2);
   border: 1px solid var(--line-2);
-  box-shadow:
-    var(--shadow),
-    0 0 0 1px rgb(255 176 32 / 8%);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
   transform: translateY(16px) scale(0.985);
   transition: transform 0.24s var(--ease-out);
 }
 
 .modal-stripe {
-  height: 5px;
+  height: 4px;
   flex-shrink: 0;
 
   &.p-critica {
-    background: repeating-linear-gradient(-45deg, var(--red) 0 10px, #2b0f0f 10px 20px);
+    background: linear-gradient(90deg, var(--err), rgb(248 113 113 / 30%));
   }
 
   &.p-alta {
-    background: repeating-linear-gradient(-45deg, var(--amber) 0 10px, #2b1e05 10px 20px);
+    background: linear-gradient(90deg, var(--warn), rgb(251 191 36 / 30%));
   }
 
   &.p-media {
-    background: repeating-linear-gradient(-45deg, var(--green) 0 10px, #0a2b1e 10px 20px);
+    background: linear-gradient(90deg, var(--ok), rgb(34 197 94 / 30%));
   }
 }
 
@@ -73,7 +73,7 @@
     font-size: 1.35rem;
     font-weight: 700;
     line-height: 1.25;
-    letter-spacing: 0.01em;
+    letter-spacing: 0;
     padding-right: 2.6rem;
   }
 }
@@ -81,14 +81,15 @@
 .modal-id-row {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.6rem;
+  flex-wrap: wrap;
   margin-bottom: 0.5rem;
 }
 
 .modal-id {
   font-family: var(--f-mono);
   font-size: 0.66rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
   color: var(--txt-3);
 }
 
@@ -102,6 +103,7 @@
   place-items: center;
   background: var(--bg-3);
   border: 1px solid var(--line);
+  border-radius: 8px;
   color: var(--txt-2);
   font-size: 1rem;
   transition:
@@ -112,9 +114,9 @@
     transform 0.16s var(--ease-out);
 
   &:hover {
-    background: var(--red);
-    border-color: var(--red);
-    color: #fff;
+    background: var(--err-bg);
+    border-color: var(--err);
+    color: var(--err-fg);
     transform: rotate(90deg);
   }
 }
@@ -136,7 +138,7 @@
     display: block;
     font-family: var(--f-mono);
     font-size: 0.56rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--txt-3);
     margin-bottom: 0.2rem;
@@ -146,10 +148,10 @@
     font-family: var(--f-mono);
     font-size: 0.74rem;
     color: var(--txt);
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
 
     &.accent {
-      color: var(--amber);
+      color: var(--brand);
     }
   }
 }
@@ -168,13 +170,30 @@
   color: var(--txt-2);
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  background: var(--bg-0);
+  background: var(--prompt-bg);
   border: 1px solid var(--line);
-  border-left: 3px solid var(--amber);
+  border-left: 3px solid var(--brand);
+  border-radius: 10px;
   padding: 1.2rem 1.3rem;
 }
 
-// ---- platform selector ----
+/* ---- prompt variables (monospace highlight) ---- */
+.var {
+  font-family: var(--f-mono);
+  background: var(--var-bg);
+  color: var(--var-fg);
+  border: 1px solid var(--var-border);
+  border-radius: 4px;
+  padding: 0.05rem 0.3rem;
+  white-space: pre-wrap;
+}
+
+.var-block {
+  font-weight: 500;
+  padding: 0.1rem 0.35rem;
+}
+
+/* ---- platform selector ---- */
 .platform-bar {
   display: flex;
   align-items: center;
@@ -186,61 +205,7 @@
   flex-shrink: 0;
 }
 
-.platform-label {
-  font-family: var(--f-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--txt-3);
-  white-space: nowrap;
-}
-
-.platform-chips {
-  display: flex;
-  gap: 0.45rem;
-  flex-wrap: wrap;
-}
-
-.pchip {
-  font-family: var(--f-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  color: var(--txt-2);
-  background: var(--bg-2);
-  border: 1px solid var(--line);
-  padding: 0.45rem 0.8rem;
-  transition: all 0.16s ease;
-  white-space: nowrap;
-
-  &:hover {
-    border-color: var(--cyan);
-    color: var(--cyan);
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0) scale(0.96);
-  }
-
-  &.is-on {
-    background: var(--cyan);
-    border-color: var(--cyan);
-    color: #04121c;
-    font-weight: 600;
-    box-shadow: 0 2px 12px var(--cyan-dim);
-  }
-}
-
-.pchip-all {
-  &.is-on {
-    background: var(--amber);
-    border-color: var(--amber);
-    color: #171004;
-    box-shadow: 0 2px 12px var(--amber-dim);
-  }
-}
-
-// ---- action buttons ----
+/* ---- action buttons ---- */
 .modal-actions {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -258,10 +223,11 @@
   font-family: var(--f-mono);
   font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 0.78rem 0.6rem;
   border: 1px solid var(--line);
+  border-radius: 8px;
   background: var(--bg-3);
   color: var(--txt-2);
   transition:
@@ -285,53 +251,54 @@
 
 .btn-primary {
   grid-column: span 2;
-  background: var(--amber);
-  border-color: var(--amber);
-  color: #171004;
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--brand-fg);
   font-size: 0.76rem;
-  box-shadow: 0 4px 18px var(--amber-dim);
+  box-shadow: 0 4px 14px var(--brand-dim);
 
   &:hover {
-    background: var(--amber-2);
-    border-color: var(--amber-2);
-    color: #171004;
-    box-shadow: 0 6px 26px var(--amber-dim);
+    background: var(--brand-hover);
+    border-color: var(--brand-hover);
+    color: var(--brand-fg);
+    box-shadow: 0 6px 20px var(--brand-dim);
   }
 
   &.copied {
-    background: var(--green);
-    border-color: var(--green);
+    background: var(--ok);
+    border-color: var(--ok);
+    color: #04121c;
   }
 }
 
 .btn-ai {
-  border-color: var(--cyan);
-  color: var(--cyan);
-  background: var(--cyan-dim);
+  border-color: var(--info);
+  color: var(--info);
+  background: var(--info-dim);
 
   &:hover {
-    background: var(--cyan);
+    background: var(--info);
     color: #04121c;
-    border-color: var(--cyan);
+    border-color: var(--info);
   }
 }
 
 .btn-chat {
-  border-color: var(--green);
-  color: var(--green);
-  background: var(--green-dim);
+  border-color: var(--ok);
+  color: var(--ok);
+  background: var(--ok-dim);
 
   &:hover {
-    background: var(--green);
+    background: var(--ok);
     color: #04121c;
-    border-color: var(--green);
+    border-color: var(--ok);
   }
 }
 
 .btn-fav {
   &.is-fav {
-    border-color: var(--amber);
-    color: var(--amber);
-    background: var(--amber-dim);
+    border-color: var(--warn);
+    color: var(--warn-fg);
+    background: var(--warn-bg);
   }
 }
