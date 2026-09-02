@@ -34,6 +34,6 @@ export default defineConfig({
     command: 'npx serve . -p 3000 --no-clipboard',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 10000,
+    timeout: 60000,
   },
 });

@@ -66,7 +66,18 @@ if (fs.existsSync(cssMinSrc)) {
 const jsDir = path.join(DIST, 'js');
 fs.mkdirSync(jsDir, { recursive: true });
 
-const jsToMinify = ['app.js', 'ai-chat.js', 'platform-tests.js', 'store.js'];
+// FIX: crypto.js, usage-tracker.js, bpi-worker.js y lib-loader.js faltaban en el
+// build anterior → 404 en producción y Web Worker roto.
+const jsToMinify = [
+  'app.js',
+  'ai-chat.js',
+  'platform-tests.js',
+  'store.js',
+  'crypto.js',
+  'usage-tracker.js',
+  'bpi-worker.js',
+  'lib-loader.js',
+];
 const jsToCopy = ['prompts-data.js', 'prompts-data-extra.js', 'prompts-data-v2.js', 'prompts-data-fullstack.js'];
 
 for (const f of jsToMinify) {

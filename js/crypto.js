@@ -1,84 +1,96 @@
-/* global SafeStore */
+/* ============================================================
+   BPI CRYPTO v2 — Cifrado de datos sensibles en reposo (API keys).
+
+   Diseño (honrado sobre las limitaciones de un client-side BYOK):
+   - AES-GCM (Web Crypto) con clave derivada por PBKDF2-SHA256
+     (150k iteraciones) de un secreto de instalación aleatorio.
+   - La clave NUNCA se exporta ni se persiste en crudo: solo vive
+     en memoria como CryptoKey no extraíble.
+   - El "secreto de instalación" (salt larga) se genera una vez por
+     dispositivo y se guarda en localStorage. Esto protege contra
+     inspección casual, backups, discos compartidos y lectura
+     cross-app; NO protege contra un XSS del mismo origen (ningún
+     esquema local lo hace — por eso el CSP y la sanitización son
+     la defensa primaria).
+   - Prefijo bpi2_ para distinguir del formato legacy inseguro.
+   ============================================================ */
+
+/* global SafeStore, module */
 
 const BPICrypto = (() => {
-  const DB_NAME = 'bpi_crypto';
-  const DB_VERSION = 1;
-  const STORE_NAME = 'keys';
-  const KEY_ID = 'derived_key';
+  const VERSION_PREFIX = 'bpi2_';
+  const LEGACY_PREFIX = 'bpi_enc_';
+  const SECRET_KEY = 'bpi_install_secret';
+  const MIGRATED_KEY = 'bpi_crypto_migrated_v2';
+  const ITERATIONS = 150000;
+  const PEPPER = 'bpi_promps_industriales_v2';
 
-  let db = null;
   let cryptoKey = null;
+  let keySecret = null;
   let available = null;
 
-  /* ---------- IndexedDB for key storage ---------- */
-
-  function openDB() {
-    return new Promise((resolve, reject) => {
-      if (db) return resolve(db);
-      const req = indexedDB.open(DB_NAME, DB_VERSION);
-      req.onupgradeneeded = (e) => {
-        const d = e.target.result;
-        if (!d.objectStoreNames.contains(STORE_NAME)) {
-          d.createObjectStore(STORE_NAME);
+  function getStore() {
+    if (typeof SafeStore !== 'undefined' && SafeStore) return SafeStore;
+    return {
+      get: (k) => {
+        try {
+          return localStorage.getItem(k);
+        } catch {
+          return null;
         }
-      };
-      req.onsuccess = (e) => {
-        db = e.target.result;
-        resolve(db);
-      };
-      req.onerror = () => reject(req.error);
-    });
+      },
+      set: (k, v) => {
+        try {
+          localStorage.setItem(k, v);
+        } catch {
+          /* ignore */
+        }
+      },
+    };
   }
 
-  async function dbGet(key) {
-    try {
-      const d = await openDB();
-      return new Promise((resolve, reject) => {
-        const tx = d.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
-        const req = store.get(key);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-      });
-    } catch {
-      return null;
+  /** Secreto de instalación: 32 bytes aleatorios en base64, generados una vez. */
+  function getInstallSecret() {
+    const store = getStore();
+    let secret = store.get(SECRET_KEY);
+    if (!secret) {
+      const bytes = crypto.getRandomValues(new Uint8Array(32));
+      secret = btoa(String.fromCharCode(...bytes));
+      store.set(SECRET_KEY, secret);
     }
+    return secret;
   }
 
-  async function dbSet(key, value) {
-    try {
-      const d = await openDB();
-      return new Promise((resolve, reject) => {
-        const tx = d.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        const req = store.put(value, key);
-        req.onsuccess = () => resolve();
-        req.onerror = () => reject(req.error);
-      });
-    } catch {
-      /* ignore */
-    }
-  }
-
-  /* ---------- Fingerprint derivation ---------- */
-
-  function getFingerprint() {
-    const parts = [
-      navigator.userAgent || '',
-      String(screen.width || 0),
-      String(screen.height || 0),
-      String(screen.colorDepth || 0),
-      Intl.DateTimeFormat().resolvedOptions().timeZone || '',
-      navigator.language || '',
-    ];
-    return parts.join('|');
-  }
-
-  async function deriveKey(fingerprint) {
+  /** PBKDF2 → AES-GCM key, no extraíble, solo en memoria.
+      Si el secreto de instalación cambia (p. ej. el usuario limpió los datos
+      del sitio), se re-deriva la clave para no cifrar con un secreto huérfano. */
+  async function getKey() {
+    const secret = getInstallSecret();
+    if (cryptoKey && keySecret === secret) return cryptoKey;
     const enc = new TextEncoder();
-    const material = enc.encode('bpi_v1_' + fingerprint);
-    const hash = await crypto.subtle.digest('SHA-256', material);
-    return crypto.subtle.importKey('raw', hash.slice(0, 32), { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+    const salt = enc.encode(PEPPER + '|' + secret);
+    const material = await crypto.subtle.importKey('raw', enc.encode('bpi-key-material'), 'PBKDF2', false, ['deriveKey']);
+    cryptoKey = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations: ITERATIONS, hash: 'SHA-256' },
+      material,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt']
+    );
+    keySecret = secret;
+    return cryptoKey;
+  }
+
+  function toBase64(bytes) {
+    let bin = '';
+    bytes.forEach((b) => {
+      bin += String.fromCharCode(b);
+    });
+    return btoa(bin);
+  }
+
+  function fromBase64(b64) {
+    return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
   }
 
   /* ---------- Public API ---------- */
@@ -86,103 +98,92 @@ const BPICrypto = (() => {
   async function isAvailable() {
     if (available !== null) return available;
     try {
-      if (!window.crypto || !window.crypto.subtle) {
+      if (typeof crypto === 'undefined' || !crypto.subtle || !crypto.getRandomValues) {
         available = false;
         return false;
       }
-      if (!window.indexedDB) {
-        available = false;
-        return false;
-      }
-      // Test encrypt/decrypt
-      const fp = getFingerprint();
-      const key = await deriveKey(fp);
+      // Round-trip de prueba
+      const key = await getKey();
       const iv = crypto.getRandomValues(new Uint8Array(12));
-      const enc = new TextEncoder();
-      const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode('test'));
-      await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, cipher);
-      available = true;
-      return true;
+      const data = new TextEncoder().encode('bpi-selftest');
+      const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
+      const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, cipher);
+      available = new TextDecoder().decode(plain) === 'bpi-selftest';
+      return available;
     } catch {
       available = false;
       return false;
     }
   }
 
+  /**
+   * Cifra un string. Devuelve el ciphertext con prefijo bpi2_, o el
+   * plaintext original si el cifrado no está disponible (fallback legado).
+   */
   async function encrypt(plaintext) {
-    if (!plaintext) return plaintext;
+    if (!plaintext || typeof plaintext !== 'string') return plaintext;
+    if (plaintext.startsWith(VERSION_PREFIX)) return plaintext; // ya cifrado
     try {
       if (!(await isAvailable())) return plaintext;
-      if (!cryptoKey) {
-        const stored = await dbGet(KEY_ID);
-        if (stored) {
-          cryptoKey = await crypto.subtle.importKey('raw', stored, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
-        } else {
-          const fp = getFingerprint();
-          cryptoKey = await deriveKey(fp);
-          const raw = await crypto.subtle.exportKey('raw', cryptoKey);
-          await dbSet(KEY_ID, raw);
-        }
-      }
+      const key = await getKey();
       const iv = crypto.getRandomValues(new Uint8Array(12));
-      const enc = new TextEncoder();
-      const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, cryptoKey, enc.encode(plaintext));
-      // Prepend IV to ciphertext
-      const combined = new Uint8Array(iv.length + cipher.byteLength);
-      combined.set(iv);
-      combined.set(new Uint8Array(cipher), iv.length);
-      return 'bpi_enc_' + btoa(String.fromCharCode(...combined));
+      const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(plaintext));
+      return VERSION_PREFIX + toBase64(iv) + '.' + toBase64(new Uint8Array(cipher));
     } catch {
       return plaintext;
     }
   }
 
+  /**
+   * Descifra. Devuelve null si el ciphertext es corrupto/ilegible
+   * (fail-closed: el caller decide pedir la clave de nuevo).
+   * Strings sin prefijo se devuelven como vienen (plaintext legacy).
+   */
   async function decrypt(ciphertext) {
     if (!ciphertext || typeof ciphertext !== 'string') return ciphertext;
-    if (!ciphertext.startsWith('bpi_enc_')) return ciphertext;
+    if (ciphertext.startsWith(LEGACY_PREFIX)) {
+      // Formato legacy inseguro (clave derivada de fingerprint): ilegible ahora.
+      return null;
+    }
+    if (!ciphertext.startsWith(VERSION_PREFIX)) return ciphertext;
     try {
-      if (!(await isAvailable())) return ciphertext;
-      if (!cryptoKey) {
-        const stored = await dbGet(KEY_ID);
-        if (stored) {
-          cryptoKey = await crypto.subtle.importKey('raw', stored, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
-        } else {
-          return ciphertext;
-        }
-      }
-      const raw = ciphertext.slice(8); // remove 'bpi_enc_'
-      const bytes = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
-      const iv = bytes.slice(0, 12);
-      const data = bytes.slice(12);
-      const dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, cryptoKey, data);
-      return new TextDecoder().decode(dec);
+      if (!(await isAvailable())) return null;
+      const key = await getKey();
+      const body = ciphertext.slice(VERSION_PREFIX.length);
+      const [ivB64, dataB64] = body.split('.');
+      if (!ivB64 || !dataB64) return null;
+      const iv = fromBase64(ivB64);
+      const data = fromBase64(dataB64);
+      const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+      return new TextDecoder().decode(plain);
     } catch {
-      return ciphertext;
+      return null;
     }
   }
 
-  /* ---------- Migration ---------- */
-
+  /**
+   * Migra las API keys de proveedores guardadas en plaintext a cifrado.
+   * Idempotente. Se llama desde AIChat.init().
+   */
   async function migrateKeys() {
-    if (SafeStore && SafeStore.get('bpi_crypto_migrated') === '1') return;
+    const store = getStore();
+    if (store.get(MIGRATED_KEY) === '1') return;
     try {
-      const providers = JSON.parse((SafeStore && SafeStore.get('aichat_providers')) || localStorage.getItem('aichat_providers') || '[]');
-      let changed = false;
-      for (const p of providers) {
-        if (p.apiKey && !p.apiKey.startsWith('bpi_enc_')) {
-          p.apiKey = await encrypt(p.apiKey);
-          changed = true;
+      const raw = store.get('aichat_providers');
+      if (raw) {
+        const providers = JSON.parse(raw);
+        let changed = false;
+        for (const p of providers) {
+          if (p.apiKey && typeof p.apiKey === 'string' && !p.apiKey.startsWith(VERSION_PREFIX) && !p.apiKey.startsWith(LEGACY_PREFIX)) {
+            p.apiKey = await encrypt(p.apiKey);
+            changed = true;
+          }
         }
+        if (changed) store.set('aichat_providers', JSON.stringify(providers));
       }
-      if (changed) {
-        const s = JSON.stringify(providers);
-        if (SafeStore) SafeStore.set('aichat_providers', s);
-        else localStorage.setItem('aichat_providers', s);
-      }
-      if (SafeStore) SafeStore.set('bpi_crypto_migrated', '1');
-      else localStorage.setItem('bpi_crypto_migrated', '1');
+      store.set(MIGRATED_KEY, '1');
     } catch {
-      /* migration failed silently */
+      /* no bloquear la app por la migración */
     }
   }
 
@@ -191,4 +192,8 @@ const BPICrypto = (() => {
 
 if (typeof window !== 'undefined') {
   window.BPICrypto = BPICrypto;
+}
+// Export para tests reales (Jest) sin cambiar el uso en navegador
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = BPICrypto;
 }

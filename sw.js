@@ -1,4 +1,4 @@
-const CACHE_NAME = 'biblioteca-promps-v3.5';
+const CACHE_NAME = 'biblioteca-promps-v3.6';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -8,6 +8,9 @@ const ASSETS_TO_CACHE = [
   '/js/app.js',
   '/js/ai-chat.js',
   '/js/store.js',
+  '/js/crypto.js',
+  '/js/usage-tracker.js',
+  '/js/lib-loader.js',
   '/js/prompts-data.js',
   '/js/prompts-data-extra.js',
   '/js/prompts-data-v2.js',
@@ -20,6 +23,8 @@ const ASSETS_TO_CACHE = [
   '/js/vendor/xlsx.full.min.js',
   '/js/vendor/highlight.min.js',
   '/js/vendor/mermaid.min.js',
+  '/js/vendor/jszip.min.js',
+  '/js/vendor/marked.min.js',
   '/css/highlight-github-dark.min.css',
   '/manifest.json',
   '/icons/icon-192.svg',
@@ -77,27 +82,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // CDN scripts: cache-first with network fallback
-  if (url.origin === 'https://cdnjs.cloudflare.com') {
-    event.respondWith(
-      caches.open(CACHE_NAME).then((cache) =>
-        cache.match(event.request).then((cached) => {
-          if (cached) return cached;
-          return fetch(event.request)
-            .then((response) => {
-              if (response && response.status === 200) {
-                cache.put(event.request, response.clone());
-              }
-              return response;
-            })
-            .catch(() => new Response('', { status: 504 }));
-        })
-      )
-    );
-    return;
-  }
-
   // App assets: stale-while-revalidate strategy
+  // (todos los scripts son locales desde v3.6 — sin dependencias de CDN)
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request)

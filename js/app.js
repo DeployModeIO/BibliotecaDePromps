@@ -2,7 +2,7 @@
    BIBLIOTECA DE PROMPS INDUSTRIAL — APP CORE v3.3
    JSDoc type annotations for DX. TypeScript not required.
    ============================================================ */
-/* global PROMPTS_DB, PROMPTS_DB_EXTRA, PROMPTS_DB_V2, PROMPTS_DB_FULLSTACK */
+/* global PROMPTS_DB, PROMPTS_DB_EXTRA, PROMPTS_DB_V2, PROMPTS_DB_FULLSTACK, module */
 
 /**
  * @typedef {{"label": string, "spec": string}} PlatformSpec
@@ -281,6 +281,12 @@ class PromptLibrary {
       emailBtn: $('emailBtn'),
       pdfBtn: $('pdfBtn'),
       excelBtn: $('excelBtn'),
+      shareBtn: $('shareBtn'),
+      varModal: $('varModal'),
+      varModalFields: $('varModalFields'),
+      varModalClose: $('varModalClose'),
+      varModalApply: $('varModalApply'),
+      varModalRaw: $('varModalRaw'),
       platformChips: $('platformChips'),
       favDrawer: $('favDrawer'),
       histDrawer: $('histDrawer'),
@@ -301,7 +307,9 @@ class PromptLibrary {
     this.setupTheme();
     this.setupSW();
     this.updateFavBadge();
+    if (window.UsageTracker && window.UsageTracker.init) window.UsageTracker.init();
     if (window.AIChat) window.AIChat.init();
+    this.handleHashRoute();
     if (!SafeStore.available()) {
       setTimeout(
         () => this.showToast('⚠ Navegador bloquea almacenamiento — favoritos/historial no persistirán (baje los Shields de Brave)', ''),
@@ -339,6 +347,34 @@ class PromptLibrary {
       if (card) this.openPromptById(card.dataset.id);
     });
 
+    /* A11y: activación por teclado (Enter/Espacio) para cards y categorías,
+       que son <article role="button"> en lugar de divs clicables. */
+    const isActivateKey = (e) => e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar';
+    this.el.categoriesGrid.addEventListener('keydown', (e) => {
+      if (!isActivateKey(e)) return;
+      const panel = e.target.closest('.cat-panel');
+      if (panel) {
+        e.preventDefault();
+        this.openCategory(panel.dataset.id);
+      }
+    });
+    this.el.categoryView.addEventListener('keydown', (e) => {
+      if (!isActivateKey(e)) return;
+      const card = e.target.closest('.pcard');
+      if (card) {
+        e.preventDefault();
+        this.openPromptById(card.dataset.id);
+      }
+    });
+    this.el.resultsList.addEventListener('keydown', (e) => {
+      if (!isActivateKey(e)) return;
+      const card = e.target.closest('.pcard');
+      if (card) {
+        e.preventDefault();
+        this.openPromptById(card.dataset.id);
+      }
+    });
+
     this.el.favToggle.addEventListener('click', () => {
       this.renderFavList();
       this.openDrawer('fav');
@@ -349,6 +385,10 @@ class PromptLibrary {
     });
     this.el.drawerScrim.addEventListener('click', () => this.closeDrawers());
     document.querySelectorAll('[data-close-drawer]').forEach((b) => b.addEventListener('click', () => this.closeDrawers()));
+
+    // A11y: focus-trap para los drawers (una sola vez, no por apertura)
+    this.trapFocus(this.el.favDrawer);
+    this.trapFocus(this.el.histDrawer);
 
     [this.el.favList, this.el.histList].forEach((list) => {
       list.addEventListener('click', (e) => {
@@ -375,8 +415,20 @@ class PromptLibrary {
 
     this.el.copyBtn.addEventListener('click', () => {
       if (!this.currentPrompt) return;
-      this.copyText(this.getFullPrompt(), this.el.copyBtn);
+      this.copyPromptSmart();
     });
+
+    if (this.el.varModalClose) this.el.varModalClose.addEventListener('click', () => this.closeVarModal());
+    if (this.el.varModal)
+      this.el.varModal.addEventListener('click', (e) => {
+        if (e.target === this.el.varModal) this.closeVarModal();
+      });
+    if (this.el.varModalApply) this.el.varModalApply.addEventListener('click', () => this.applyVarModal());
+    if (this.el.varModalRaw)
+      this.el.varModalRaw.addEventListener('click', () => {
+        this.closeVarModal();
+        this.copyText(this.getFullPrompt(), this.el.copyBtn);
+      });
     this.el.gptBtn.addEventListener('click', () => this.openInAI('https://chatgpt.com/', 'ChatGPT'));
     this.el.claudeBtn.addEventListener('click', () => this.openInAI('https://claude.ai/new', 'Claude'));
     this.el.sendToChatBtn.addEventListener('click', () => {
@@ -392,14 +444,28 @@ class PromptLibrary {
       if (this.currentPrompt) this.toggleFavorite(this.currentPrompt);
     });
     this.el.emailBtn.addEventListener('click', () => {
-      if (this.currentPrompt) this.sendByEmail(this.currentPrompt);
+      if (this.currentPrompt) {
+        if (window.UsageTracker) window.UsageTracker.recordPromptExport(this.currentPrompt, 'email');
+        this.sendByEmail(this.currentPrompt);
+      }
     });
     this.el.pdfBtn.addEventListener('click', () => {
-      if (this.currentPrompt) this.exportToPDF(this.currentPrompt);
+      if (this.currentPrompt) {
+        if (window.UsageTracker) window.UsageTracker.recordPromptExport(this.currentPrompt, 'pdf');
+        this.exportToPDF(this.currentPrompt);
+      }
     });
     this.el.excelBtn.addEventListener('click', () => {
-      if (this.currentPrompt) this.exportToExcel(this.currentPrompt);
+      if (this.currentPrompt) {
+        if (window.UsageTracker) window.UsageTracker.recordPromptExport(this.currentPrompt, 'excel');
+        this.exportToExcel(this.currentPrompt);
+      }
     });
+
+    if (this.el.shareBtn) this.el.shareBtn.addEventListener('click', () => this.sharePrompt());
+
+    // Permalinks: #p/<id> abre el prompt (compartible/SEO)
+    window.addEventListener('hashchange', () => this.handleHashRoute());
 
     this.el.platformChips.addEventListener('click', (e) => this.onPlatformClick(e));
 
@@ -464,6 +530,7 @@ class PromptLibrary {
       else if (chip.dataset.priority) on = this.state.priority === chip.dataset.priority;
       else if (chip.dataset.type) on = this.state.type === chip.dataset.type;
       chip.classList.toggle('is-on', on);
+      chip.setAttribute('aria-pressed', String(on)); // A11y: estado anunciado
     });
   }
 
@@ -577,6 +644,10 @@ class PromptLibrary {
       const panel = document.createElement('article');
       panel.className = 'cat-panel reveal';
       panel.dataset.id = cat.id;
+      // A11y: operable por teclado y anunciado como botón
+      panel.setAttribute('role', 'button');
+      panel.tabIndex = 0;
+      panel.setAttribute('aria-label', `Abrir sistema ${cat.nombre} (${totalPrompts} prompts)`);
       panel.style.setProperty('--cat', cat.color);
       panel.style.transitionDelay = (i % 6) * 55 + 'ms';
       panel.innerHTML = `
@@ -686,6 +757,10 @@ class PromptLibrary {
     const card = document.createElement('article');
     card.className = 'pcard reveal';
     card.dataset.id = p.id;
+    // A11y: operable por teclado y anunciado como botón
+    card.setAttribute('role', 'button');
+    card.tabIndex = 0;
+    card.setAttribute('aria-label', `Ver prompt ${p.titulo}`);
     card.style.transitionDelay = (i % 8) * 45 + 'ms';
     const words = this.wordCount(p.prompt);
     const catLabel = cat ? `<span>SISTEMA: <b>${this.esc(cat.nombre.toUpperCase())}</b></span>` : '';
@@ -728,6 +803,7 @@ class PromptLibrary {
     this.currentPrompt = prompt;
     this.currentMeta = entry;
     this.addToHistory(prompt);
+    if (window.UsageTracker) window.UsageTracker.recordPromptView(prompt, entry.cat.nombre);
 
     const words = this.wordCount(prompt.prompt);
     const genTime = Math.max(2, Math.round(words / 180));
@@ -756,6 +832,70 @@ class PromptLibrary {
     this._lastFocused = document.activeElement;
     this.trapFocus(this.el.modal);
     requestAnimationFrame(() => this.el.modalClose.focus());
+  }
+
+  /* ---------- share / permalinks / variables ---------- */
+
+  handleHashRoute() {
+    const m = (location.hash || '').match(/^#p\/([\w-]+)/);
+    if (!m) return;
+    const id = m[1].toLowerCase().replace(/-/g, '_');
+    const entry = this.index.get(id) || [...this.index.values()].find((e) => e.prompt.id.replace(/_/g, '-') === m[1]);
+    if (entry) this.openPromptModal(entry.prompt, entry);
+  }
+
+  sharePrompt() {
+    if (!this.currentPrompt) return;
+    const id = this.currentPrompt.id.toUpperCase().replace(/_/g, '-');
+    const url = location.origin + location.pathname + '#p/' + this.currentPrompt.id;
+    this.copyText(url, null);
+    this.showToast('🔗 Enlace copiado — PRM-' + id, 'ok');
+  }
+
+  getPromptVariables(text) {
+    const vars = [];
+    const re = /\{\{([^{}]+)\}\}/g;
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      const name = m[1].trim();
+      if (!vars.includes(name)) vars.push(name);
+    }
+    return vars;
+  }
+
+  copyPromptSmart() {
+    const full = this.getFullPrompt();
+    const vars = this.getPromptVariables(full);
+    if (window.UsageTracker && this.currentPrompt) window.UsageTracker.recordPromptCopy(this.currentPrompt);
+    if (!vars.length) {
+      this.copyText(full, this.el.copyBtn);
+      return;
+    }
+    // Editor de variables {{...}}
+    this.el.varModalFields.innerHTML = vars
+      .map(
+        (v, i) => `<div style="margin-bottom:0.7rem">
+        <label for="varField${i}" style="display:block;font-family:var(--f-mono);font-size:0.65rem;color:var(--txt-2);margin-bottom:0.25rem">${this.esc(v)}</label>
+        <input id="varField${i}" data-var="${this.esc(v)}" type="text" style="width:100%;padding:0.5rem 0.7rem;background:var(--bg-2);border:1px solid var(--line);border-radius:8px;color:var(--txt-1);font-size:0.85rem">
+      </div>`
+      )
+      .join('');
+    this.el.varModal.classList.add('active');
+    requestAnimationFrame(() => this.el.varModalFields.querySelector('input')?.focus());
+  }
+
+  applyVarModal() {
+    let text = this.getFullPrompt();
+    this.el.varModalFields.querySelectorAll('input').forEach((inp) => {
+      const val = inp.value.trim();
+      if (val) text = text.split('{{' + inp.dataset.var + '}}').join(val);
+    });
+    this.closeVarModal();
+    this.copyText(text, this.el.copyBtn);
+  }
+
+  closeVarModal() {
+    if (this.el.varModal) this.el.varModal.classList.remove('active');
   }
 
   closeModal() {
@@ -861,8 +1001,10 @@ class PromptLibrary {
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
-  exportToPDF(prompt) {
+  async exportToPDF(prompt) {
     const meta = this.currentMeta;
+    // Lazy-load: jsPDF (~366 KB) solo se descarga al exportar el primer PDF
+    if (!window.jspdf && window.LibLoader) await window.LibLoader.jspdf();
     const lib = window.jspdf || {};
     const jsPDF = lib.jsPDF;
     if (!jsPDF) {
@@ -928,8 +1070,10 @@ class PromptLibrary {
     this.showToast('✓ PDF generado', 'ok');
   }
 
-  exportToExcel(prompt) {
+  async exportToExcel(prompt) {
     const meta = this.currentMeta;
+    // Lazy-load: SheetJS (~952 KB) solo se descarga al exportar el primer Excel
+    if (typeof window.XLSX === 'undefined' && window.LibLoader) await window.LibLoader.xlsx();
     if (typeof window.XLSX === 'undefined') {
       this.showToast('✕ SheetJS no disponible', 'error');
       return;
@@ -1010,6 +1154,7 @@ class PromptLibrary {
       const on =
         p === 'all' ? this.state.platforms.size === 0 || this.state.platforms.size === PLATFORM_KEYS.length : this.state.platforms.has(p);
       chip.classList.toggle('is-on', on);
+      chip.setAttribute('aria-pressed', String(on)); // A11y: estado anunciado
     });
   }
 
@@ -1051,10 +1196,13 @@ class PromptLibrary {
   }
 
   toggleFavorite(prompt) {
-    if (this.isFavorite(prompt.id)) this.removeFavoriteById(prompt.id);
-    else {
+    if (this.isFavorite(prompt.id)) {
+      if (window.UsageTracker) window.UsageTracker.recordPromptFavorite(prompt, false);
+      this.removeFavoriteById(prompt.id);
+    } else {
       this.favorites.unshift({ id: prompt.id, titulo: prompt.titulo, timestamp: Date.now() });
       this.save('favorites', this.favorites);
+      if (window.UsageTracker) window.UsageTracker.recordPromptFavorite(prompt, true);
       this.showToast('★ Agregado a favoritos', 'ok');
     }
     this.updateFavBadge();
@@ -1133,14 +1281,28 @@ class PromptLibrary {
 
   openDrawer(which) {
     this.closeDrawers();
-    (which === 'fav' ? this.el.favDrawer : this.el.histDrawer).classList.add('active');
+    const drawer = which === 'fav' ? this.el.favDrawer : this.el.histDrawer;
+    drawer.classList.add('active');
     this.el.drawerScrim.classList.add('active');
+    // A11y: guardar foco previo y moverlo dentro del drawer
+    this._drawerLastFocused = document.activeElement;
+    const closeBtn = drawer.querySelector('[data-close-drawer]');
+    if (closeBtn) requestAnimationFrame(() => closeBtn.focus());
   }
 
   closeDrawers() {
     this.el.favDrawer.classList.remove('active');
     this.el.histDrawer.classList.remove('active');
     this.el.drawerScrim.classList.remove('active');
+    // A11y: restaurar el foco al elemento que abrió el drawer
+    if (this._drawerLastFocused && this._drawerLastFocused.focus) {
+      try {
+        this._drawerLastFocused.focus();
+      } catch (e) {
+        /* ignore */
+      }
+      this._drawerLastFocused = null;
+    }
   }
 
   /* ---------- system ---------- */
@@ -1520,3 +1682,8 @@ function renderDashboard() {
     });
   });
 })();
+
+// Export para tests reales (Jest/jsdom) sin cambiar el uso en navegador
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { PromptLibrary, SafeStore, PLATFORM_SPECS, PLATFORM_KEYS };
+}

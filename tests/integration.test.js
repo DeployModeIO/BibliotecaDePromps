@@ -51,12 +51,15 @@ describe('DOM — Initial render', () => {
     expect(html).toContain("object-src 'none'");
   });
 
-  test('index.html has SRI on CDN scripts', () => {
-    // Check that CDN script tags have integrity attributes
-    const cdnPattern = /<script[^>]*src="https:\/\/[^"]*"[^>]*integrity="[^"]+"[^>]*>/g;
-    const matches = html.match(cdnPattern);
-    expect(matches).toBeTruthy();
-    expect(matches.length).toBeGreaterThanOrEqual(2);
+  test('index.html no depende de CDN: todos los scripts son locales', () => {
+    // Desde v3.6 no hay scripts de CDN (offline-first, sin supply chain,
+    // sin inline onerror). Las librerías pesadas se cargan bajo demanda
+    // vía js/lib-loader.js desde js/vendor/.
+    const cdnScriptPattern = /<script[^>]*src="https:\/\/[^"]*"/g;
+    const matches = html.match(cdnScriptPattern);
+    expect(matches).toBeNull();
+    expect(html).toContain('js/lib-loader.js');
+    expect(html).not.toContain('onerror=');
   });
 
   test('index.html has manifest link', () => {

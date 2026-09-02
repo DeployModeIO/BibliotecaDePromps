@@ -457,7 +457,9 @@
 }
 
 .ai-cfg-section {
-  label {
+  /* label real (con for=) y títulos visuales (span) comparten estilo */
+  label,
+  .ai-cfg-title {
     font-family: var(--f-mono);
     font-size: 0.6rem;
     letter-spacing: 0.06em;

@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' https://api.openai.com https://api.anthropic.com https://api.groq.com https://api.deepseek.com https://openrouter.ai https://dashscope-intl.aliyuncs.com https://generativelanguage.googleapis.com http://localhost:*; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; base-uri 'self'; form-action 'self';"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; connect-src 'self' https://api.openai.com https://api.anthropic.com https://api.groq.com https://api.deepseek.com https://openrouter.ai https://dashscope-intl.aliyuncs.com https://generativelanguage.googleapis.com https://api.mistral.ai https://api.together.xyz https://api.perplexity.ai https://api.x.ai https://api.cerebras.ai https://api.cohere.ai https://api.cohere.com https://api.chatglm.cn https://open.bigmodel.cn http://localhost:*; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'self';"
     />
     <meta
       name="description"
@@ -65,7 +65,7 @@
           <button class="icon-btn" id="chatToggle" title="Chat IA" aria-label="Abrir chat IA">💬</button>
         </div>
       </div>
-      <div class="hazard-line hazard-amber"></div>
+      <div class="hazard-line"></div>
     </header>
 
     <!-- ══════════ STATS STRIP ══════════ -->
@@ -102,14 +102,14 @@
       </div>
 
       <div class="filters" id="filterBar" role="group" aria-label="Filtros">
-        <button class="chip is-on" data-reset>Todos</button>
+        <button class="chip is-on" data-reset aria-pressed="true">Todos</button>
         <span class="chip-sep"></span>
-        <button class="chip" data-priority="critica"><i class="sq" style="--c: var(--red)"></i>Crítica</button>
-        <button class="chip" data-priority="alta"><i class="sq" style="--c: var(--amber)"></i>Alta</button>
-        <button class="chip" data-priority="media"><i class="sq" style="--c: var(--green)"></i>Media</button>
+        <button class="chip" data-priority="critica" aria-pressed="false"><i class="sq" style="--c: var(--red)"></i>Crítica</button>
+        <button class="chip" data-priority="alta" aria-pressed="false"><i class="sq" style="--c: var(--amber)"></i>Alta</button>
+        <button class="chip" data-priority="media" aria-pressed="false"><i class="sq" style="--c: var(--green)"></i>Media</button>
         <span class="chip-sep"></span>
-        <button class="chip" data-type="app">Aplicaciones</button>
-        <button class="chip" data-type="tool">Herramientas</button>
+        <button class="chip" data-type="app" aria-pressed="false">Aplicaciones</button>
+        <button class="chip" data-type="tool" aria-pressed="false">Herramientas</button>
       </div>
     </section>
 
@@ -141,7 +141,7 @@
 
     <!-- ══════════ FOOTER ══════════ -->
     <footer>
-      <div class="hazard-line hazard-amber"></div>
+      <div class="hazard-line"></div>
       <div class="foot-inner">
         <span><b>Biblioteca de Promps Industriales</b> · Rev 3.5</span>
         <span>Android / iOS / Web / Tablet / Windows</span>
@@ -164,14 +164,14 @@
         </div>
         <div class="modal-meta" id="modalMeta"></div>
         <div class="platform-bar">
-          <div class="pchips" id="platformChips">
-            <span class="pchip-label">Generar para:</span>
-            <button class="pchip is-on" data-platform="all">⊕ Todas</button>
-            <button class="pchip" data-platform="web">🌐 Web</button>
-            <button class="pchip" data-platform="android">🤖 Android</button>
-            <button class="pchip" data-platform="ios">🍎 iOS</button>
-            <button class="pchip" data-platform="tablet">📱 Tablet</button>
-            <button class="pchip" data-platform="windows">🪟 Windows</button>
+          <div class="pchips" id="platformChips" role="group" aria-label="Plataformas de generación">
+            <span class="pchip-label" id="pchipLabel">Generar para:</span>
+            <button class="pchip is-on" data-platform="all" aria-pressed="true">⊕ Todas</button>
+            <button class="pchip" data-platform="web" aria-pressed="false">🌐 Web</button>
+            <button class="pchip" data-platform="android" aria-pressed="false">🤖 Android</button>
+            <button class="pchip" data-platform="ios" aria-pressed="false">🍎 iOS</button>
+            <button class="pchip" data-platform="tablet" aria-pressed="false">📱 Tablet</button>
+            <button class="pchip" data-platform="windows" aria-pressed="false">🪟 Windows</button>
           </div>
         </div>
         <div class="modal-prompt-wrap">
@@ -179,6 +179,7 @@
         </div>
         <div class="modal-actions">
           <button class="btn btn-primary" id="copyBtn">⧉ Copiar Prompt</button>
+          <button class="btn" id="shareBtn" title="Copiar enlace para compartir">🔗 Compartir</button>
           <button class="btn btn-ai" id="gptBtn" title="Copia el prompt y abre ChatGPT">↗ ChatGPT</button>
           <button class="btn btn-ai" id="claudeBtn" title="Copia el prompt y abre Claude">↗ Claude</button>
           <button class="btn btn-chat" id="sendToChatBtn" title="Envía el prompt al chat IA lateral">💬 Enviar a Chat</button>
@@ -193,7 +194,7 @@
     <!-- ══════════ DRAWERS ══════════ -->
     <div class="drawer-scrim" id="drawerScrim"></div>
 
-    <aside class="drawer" id="favDrawer" aria-label="Favoritos">
+    <aside class="drawer" id="favDrawer" role="dialog" aria-modal="true" aria-label="Favoritos">
       <div class="drawer-head">
         <h3><span>★</span> Favoritos</h3>
         <button class="drawer-close" data-close-drawer aria-label="Cerrar">✕</button>
@@ -201,7 +202,7 @@
       <div class="drawer-list" id="favList"></div>
     </aside>
 
-    <aside class="drawer" id="histDrawer" aria-label="Historial">
+    <aside class="drawer" id="histDrawer" role="dialog" aria-modal="true" aria-label="Historial">
       <div class="drawer-head">
         <h3><span>⏱</span> Historial</h3>
         <button class="drawer-close" data-close-drawer aria-label="Cerrar">✕</button>
@@ -211,7 +212,7 @@
 
     <div class="drawer-scrim" id="chatScrim"></div>
 
-    <aside class="chat-drawer" id="chatDrawer" aria-label="Chat IA">
+    <aside class="chat-drawer" id="chatDrawer" role="dialog" aria-modal="true" aria-label="Chat IA">
       <div class="chat-resize-handle" id="chatResizeHandle" title="Arrastrar para redimensionar"></div>
       <div class="chat-head">
         <div class="chat-head-left">
@@ -235,7 +236,14 @@
       </div>
 
       <div class="chat-api-row" id="aiApiRow">
-        <input type="password" class="chat-api-key" id="aiApiKey" placeholder="API Key..." autocomplete="off" />
+        <input
+          type="password"
+          class="chat-api-key"
+          id="aiApiKey"
+          placeholder="API Key..."
+          autocomplete="off"
+          aria-label="API Key del proveedor seleccionado"
+        />
         <button class="chat-api-detect" id="aiDetectModels" title="Detectar modelos disponibles">Detectar</button>
         <button class="chat-api-detect" id="aiRescanLocal" title="Re-escanear servidores locales">Re-scan</button>
       </div>
@@ -245,7 +253,7 @@
         🗑 Eliminar todos los chats
       </button>
 
-      <div class="chat-messages" id="chatMessages">
+      <div class="chat-messages" id="chatMessages" aria-live="polite" aria-label="Mensajes del chat">
         <div class="chat-empty">Envía un mensaje o pega un mega-prompt para comenzar</div>
       </div>
 
@@ -265,14 +273,14 @@
         <summary>⚙ Configuración avanzada</summary>
         <div class="chat-config-body">
           <div class="ai-cfg-section">
-            <label>Carpeta de guardado</label>
+            <span class="ai-cfg-title">Carpeta de guardado</span>
             <div class="ai-cfg-row">
               <span class="ai-cfg-label" id="aiSaveDirLabel">No seleccionada (se descarga ZIP)</span>
               <button class="ai-cfg-btn" id="aiSaveDirBtn">Seleccionar carpeta</button>
             </div>
           </div>
           <div class="ai-cfg-section">
-            <label>Máximo de tokens por respuesta</label>
+            <label for="aiMaxTokens">Máximo de tokens por respuesta</label>
             <select class="chat-select" id="aiMaxTokens">
               <option value="4096">4,096 (respuestas cortas)</option>
               <option value="8192">8,192 (respuestas medias)</option>
@@ -282,7 +290,7 @@
             </select>
           </div>
           <div class="ai-cfg-section">
-            <label>Proveedores personalizados</label>
+            <span class="ai-cfg-title">Proveedores personalizados</span>
             <div class="ai-cfg-list" id="aiConfigList"></div>
             <button class="ai-cfg-btn" id="aiConfigAdd">+ Agregar proveedor</button>
           </div>
@@ -291,7 +299,7 @@
     </aside>
 
     <!-- ══════════ CODE SANDBOX PANEL ══════════ -->
-    <aside class="sandbox-panel" id="sandboxPanel" aria-label="Sandbox de Código">
+    <aside class="sandbox-panel" id="sandboxPanel" role="dialog" aria-modal="true" aria-label="Sandbox de Código">
       <div class="sandbox-resize-handle" id="sandboxResizeHandle" title="Arrastrar para redimensionar"></div>
       <div class="sandbox-head">
         <div class="sandbox-head-left">
@@ -307,13 +315,15 @@
       <div class="sandbox-body">
         <div class="sandbox-empty" id="sandboxEmpty">
           <div class="sandbox-empty-icon">💻</div>
-          <p>No code to preview</p>
+          <p>Sin código para previsualizar</p>
           <span>Genera código HTML/CSS/JS con la IA y presiona ▶ Run o ▶ Preview</span>
         </div>
+        <!-- SEGURIDAD: sin allow-same-origin — el código generado por la IA corre en un
+             origen opaco y NO puede leer localStorage/cookies ni las API keys de la app. -->
         <iframe
           class="sandbox-iframe"
           id="sandboxIframe"
-          sandbox="allow-scripts allow-modals allow-forms allow-same-origin allow-popups"
+          sandbox="allow-scripts allow-modals allow-forms allow-popups"
           title="Vista previa del código"
           style="display: none"
         ></iframe>
@@ -333,7 +343,7 @@
     </div>
 
     <!-- Dashboard overlay -->
-    <div class="dashboard-overlay" id="dashboardOverlay">
+    <div class="dashboard-overlay" id="dashboardOverlay" role="dialog" aria-modal="true" aria-label="Panel de Control">
       <div class="dashboard">
         <div class="dashboard-head">
           <h2>📊 Panel de Control</h2>
@@ -341,6 +351,22 @@
         </div>
         <div class="dashboard-body" id="dashboardBody">
           <div class="dash-empty">Cargando estadísticas...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variables editor modal ({{variables}} del prompt) -->
+    <div class="modal-overlay" id="varModal" role="dialog" aria-modal="true" aria-labelledby="varModalTitle">
+      <div class="modal" style="max-width: 560px">
+        <div class="modal-head">
+          <h2 id="varModalTitle">⚙ Completar variables</h2>
+          <button class="modal-close" id="varModalClose" aria-label="Cerrar">✕</button>
+        </div>
+        <p class="var-modal-hint">Este prompt usa variables {{...}}. Complételas para copiarlo personalizado:</p>
+        <div class="var-modal-fields" id="varModalFields"></div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="varModalApply">⧉ Copiar con valores</button>
+          <button class="btn" id="varModalRaw">Copiar sin completar</button>
         </div>
       </div>
     </div>
@@ -361,26 +387,10 @@
     </div>
 
     <script src="js/vendor/dompurify.min.js" defer></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
-      integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"
-      crossorigin="anonymous"
-      onerror="
-        this.onerror = null;
-        this.src = 'js/vendor/jszip.min.js';
-      "
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"
-      integrity="sha384-/TQbtLCAerC3jgaim+N78RZSDYV7ryeoBCVqTuzRrFec2akfBkHS7ACQ3PQhvMVi"
-      crossorigin="anonymous"
-      onerror="
-        this.onerror = null;
-        this.src = 'js/vendor/marked.min.js';
-      "
-    ></script>
     <script src="js/vendor/highlight.min.js" defer></script>
-    <script src="js/vendor/mermaid.min.js" defer></script>
+    <!-- Librerías pesadas (marked, jszip, mermaid, jspdf, xlsx) se cargan bajo demanda
+         vía js/lib-loader.js para reducir ~4.8 MB de la carga inicial. -->
+    <script src="js/lib-loader.js" defer></script>
     <script src="js/prompts-data.js" defer></script>
     <script src="js/prompts-data-extra.js" defer></script>
     <script src="js/prompts-data-v2.js" defer></script>
@@ -390,8 +400,6 @@
     <script src="js/usage-tracker.js" defer></script>
     <script src="js/vendor/dexie.min.js" defer></script>
     <script src="js/store.js" defer></script>
-    <script src="js/vendor/jspdf.umd.min.js" defer></script>
-    <script src="js/vendor/xlsx.full.min.js" defer></script>
     <script src="js/ai-chat.js" defer></script>
     <script src="js/app.js" defer></script>
   </body>

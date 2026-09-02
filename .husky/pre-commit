@@ -1,1 +1,3 @@
-npm run precommit
+# Rápido: solo formatea/lintea los archivos del commit (antes corría la suite
+# completa en cada commit). Los tests corren en CI y en pre-push/manual.
+npx lint-staged

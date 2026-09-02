@@ -40,7 +40,7 @@ test.describe('Homepage', () => {
     await page.goto('/');
     // Wait for JS to render categories
     await page.waitForTimeout(800);
-    const cards = page.locator('.cat-card');
+    const cards = page.locator('.cat-panel');
     const count = await cards.count();
     expect(count).toBeGreaterThan(0);
   });
@@ -99,7 +99,7 @@ test.describe('Category navigation', () => {
     await page.goto('/');
     await page.waitForTimeout(800);
 
-    const firstCard = page.locator('.cat-card').first();
+    const firstCard = page.locator('.cat-panel').first();
     await firstCard.click();
     await page.waitForTimeout(500);
 
@@ -111,10 +111,10 @@ test.describe('Category navigation', () => {
     await page.goto('/');
     await page.waitForTimeout(800);
 
-    await page.locator('.cat-card').first().click();
+    await page.locator('.cat-panel').first().click();
     await page.waitForTimeout(500);
 
-    const promptCards = page.locator('.prompt-card');
+    const promptCards = page.locator('.pcard');
     const count = await promptCards.count();
     expect(count).toBeGreaterThan(0);
   });
@@ -126,11 +126,11 @@ test.describe('Modal', () => {
     await page.waitForTimeout(800);
 
     // Go to first category
-    await page.locator('.cat-card').first().click();
+    await page.locator('.cat-panel').first().click();
     await page.waitForTimeout(500);
 
     // Click first prompt
-    const firstPrompt = page.locator('.prompt-card').first();
+    const firstPrompt = page.locator('.pcard').first();
     await firstPrompt.click();
     await page.waitForTimeout(500);
 
@@ -142,9 +142,9 @@ test.describe('Modal', () => {
     await page.goto('/');
     await page.waitForTimeout(800);
 
-    await page.locator('.cat-card').first().click();
+    await page.locator('.cat-panel').first().click();
     await page.waitForTimeout(500);
-    await page.locator('.prompt-card').first().click();
+    await page.locator('.pcard').first().click();
     await page.waitForTimeout(500);
 
     await page.locator('#modalClose').click();
@@ -158,9 +158,9 @@ test.describe('Modal', () => {
     await page.goto('/');
     await page.waitForTimeout(800);
 
-    await page.locator('.cat-card').first().click();
+    await page.locator('.cat-panel').first().click();
     await page.waitForTimeout(500);
-    await page.locator('.prompt-card').first().click();
+    await page.locator('.pcard').first().click();
     await page.waitForTimeout(500);
 
     const copyBtn = page.locator('#copyBtn');
@@ -217,16 +217,22 @@ test.describe('Chat AI', () => {
 });
 
 test.describe('Offline / PWA', () => {
-  test('should have service worker registered', async ({ page }) => {
+  test('should register service worker and work offline', async ({ page }) => {
     await page.goto('/');
-    await page.waitForTimeout(1000);
 
-    const sw = await page.evaluate(async () => {
-      const reg = await navigator.serviceWorker.getRegistration();
-      return reg ? 'registered' : 'not registered';
+    // Esperar a que el SW esté ACTIVO (no solo registrado)
+    await page.waitForFunction(() => navigator.serviceWorker.getRegistration().then((r) => !!r && !!r.active), null, {
+      timeout: 20000,
     });
-    // SW may not register in dev mode, check if it's at least attempted
-    expect(sw).toBeDefined();
+
+    // Dar tiempo al precache de assets (install usa allSettled)
+    await page.waitForTimeout(2000);
+
+    // OFFLINE REAL: la app debe seguir funcionando desde la caché del SW
+    await page.context().setOffline(true);
+    await page.reload();
+    await expect(page.locator('.topbar')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('#searchInput')).toBeVisible();
   });
 
   test('should have manifest link', async ({ page }) => {

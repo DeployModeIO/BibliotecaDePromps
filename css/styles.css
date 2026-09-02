@@ -23,7 +23,7 @@
   /* text */
   --txt: #e2e8f0;
   --txt-2: #94a3b8;
-  --txt-3: #64748b;
+  --txt-3: #8a99b0; /* A11y: subido desde #64748b para contraste ≥4.5:1 (WCAG AA) */
   /* brand / primary action */
   --brand: #0070d2;
   --brand-hover: #005fb2;
@@ -246,7 +246,7 @@ textarea:focus-visible {
   /* text */
   --txt: #181b25;
   --txt-2: #5c5c5c;
-  --txt-3: #8a94a6;
+  --txt-3: #5f6b7d; /* A11y: subido desde #8a94a6 (~2.9:1) a ≥4.5:1 (WCAG AA) */
   /* brand / primary action */
   --brand: #0070d2;
   --brand-hover: #005fb2;
@@ -2127,7 +2127,11 @@ footer .hazard-line {
   background: var(--bg-1);
 }
 
-.ai-cfg-section label {
+.ai-cfg-section {
+  /* label real (con for=) y títulos visuales (span) comparten estilo */
+}
+.ai-cfg-section label,
+.ai-cfg-section .ai-cfg-title {
   font-family: var(--f-mono);
   font-size: 0.6rem;
   letter-spacing: 0.06em;
@@ -2314,7 +2318,8 @@ footer .hazard-line {
   box-shadow: -8px 0 30px rgba(2, 6, 23, 0.45);
 }
 
-.sandbox-drawer.active {
+.sandbox-drawer.active,
+.sandbox-panel.active {
   transform: translateX(0);
 }
 
@@ -2518,9 +2523,11 @@ footer .hazard-line {
   margin-top: 0.5rem;
 }
 
-/* Responsive sandbox */
+/* Responsive sandbox — FIX: el HTML usa .sandbox-panel; la media query
+   anterior solo apuntaba a .sandbox-drawer y el sandbox se rompía en móvil. */
 @media (width <= 768px) {
-  .sandbox-drawer {
+  .sandbox-drawer,
+  .sandbox-panel {
     width: 100vw;
     min-width: unset;
     max-width: 100vw;
@@ -2533,7 +2540,8 @@ footer .hazard-line {
     border-top: 1px solid var(--line);
     border-radius: 12px 12px 0 0;
   }
-  .sandbox-drawer.active {
+  .sandbox-drawer.active,
+  .sandbox-panel.active {
     transform: translateY(0);
   }
 }

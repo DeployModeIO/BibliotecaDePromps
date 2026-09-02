@@ -459,8 +459,56 @@ const AIChat = (() => {
     state.maxTokens = safeGet('maxTokens', 16384);
   }
 
+  /* Persiste los proveedores con las API keys cifradas en reposo (AES-GCM).
+     En memoria las keys siguen en claro para poder usarse; solo se cifra lo
+     que se escribe a localStorage. Fire-and-forget: el cifrado es rápido. */
+  async function persistProvidersEncrypted() {
+    try {
+      let toStore = state.providers;
+      if (window.BPICrypto) {
+        const ok = await window.BPICrypto.isAvailable();
+        if (ok) {
+          toStore = await Promise.all(
+            state.providers.map(async (p) => {
+              if (!p.apiKey) return p;
+              const enc = await window.BPICrypto.encrypt(p.apiKey);
+              return Object.assign({}, p, { apiKey: enc });
+            })
+          );
+        }
+      }
+      safeSet('providers', toStore);
+    } catch {
+      safeSet('providers', state.providers);
+    }
+  }
+
+  /* Descifra las keys cargadas del storage. Las corruptas/legacy ilegibles
+     se vacían y el usuario deberá pegarlas de nuevo (fail-closed). */
+  async function hydrateProviderKeys() {
+    if (!window.BPICrypto) return;
+    try {
+      await window.BPICrypto.migrateKeys();
+      if (!(await window.BPICrypto.isAvailable())) return;
+      for (const p of state.providers) {
+        if (!p.apiKey || typeof p.apiKey !== 'string') continue;
+        if (p.apiKey.startsWith('bpi2_') || p.apiKey.startsWith('bpi_enc_')) {
+          const dec = await window.BPICrypto.decrypt(p.apiKey);
+          p.apiKey = dec === null ? '' : dec;
+        }
+      }
+      // Refrescar el input si el proveedor activo tenía key
+      if (el.apiKeyInput) {
+        const active = state.providers.find((pr) => pr.id === state.activeProvider);
+        if (active && active.type === 'cloud') el.apiKeyInput.value = active.apiKey || '';
+      }
+    } catch (err) {
+      console.warn('[AIChat] hydrateProviderKeys:', err && err.message);
+    }
+  }
+
   function saveState() {
-    safeSet('providers', state.providers);
+    persistProvidersEncrypted();
     safeSet('activeProvider', state.activeProvider);
     safeSet('activeModel', state.activeModel);
     persistConversations();
@@ -593,7 +641,8 @@ const AIChat = (() => {
     let modelsUrl =
       provider.modelsEndpoint ||
       provider.endpoint.replace('/chat/completions', '/models').replace('/messages', '/models').replace('/chat', '/models');
-    if (provider.authType === 'query' && provider.apiKey) {
+    const isGemini = provider.id === 'gemini' || (provider.endpoint || '').includes('generativelanguage');
+    if (provider.authType === 'query' && provider.apiKey && !isGemini) {
       modelsUrl += (modelsUrl.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(provider.apiKey);
     }
     el.detectModelsBtn.textContent = '...';
@@ -601,7 +650,10 @@ const AIChat = (() => {
     updateStatus('detectando modelos...');
     try {
       const headers = {};
-      if (provider.authType === 'x-api-key') {
+      if (isGemini && provider.apiKey) {
+        // SEGURIDAD: la key viaja en header, no en la URL (no queda en logs/referrers)
+        headers['x-goog-api-key'] = provider.apiKey;
+      } else if (provider.authType === 'x-api-key') {
         headers['x-api-key'] = provider.apiKey;
       } else if (provider.authType !== 'query' && provider.apiKey) {
         headers['Authorization'] = 'Bearer ' + provider.apiKey;
@@ -738,11 +790,12 @@ const AIChat = (() => {
         let ok = false;
 
         if (provider.id === 'gemini' || (provider.endpoint && provider.endpoint.includes('generativelanguage'))) {
-          let testUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent';
-          if (provider.apiKey) testUrl += '?key=' + encodeURIComponent(provider.apiKey);
+          const testUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent';
+          const testHeaders = { 'Content-Type': 'application/json' };
+          if (provider.apiKey) testHeaders['x-goog-api-key'] = provider.apiKey;
           const r = await fetch(testUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: testHeaders,
             body: JSON.stringify({
               contents: [{ role: 'user', parts: [{ text: 'ping' }] }],
               generationConfig: { maxOutputTokens: 5 },
@@ -1136,13 +1189,12 @@ const AIChat = (() => {
     const model = state.activeModel || provider.defaultModel || 'gemini-2.0-flash';
     const apiKey = provider.apiKey || '';
 
-    let streamUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
-    let generateUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+    const streamUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
+    const generateUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
-    if (apiKey) {
-      streamUrl += `&key=${encodeURIComponent(apiKey)}`;
-      generateUrl += `?key=${encodeURIComponent(apiKey)}`;
-    }
+    // SEGURIDAD: la API key viaja en el header x-goog-api-key, nunca en la URL
+    const authHeaders = { 'Content-Type': 'application/json' };
+    if (apiKey) authHeaders['x-goog-api-key'] = apiKey;
 
     const contents = [];
     for (const m of conv.messages) {
@@ -1171,7 +1223,7 @@ const AIChat = (() => {
     try {
       const resp = await fetch(streamUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders,
         body: JSON.stringify(payload),
       });
 
@@ -1227,7 +1279,7 @@ const AIChat = (() => {
     // Standard generateContent fallback
     const resp = await fetch(generateUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders,
       body: JSON.stringify(payload),
     });
 
@@ -1323,6 +1375,10 @@ const AIChat = (() => {
   }
 
   async function downloadAsZip(files) {
+    // Lazy-load: JSZip solo se descarga cuando se exporta un ZIP
+    if (typeof JSZip === 'undefined' && window.LibLoader) {
+      await window.LibLoader.jszip();
+    }
     if (typeof JSZip === 'undefined') {
       showToast('JSZip no cargado — descargando archivos individuales');
       files.forEach((f) => downloadFile(f.name, f.content));
@@ -1387,14 +1443,21 @@ const AIChat = (() => {
       detectLocal().catch((err) => console.error('[AIChat] detectLocal failed:', err));
     }
     initialized = true;
-    if (window.mermaid) {
-      try {
-        window.mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'strict' });
-      } catch (e) {
-        /* ignore */
-      }
-    }
+    initMermaid();
+    // SEGURIDAD: descifrar API keys del storage (hydratación asíncrona)
+    hydrateProviderKeys();
     console.log('[AIChat] Initialized — providers:', state.providers.length, 'active:', state.activeProvider);
+  }
+
+  let mermaidReady = false;
+  function initMermaid() {
+    if (mermaidReady || !window.mermaid) return;
+    try {
+      window.mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'strict' });
+      mermaidReady = true;
+    } catch (e) {
+      /* ignore */
+    }
   }
 
   function cacheDom() {
@@ -1579,7 +1642,7 @@ const AIChat = (() => {
     const sandboxDownload = document.getElementById('sandboxDownloadBtn');
     if (sandboxClose)
       sandboxClose.addEventListener('click', () => {
-        document.getElementById('sandboxDrawer')?.classList.remove('active');
+        document.getElementById('sandboxPanel')?.classList.remove('active');
       });
     if (sandboxFullscreen)
       sandboxFullscreen.addEventListener('click', () => {
@@ -1595,19 +1658,35 @@ const AIChat = (() => {
       });
   }
 
+  let drawerLastFocused = null;
+
   function openDrawer() {
+    drawerLastFocused = document.activeElement;
     el.chatDrawer.classList.add('active');
     el.chatScrim.classList.add('active');
     document.body.style.overflow = 'hidden';
     if (!initialized) init();
+    // Prewarm: cargar marked bajo demanda para el render de markdown del chat
+    if (window.LibLoader && typeof window.marked === 'undefined') window.LibLoader.marked();
     renderConversations();
     scrollChat();
+    // A11y: mover el foco dentro del drawer
+    if (el.chatInput) requestAnimationFrame(() => el.chatInput.focus());
   }
 
   function closeDrawer() {
     el.chatDrawer.classList.remove('active');
     el.chatScrim.classList.remove('active');
     document.body.style.overflow = '';
+    // A11y: restaurar el foco
+    if (drawerLastFocused && drawerLastFocused.focus) {
+      try {
+        drawerLastFocused.focus();
+      } catch (e) {
+        /* ignore */
+      }
+      drawerLastFocused = null;
+    }
   }
 
   function sendCurrentMessage() {
@@ -1733,9 +1812,11 @@ const AIChat = (() => {
   }
 
   function renderMarkdown(text) {
-    if (typeof marked !== 'undefined') {
+    if (typeof marked !== 'undefined' && typeof window.DOMPurify !== 'undefined') {
       const html = marked.parse(text);
-      const clean = typeof window.DOMPurify !== 'undefined' ? window.DOMPurify.sanitize(html, { ADD_ATTR: ['target'] }) : html;
+      // SEGURIDAD: jamás devolver HTML sin sanitizar. Si DOMPurify no está
+      // disponible se degrada a texto plano escapado.
+      const clean = window.DOMPurify.sanitize(html, { ADD_ATTR: ['target'] });
       return addCodeButtons(clean);
     }
     return escapeHtml(text).replace(/\n/g, '<br>');
@@ -1755,7 +1836,12 @@ const AIChat = (() => {
       wrapper.className = 'code-block-wrapper';
       const header = document.createElement('div');
       header.className = 'code-block-header';
-      header.innerHTML = '<span class="code-block-lang">' + (lang || 'code') + '</span>';
+      // SEGURIDAD: el lenguaje viene del markdown (entrada de la IA) — usar
+      // textContent en vez de innerHTML evita XSS post-sanitización.
+      const langSpan = document.createElement('span');
+      langSpan.className = 'code-block-lang';
+      langSpan.textContent = lang || 'code';
+      header.appendChild(langSpan);
 
       const btnGroup = document.createElement('div');
       btnGroup.className = 'code-block-actions';
@@ -1802,7 +1888,24 @@ const AIChat = (() => {
   }
 
   function processMermaid(containerEl) {
-    if (!containerEl || !window.mermaid) return;
+    if (!containerEl) return;
+    const blocks = containerEl.querySelectorAll('code.language-mermaid');
+    if (!blocks.length) return;
+    // Lazy-load: mermaid pesa ~3.3 MB, solo se descarga si hay diagramas
+    if (!window.mermaid) {
+      if (window.LibLoader) {
+        window.LibLoader.mermaid().then((ok) => {
+          if (ok) renderMermaidBlocks(containerEl);
+        });
+      }
+      return;
+    }
+    renderMermaidBlocks(containerEl);
+  }
+
+  function renderMermaidBlocks(containerEl) {
+    initMermaid();
+    if (!window.mermaid) return;
     const blocks = containerEl.querySelectorAll('code.language-mermaid');
     blocks.forEach((code, i) => {
       const wrapper = code.closest('.code-block-wrapper');
@@ -1827,7 +1930,7 @@ const AIChat = (() => {
   }
 
   function openSandbox(code, lang) {
-    const sandbox = document.getElementById('sandboxDrawer');
+    const sandbox = document.getElementById('sandboxPanel');
     const iframe = document.getElementById('sandboxIframe');
     const empty = document.getElementById('sandboxEmpty');
     const badge = document.getElementById('sandboxBadge');
