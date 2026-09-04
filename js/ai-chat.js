@@ -1,7 +1,7 @@
 /* ============================================================
    IA CHAT PANEL v1.1 — Auto-detección local + cloud genérico + Gemini API & Free Tiers
    ============================================================ */
-/* global JSZip, marked, BPDStore */
+/* global JSZip, marked, BPDStore, module */
 
 const AIChat = (() => {
   const LS_PREFIX = 'aichat_';
@@ -209,7 +209,8 @@ const AIChat = (() => {
     if (meta.quant && meta.quant !== 'F16' && meta.quant !== 'F32') parts.push(meta.quant);
     if (meta.ctx) parts.push(Math.round(meta.ctx / 1024) + 'k ctx');
     if (meta.loaded) parts.push('●cargado');
-    const toolsKnown = meta.tools !== undefined ? !!meta.tools : state.ollamaToolsCache[name] !== undefined ? state.ollamaToolsCache[name] === true : null;
+    const toolsKnown =
+      meta.tools !== undefined ? !!meta.tools : state.ollamaToolsCache[name] !== undefined ? state.ollamaToolsCache[name] === true : null;
     if (toolsKnown) parts.push(toolsKnown ? '⚡tools' : 'sin tools');
     return parts.join(' · ');
   }
@@ -218,8 +219,7 @@ const AIChat = (() => {
      plano: alimenta los badges ⚡ del selector y la auto-elección del modo agente. */
   function probeOllamaCapabilities(provider) {
     if (!provider || provider.localType !== 'ollama' || provider.corsBlocked) return;
-    const origin = new URL(provider.endpoint, typeof location !== 'undefined' ? location.href : 'http://localhost/')
-      .origin;
+    const origin = new URL(provider.endpoint, typeof location !== 'undefined' ? location.href : 'http://localhost/').origin;
     const models = (provider.models || []).slice(0, 30);
     let updated = false;
     Promise.allSettled(
@@ -433,7 +433,11 @@ const AIChat = (() => {
      servidores locales; no hay proveedores cloud). */
   function syncProviders() {
     const locals = (state.autoDetectedLocal || []).map((d) => ({
-      id: 'local_' + String(d.name).toLowerCase().replace(/[^a-z0-9]+/g, '_'),
+      id:
+        'local_' +
+        String(d.name)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '_'),
       name: d.name,
       isLocal: true,
       localType: d.type,
@@ -472,7 +476,9 @@ const AIChat = (() => {
     }
     if (provider.authRequired && !provider.apiKey) {
       appendSystemMsg(
-        '🔒 ' + provider.name + ' exige passkey (HTTP 401). LM Studio: Developer → Permission Management → copia la passkey y pégala en Configuración avanzada → Llave de servidores locales.'
+        '🔒 ' +
+          provider.name +
+          ' exige passkey (HTTP 401). LM Studio: Developer → Permission Management → copia la passkey y pégala en Configuración avanzada → Llave de servidores locales.'
       );
       return;
     }
@@ -1878,9 +1884,15 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
         if (validationError) {
           invalidStreak = lastInvalidTool === call.name ? invalidStreak + 1 : 1;
           lastInvalidTool = call.name;
-          results.push({ name: call.name, content: 'OBSERVACIÓN ' + call.name + ' → validación: ' + validationError + '. Reintenta con los argumentos correctos.' });
+          results.push({
+            name: call.name,
+            content: 'OBSERVACIÓN ' + call.name + ' → validación: ' + validationError + '. Reintenta con los argumentos correctos.',
+          });
           if (invalidStreak >= 3) {
-            finalText = 'Bucle de llamadas inválidas en "' + lastInvalidTool + '": demasiados intentos con argumentos incorrectos. Se detuvo la generación.';
+            finalText =
+              'Bucle de llamadas inválidas en "' +
+              lastInvalidTool +
+              '": demasiados intentos con argumentos incorrectos. Se detuvo la generación.';
             break;
           }
           continue;
@@ -1951,12 +1963,19 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
         const rawCalls = step.rawCalls || [];
         const calls = step.calls || [];
 
-        if (!calls.length && !rawCalls.length && emptyPushes === 0 && iterations === 1 && toolNames.length &&
-            /(¿|\?|lo siento|disculp|perd[oó]n|quieres que|puedo|deber[ií]a)/i.test(step.content || '')) {
+        if (
+          !calls.length &&
+          !rawCalls.length &&
+          emptyPushes === 0 &&
+          iterations === 1 &&
+          toolNames.length &&
+          /(¿|\?|lo siento|disculp|perd[oó]n|quieres que|puedo|deber[ií]a)/i.test(step.content || '')
+        ) {
           emptyPushes++;
           history.msgs.push({
             role: 'user',
-            content: 'SÍ: hazlo ahora sin preguntar. Ejecuta ya las herramientas que necesites (write_file, run_command…). No pidas permiso.',
+            content:
+              'SÍ: hazlo ahora sin preguntar. Ejecuta ya las herramientas que necesites (write_file, run_command…). No pidas permiso.',
           });
           continue;
         }
@@ -1969,12 +1988,15 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
           }
           const rescued = toolNames.indexOf('write_file') !== -1 ? salvageCodeBlocks(step.content || '') : [];
           if (rescued.length) {
-            const results = await executeCalls(rescued);
+            await executeCalls(rescued);
             if (stopped) break;
             history.msgs.push({ role: 'assistant', content: step.content || '' });
             history.msgs.push({
               role: 'user',
-              content: 'RESCATE AUTOMÁTICO: se guardaron los bloques de código mostrados con write_file (' + rescued.map((c) => c.args.path).join(', ') + '). Continúa o entrega el resumen final.',
+              content:
+                'RESCATE AUTOMÁTICO: se guardaron los bloques de código mostrados con write_file (' +
+                rescued.map((c) => c.args.path).join(', ') +
+                '). Continúa o entrega el resumen final.',
             });
             if (trackRepeats(rescued)) {
               repeated = true;
@@ -1993,7 +2015,10 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
             emptyPushes++;
             history.msgs.push({
               role: 'user',
-              content: emptyPushes === 1 ? 'Continúa: ejecuta la siguiente herramienta o entrega el resultado final.' : 'Último aviso: si no hay más herramientas, escribe ahora el resumen final.',
+              content:
+                emptyPushes === 1
+                  ? 'Continúa: ejecuta la siguiente herramienta o entrega el resultado final.'
+                  : 'Último aviso: si no hay más herramientas, escribe ahora el resumen final.',
             });
             continue;
           }
@@ -2024,7 +2049,8 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
         history.msgs.push({ role: 'assistant', content: text || '' });
         history.msgs.push({
           role: 'user',
-          content: 'JSON inválido en el bloque ```tool. Devuelve de nuevo el bloque con JSON VÁLIDO en una sola línea: {"name":"write_file","args":{"path":"...","content":"..."}}',
+          content:
+            'JSON inválido en el bloque ```tool. Devuelve de nuevo el bloque con JSON VÁLIDO en una sola línea: {"name":"write_file","args":{"path":"...","content":"..."}}',
         });
         continue;
       }
@@ -2033,12 +2059,15 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
       if (!parsedCalls.calls.length) {
         const rescued = toolNames.indexOf('write_file') !== -1 ? salvageCodeBlocks(text || '') : [];
         if (rescued.length) {
-          const results = await executeCalls(rescued);
+          await executeCalls(rescued);
           if (stopped) break;
           history.msgs.push({ role: 'assistant', content: text || '' });
           history.msgs.push({
             role: 'user',
-            content: 'RESCATE AUTOMÁTICO: se guardaron los bloques de código mostrados con write_file (' + rescued.map((c) => c.args.path).join(', ') + '). Continúa o entrega el resumen final.',
+            content:
+              'RESCATE AUTOMÁTICO: se guardaron los bloques de código mostrados con write_file (' +
+              rescued.map((c) => c.args.path).join(', ') +
+              '). Continúa o entrega el resumen final.',
           });
           if (trackRepeats(rescued)) {
             repeated = true;
@@ -2052,7 +2081,8 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
           history.msgs.push({ role: 'assistant', content: text || '' });
           history.msgs.push({
             role: 'user',
-            content: 'AÚN NO EJECUTADO: no describas ni repitas la acción, EJECÚTALA ahora mismo con un bloque ```tool con JSON válido de una línea (usa "path" para el archivo). Si ya terminaste, responde solo el resumen sin mencionar herramientas.',
+            content:
+              'AÚN NO EJECUTADO: no describas ni repitas la acción, EJECÚTALA ahora mismo con un bloque ```tool con JSON válido de una línea (usa "path" para el archivo). Si ya terminaste, responde solo el resumen sin mencionar herramientas.',
           });
           continue;
         }
@@ -2076,8 +2106,13 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
   /* ---------- transporte real del agente ---------- */
 
   function sanitizeProjectDir(value) {
-    let s = String(value == null ? '' : value).trim().replace(/\\/g, '/');
-    s = s.replace(/^\.\/+/, '').replace(/^\/+/, '').replace(/\/+$/, '');
+    let s = String(value == null ? '' : value)
+      .trim()
+      .replace(/\\/g, '/');
+    s = s
+      .replace(/^\.\/+/, '')
+      .replace(/^\/+/, '')
+      .replace(/\/+$/, '');
     if (!s || s === '.') return '';
     if (/^[a-zA-Z]:/.test(s) || s.split('/').indexOf('..') !== -1) return '';
     return s;
@@ -2149,8 +2184,7 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
         options: { num_predict: sess.maxTokens || 16384, temperature: 0.7 },
       });
     } else if (family === 'kobold') {
-      const prompt =
-        history.msgs.map((m) => (m.role === 'user' ? 'Usuario: ' : 'Agente: ') + m.content).join('\n\n') + '\nAgente:';
+      const prompt = history.msgs.map((m) => (m.role === 'user' ? 'Usuario: ' : 'Agente: ') + m.content).join('\n\n') + '\nAgente:';
       resp = await agentFetch(provider, { prompt, max_length: Math.min(sess.maxTokens || 4096, 4096) });
     } else {
       resp = await agentFetch(provider, {
@@ -2164,15 +2198,12 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
     }
     if (!resp.ok) throw new Error((await resp.text().catch(() => '')) || 'Error ' + resp.status);
     const data = await resp.json();
-    const msg =
-      family === 'ollama' ? data.message || {} : (data.choices && data.choices[0] && data.choices[0].message) || {};
+    const msg = family === 'ollama' ? data.message || {} : (data.choices && data.choices[0] && data.choices[0].message) || {};
     const rawCalls = msg.tool_calls || [];
     const calls = rawCalls.map((tc, i) => ({
       id: tc.id || 'call_' + i,
       name: (tc.function && tc.function.name) || tc.name,
-      args: Lib.parseToolArguments(
-        tc.function && tc.function.arguments !== undefined ? tc.function.arguments : tc.arguments
-      ),
+      args: Lib.parseToolArguments(tc.function && tc.function.arguments !== undefined ? tc.function.arguments : tc.arguments),
     }));
     return { content: msg.content || msg.reasoning_content || msg.reasoning || msg.thinking || '', rawCalls, calls };
   }
@@ -2182,8 +2213,7 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
     const model = sess.model || provider.defaultModel;
     let resp;
     if (family === 'kobold') {
-      const prompt =
-        history.msgs.map((m) => (m.role === 'user' ? 'Usuario: ' : 'Agente: ') + m.content).join('\n\n') + '\nAgente:';
+      const prompt = history.msgs.map((m) => (m.role === 'user' ? 'Usuario: ' : 'Agente: ') + m.content).join('\n\n') + '\nAgente:';
       resp = await agentFetch(provider, { prompt, max_length: Math.min(sess.maxTokens || 4096, 4096) });
       if (!resp.ok) throw new Error((await resp.text().catch(() => '')) || 'Error ' + resp.status);
       const data = await resp.json();
@@ -2229,15 +2259,17 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
       family,
       runner,
       toolNames,
-      ollamaSupportsTools:
-        family === 'ollama'
-          ? async () => null
-          : async () => true,
+      ollamaSupportsTools: family === 'ollama' ? async () => null : async () => true,
       initHistory: (conv, mode) => {
         const historyMsgs = Array.isArray(conv) ? conv : conv && Array.isArray(conv.messages) ? conv.messages : [];
         return {
           mode,
-          msgs: [{ role: 'system', content: sess.systemContent + (mode === 'emulated' ? EMULATED_PROTOCOL_NOTE.replace('{TOOLS}', toolNames.join(', ')) : '') }].concat(
+          msgs: [
+            {
+              role: 'system',
+              content: sess.systemContent + (mode === 'emulated' ? EMULATED_PROTOCOL_NOTE.replace('{TOOLS}', toolNames.join(', ')) : ''),
+            },
+          ].concat(
             historyMsgs
               .filter((msg) => msg.role !== 'assistant' || !String(msg.content || '').startsWith('ERROR:'))
               .map((msg) => ({ role: msg.role, content: String(msg.content || '') }))
@@ -2255,7 +2287,7 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
     };
   }
 
-  async function runAgentTurn(provider, conv, msgEl) {
+  async function runAgentTurn(provider, conv, _msgEl) {
     const Lib = getAgentLib();
     if (!Lib) throw new Error('Catálogo de herramientas (js/agent-tools.js) no disponible');
     const serverOk = !!(state.agentServer && state.agentServer.ok);
@@ -2309,7 +2341,9 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
       el.agentServerStatus.className = 'ai-cfg-status off';
       el.agentServerStatus.textContent = '⚪ Comprobando conexión…';
     }
-    const base = String(state.agentServerUrl || '').trim().replace(/\/+$/, '');
+    const base = String(state.agentServerUrl || '')
+      .trim()
+      .replace(/\/+$/, '');
     let ok = false;
     let info = null;
     if (base) {
