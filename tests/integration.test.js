@@ -100,8 +100,15 @@ describe('DOM — Initial render', () => {
     expect(html).toContain('id="resultsList"');
   });
 
-  test('index.html has modal container', () => {
-    expect(html).toContain('id="promptModal"');
+  test('index.html has generate button', () => {
+    expect(html).toContain('id="generateBtn"');
+    expect(html).toContain('id="generateModal"');
+    expect(html).toContain('id="generateGrid"');
+  });
+
+  test('index.html loads simplified prompts and app generator', () => {
+    expect(html).toContain('prompts-simplified.js');
+    expect(html).toContain('app-generator.js');
   });
 });
 
@@ -189,6 +196,19 @@ describe('SCSS Architecture', () => {
     expect(bento).toContain('.bento-status');
   });
 
+  test('app-preview component exists with expected API', () => {
+    const preview = fs.readFileSync(path.join(__dirname, '..', 'scss', 'components', '_app-preview.scss'), 'utf8');
+    expect(preview).toContain('.generate-grid');
+    expect(preview).toContain('.generate-card');
+    expect(preview).toContain('.generate-btn');
+    expect(preview).toContain('.generate-btn-primary');
+  });
+
+  test('styles.scss imports app-preview', () => {
+    const main = fs.readFileSync(path.join(__dirname, '..', 'scss', 'styles.scss'), 'utf8');
+    expect(main).toContain('components/app-preview');
+  });
+
   test('All partials exist', () => {
     const base = path.join(__dirname, '..', 'scss');
     const files = fs.readdirSync(path.join(base, 'base'));
@@ -236,5 +256,52 @@ describe('Package.json scripts', () => {
     required.forEach((s) => {
       expect(pkg.scripts[s]).toBeTruthy();
     });
+  });
+});
+
+describe('Simplified Prompts', () => {
+  test('prompts-simplified.js exists and has apps array', () => {
+    const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'prompts-simplified.js'), 'utf8');
+    expect(src).toContain('PROMPTS_SIMPLIFIED');
+    expect(src).toMatch(/apps\s*:/);
+    expect(src).toMatch(/designSystem\s*:/);
+    expect(src).toContain("'bento-grid'");
+  });
+
+  test('prompts-simplified.js has all required apps', () => {
+    const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'prompts-simplified.js'), 'utf8');
+    const requiredApps = [
+      'simpl_psv_inspection',
+      'simpl_piping_integrity',
+      'simpl_flota_mant',
+      'simpl_extintores',
+      'simpl_respel',
+      'simpl_compras',
+      'simpl_energia',
+      'simpl_capacitacion',
+    ];
+    requiredApps.forEach((id) => {
+      expect(src).toContain(id);
+    });
+  });
+});
+
+describe('App Generator', () => {
+  test('app-generator.js exists with expected API', () => {
+    const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'app-generator.js'), 'utf8');
+    expect(src).toContain('AppGenerator');
+    expect(src).toContain('generate(');
+    expect(src).toContain('generateAll(');
+    expect(src).toContain('downloadApp(');
+    expect(src).toContain('openApp(');
+    expect(src).toContain('wrapDocument(');
+  });
+
+  test('app-generator.js has icon SVGs (CSP-safe, no CDN)', () => {
+    const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'app-generator.js'), 'utf8');
+    expect(src).toContain('iconSvg');
+    expect(src).toContain('<svg');
+    expect(src).not.toContain('lucide.dev');
+    expect(src).not.toContain('cdn.jsdelivr.net');
   });
 });

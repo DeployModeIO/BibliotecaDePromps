@@ -62,6 +62,7 @@
           <button class="icon-btn" id="dashboardToggle" title="Panel de Control" aria-label="Panel de Control">📊</button>
           <button class="icon-btn" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema">◐</button>
           <button class="icon-btn" id="installBtn" title="Instalar aplicación" aria-label="Instalar aplicación" hidden>⬇</button>
+          <button class="icon-btn" id="generateBtn" title="Generar App" aria-label="Generar aplicación desde prompt">⚡</button>
           <button class="icon-btn" id="chatToggle" title="Chat IA" aria-label="Abrir chat IA">💬</button>
         </div>
       </div>
@@ -456,6 +457,23 @@
       </div>
     </div>
 
+    <!-- Generate App modal -->
+    <div class="modal-overlay" id="generateModal" role="dialog" aria-modal="true" aria-label="Generar Aplicación">
+      <div class="modal" style="max-width: 700px">
+        <div class="modal-head">
+          <h2>⚡ Generar Aplicación desde Prompt</h2>
+          <button class="modal-close" id="generateModalClose" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="modal-prompt-wrap" style="max-height: 65vh; overflow-y: auto">
+          <p style="color: var(--txt-2); font-size: 0.85rem; margin-bottom: 1rem">
+            Cada prompt simplificado genera una app HTML/CSS interactiva completa con diseño bento-grid profesional. Seleccione una app para
+            previsualizar, descargar o abrir.
+          </p>
+          <div class="generate-grid" id="generateGrid"></div>
+        </div>
+      </div>
+    </div>
+
     <script src="js/vendor/dompurify.min.js" defer></script>
     <script src="js/vendor/highlight.min.js" defer></script>
     <!-- Librerías pesadas (marked, jszip, mermaid, jspdf, xlsx) se cargan bajo demanda
@@ -465,6 +483,8 @@
     <script src="js/prompts-data-extra.js" defer></script>
     <script src="js/prompts-data-v2.js" defer></script>
     <script src="js/prompts-data-fullstack.js" defer></script>
+    <script src="js/prompts-simplified.js" defer></script>
+    <script src="js/app-generator.js" defer></script>
     <script src="js/platform-tests.js" defer></script>
     <script src="js/crypto.js" defer></script>
     <script src="js/usage-tracker.js" defer></script>

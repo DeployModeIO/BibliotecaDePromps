@@ -2,7 +2,7 @@
    BIBLIOTECA DE PROMPS INDUSTRIAL — APP CORE v3.3
    JSDoc type annotations for DX. TypeScript not required.
    ============================================================ */
-/* global PROMPTS_DB, PROMPTS_DB_EXTRA, PROMPTS_DB_V2, PROMPTS_DB_FULLSTACK, module */
+/* global PROMPTS_DB, PROMPTS_DB_EXTRA, PROMPTS_DB_V2, PROMPTS_DB_FULLSTACK, PROMPTS_SIMPLIFIED, module */
 
 /**
  * @typedef {{"label": string, "spec": string}} PlatformSpec
@@ -294,6 +294,10 @@ class PromptLibrary {
       histList: $('histList'),
       drawerScrim: $('drawerScrim'),
       toast: $('toast'),
+      generateBtn: $('generateBtn'),
+      generateModal: $('generateModal'),
+      generateGrid: $('generateGrid'),
+      generateModalClose: $('generateModalClose'),
     };
   }
 
@@ -440,6 +444,12 @@ class PromptLibrary {
     this.el.chatBtn.addEventListener('click', () => {
       if (window.AIChat) window.AIChat.openDrawer();
     });
+    this.el.generateBtn.addEventListener('click', () => this.openGenerateModal());
+    this.el.generateModalClose.addEventListener('click', () => this.closeGenerateModal());
+    this.el.generateModal.addEventListener('click', (e) => {
+      if (e.target === this.el.generateModal) this.closeGenerateModal();
+    });
+    this.el.generateGrid.addEventListener('click', (e) => this.onGenerateGridClick(e));
     this.el.favoriteBtn.addEventListener('click', () => {
       if (this.currentPrompt) this.toggleFavorite(this.currentPrompt);
     });
@@ -896,6 +906,73 @@ class PromptLibrary {
 
   closeVarModal() {
     if (this.el.varModal) this.el.varModal.classList.remove('active');
+  }
+
+  /* ---------- generate app modal ---------- */
+
+  openGenerateModal() {
+    if (this.el.generateModal) {
+      this.renderGenerateGrid();
+      this.el.generateModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      this._generateModalLastFocused = document.activeElement;
+      this.trapFocus(this.el.generateModal);
+      requestAnimationFrame(() => this.el.generateModalClose.focus());
+    }
+  }
+
+  closeGenerateModal() {
+    if (this.el.generateModal) {
+      this.el.generateModal.classList.remove('active');
+      document.body.style.overflow = '';
+      if (this._generateModalLastFocused && this._generateModalLastFocused.focus) {
+        try {
+          this._generateModalLastFocused.focus();
+        } catch (e) {
+          /* ignore */
+        }
+      }
+      this._generateModalLastFocused = null;
+    }
+  }
+
+  renderGenerateGrid() {
+    if (!this.el.generateGrid) return;
+    const apps = (typeof PROMPTS_SIMPLIFIED !== 'undefined' && PROMPTS_SIMPLIFIED.apps) || [];
+    this.el.generateGrid.innerHTML = apps
+      .map(
+        (app) => `
+      <div class="generate-card" data-app-id="${this.esc(app.id)}">
+        <div class="generate-card-top">
+          <span class="generate-card-cat">${this.esc(app.categoria)}</span>
+          <span class="generate-card-prio ${app.prioridad}">${app.prioridad.toUpperCase()}</span>
+        </div>
+        <div class="generate-card-title">${this.esc(app.titulo)}</div>
+        <div class="generate-card-desc">${this.esc(app.descripcion)}</div>
+        <div class="generate-card-actions">
+          <button class="generate-btn generate-btn-primary" data-action="open" data-app-id="${this.esc(app.id)}">▶ Abrir App</button>
+          <button class="generate-btn" data-action="download" data-app-id="${this.esc(app.id)}">⬇ Descargar</button>
+        </div>
+      </div>`
+      )
+      .join('');
+  }
+
+  onGenerateGridClick(e) {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const appId = btn.dataset.appId;
+    const action = btn.dataset.action;
+    if (!appId || !window.AppGenerator) return;
+    if (action === 'open') {
+      const ok = window.AppGenerator.openApp(appId);
+      if (ok) this.showToast('✓ App generada — abierta en nueva pestaña', 'ok');
+      else this.showToast('✕ Error al generar la app', 'error');
+    } else if (action === 'download') {
+      const ok = window.AppGenerator.downloadApp(appId);
+      if (ok) this.showToast('✓ App descargada como archivo HTML', 'ok');
+      else this.showToast('✕ Error al descargar la app', 'error');
+    }
   }
 
   closeModal() {
