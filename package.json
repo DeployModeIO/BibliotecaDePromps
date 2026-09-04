@@ -29,6 +29,9 @@
     "precommit": "npm run format:check && npm run lint && npm run test",
     "build": "npm run build:css && npm run build:css:prod && node scripts/build.js",
     "dev": "npx serve . -p 3000",
+    "agent-server": "node scripts/agent-server.js",
+    "agent-server:auto": "node scripts/install-agent-autostart.js",
+    "test:agent:e2e": "node scripts/test-agent-e2e.js",
     "preview": "npx serve dist -p 3000",
     "prepare": "husky"
   },

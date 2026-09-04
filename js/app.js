@@ -1336,14 +1336,28 @@ class PromptLibrary {
   }
 
   setupSW() {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('sw.js')
+    if (!('serviceWorker' in navigator)) return;
+    /* Si había un SW previo y uno nuevo toma el control, recargar una vez
+       para que el usuario vea la versión actual (botones/cambios nuevos). */
+    const hadController = !!navigator.serviceWorker.controller;
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+    navigator.serviceWorker
+      .register('sw.js')
+      .then((reg) => {
         /* eslint-disable-next-line no-console */
-        .then(() => console.log('[SW] registrado — modo offline listo'))
-        /* eslint-disable-next-line no-console */
-        .catch((err) => console.warn('[SW] fallo:', err));
-    }
+        console.log('[SW] registrado — modo offline listo');
+        /* Buscar nuevas versiones cada 30 min sin esperar a una navegación */
+        setInterval(() => {
+          reg.update().catch(() => {});
+        }, 30 * 60 * 1000);
+      })
+      /* eslint-disable-next-line no-console */
+      .catch((err) => console.warn('[SW] fallo:', err));
   }
 
   async install() {

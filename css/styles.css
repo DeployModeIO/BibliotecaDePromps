@@ -1830,6 +1830,76 @@ footer .hazard-line {
   border-radius: 6px;
 }
 
+/* Barra siempre visible del modo agente (botón ⚡ + capacidades) */
+.chat-agent-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.5rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-1);
+  flex-shrink: 0;
+}
+
+.ai-agent-force {
+  width: 100%;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  text-align: center;
+  padding: 0.55rem 0.6rem;
+  cursor: pointer;
+  color: var(--brand);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 14%, var(--bg-2)), var(--bg-2));
+  border: 1px solid color-mix(in srgb, var(--brand) 55%, var(--line));
+  border-radius: 8px;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.ai-agent-force:hover {
+  background: color-mix(in srgb, var(--brand) 22%, var(--bg-2));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand) 40%, transparent);
+}
+.ai-agent-force:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.ai-agent-force.active {
+  color: var(--ok-fg);
+  border-color: color-mix(in srgb, var(--ok-fg) 60%, var(--line));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ok-fg) 16%, var(--bg-2)), var(--bg-2));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--ok-fg) 25%, transparent);
+}
+
+.chat-agent-bar .ai-cfg-status {
+  margin-top: 0;
+  text-align: center;
+}
+
+.ai-agent-project {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.ai-agent-project label {
+  font-family: var(--f-mono);
+  font-size: 0.58rem;
+  color: var(--txt-3);
+  white-space: nowrap;
+}
+.ai-agent-project .ai-cfg-input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  padding: 0.3rem 0.45rem;
+  background: var(--bg-2);
+  color: var(--txt);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
 .chat-api-row {
   display: flex;
   gap: 0.4rem;
@@ -2048,6 +2118,30 @@ footer .hazard-line {
   padding: 0.3rem 0.6rem;
 }
 
+.chat-tool {
+  align-self: flex-start;
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  background: var(--info-dim);
+  border: 1px solid var(--info-dim);
+  color: var(--info);
+  max-width: 92%;
+  overflow-wrap: break-word;
+}
+.chat-tool.chat-tool-error {
+  background: var(--err-bg);
+  border-color: var(--err-dim);
+  color: var(--err-fg);
+}
+
+.chat-tool-note {
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  color: var(--info);
+}
+
 .chat-err {
   color: var(--err);
   font-family: var(--f-mono);
@@ -2165,6 +2259,53 @@ footer .hazard-line {
 }
 .ai-cfg-btn:hover {
   background: var(--brand-dim);
+}
+
+.ai-cfg-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-family: var(--f-body);
+  font-size: 0.68rem;
+  color: var(--txt-2);
+  line-height: 1.4;
+  cursor: pointer;
+}
+.ai-cfg-toggle input[type=checkbox] {
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+  accent-color: var(--brand);
+  cursor: pointer;
+}
+
+.ai-cfg-input {
+  flex: 1;
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  padding: 0.3rem 0.4rem;
+  background: var(--bg-1);
+  color: var(--txt);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  min-width: 0;
+}
+.ai-cfg-input:focus {
+  outline: 1px solid var(--brand);
+}
+
+.ai-cfg-status {
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  margin-top: 0.35rem;
+}
+.ai-cfg-status.ok {
+  color: var(--ok-fg);
+}
+.ai-cfg-status.off {
+  color: var(--txt-3);
+}
+.ai-cfg-status.detecting {
+  color: var(--warn-fg, var(--brand));
 }
 
 .ai-cfg-list {

@@ -5,3 +5,4 @@ coverage/
 dist/
 backup_origen_20260821_204247/
 js/prompts-data*.js
+backup_prompts_*/

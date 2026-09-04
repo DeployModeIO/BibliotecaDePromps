@@ -23,3 +23,7 @@ playwright-report/
 e2e-report/
 test-results/
 *.br
+# Proyectos generados por el agente (E2E/UI)
+proyectos-agent/
+# Backups de reescritura de prompts
+backup_prompts_*/

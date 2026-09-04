@@ -21,6 +21,7 @@
     "js/prompts-data-extra.js",
     "js/prompts-data-v2.js",
     "js/prompts-data-fullstack.js",
-    "js/bpi-worker.js"
+    "js/bpi-worker.js",
+    "js/agent-tools.js"
   ]
 }

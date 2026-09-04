@@ -143,6 +143,7 @@ describe('Service Worker', () => {
     const sw = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
     expect(sw).toContain('app.js');
     expect(sw).toContain('ai-chat.js');
+    expect(sw).toContain('agent-tools.js');
     expect(sw).toContain('prompts-data.js');
     expect(sw).toContain('platform-tests.js');
   });
@@ -158,7 +159,8 @@ describe('GitHub Actions', () => {
     const ci = fs.readFileSync(path.join(__dirname, '..', '.github', 'workflows', 'ci.yml'), 'utf8');
     expect(ci).toContain('lint');
     expect(ci).toContain('test');
-    expect(ci).toContain('validate');
+    expect(ci).toContain('typecheck');
+    expect(ci).toContain('build');
   });
 
   test('Deploy workflow exists', () => {

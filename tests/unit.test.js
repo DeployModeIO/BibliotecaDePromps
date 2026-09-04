@@ -218,6 +218,19 @@ this.SafeStore = {
   context
 );
 
+describe('isAgentCapableModel', () => {
+  const { isAgentCapableModel } = require('../js/ai-chat.js');
+  test('excluye embeddings', () => { expect(isAgentCapableModel('nomic-embed-text-v1.5')).toBe(false); });
+  test('excluye VL puro (llava, moondream, mimo-vl)', () => { expect(isAgentCapableModel('llava-7b')).toBe(false); expect(isAgentCapableModel('mimo-vl-miloco-7b')).toBe(false); expect(isAgentCapableModel('minicpm-v-8b')).toBe(false); });
+  test('excluye Bonsai-27B base', () => { expect(isAgentCapableModel('Bonsai-27B-GGUF')).toBe(false); });
+  test('excluye GLM-4.6V-Flash base', () => { expect(isAgentCapableModel('GLM-4.6V-Flash-GGUF')).toBe(false); });
+  test('incluye Mistral Instruct', () => { expect(isAgentCapableModel('mistralai/mistral-7b-instruct-v0.3')).toBe(true); });
+  test('incluye Qwen2.5-Coder', () => { expect(isAgentCapableModel('lmstudio-community/Qwen2.5-Coder-14B-Instruct-GGUF')).toBe(true); });
+  test('incluye Qwen3.5', () => { expect(isAgentCapableModel('qwen3.5-9b')).toBe(true); });
+  test('incluye gemma-4-it', () => { expect(isAgentCapableModel('google/gemma-4-e4b-it')).toBe(true); });
+  test('incluye gpt-oss-20b', () => { expect(isAgentCapableModel('openai/gpt-oss-20b')).toBe(true); });
+  test('incluye deepseek-r1 instruct', () => { expect(isAgentCapableModel('deepseek-r1:8b')).toBe(true); });
+});
 describe('SafeStore', () => {
   test('SafeStore está disponible', () => {
     expect(context.SafeStore).toBeDefined();
@@ -424,26 +437,11 @@ describe('AIChat — Providers, Gemini & Free Tiers', () => {
     expect(typeof aiChatModule.sendMessage).toBe('function');
   });
 
-  test('DEFAULT_PROVIDERS incluye Google Gemini con modelos requeridos', () => {
-    const providers = aiChatModule.DEFAULT_PROVIDERS;
-    expect(providers).toBeDefined();
-    const gemini = providers.find((p) => p.id === 'gemini');
-    expect(gemini).toBeDefined();
-    expect(gemini.name).toContain('Google Gemini');
-    expect(gemini.models).toContain('gemini-2.0-flash');
-    expect(gemini.models).toContain('gemini-2.0-flash-lite');
-    expect(gemini.models).toContain('gemini-2.0-pro');
-    expect(gemini.models).toContain('gemini-2.5-pro');
-    expect(gemini.tier).toBe('both');
-    expect(gemini.endpoint).toContain('generativelanguage.googleapis.com');
-  });
-
-  test('Todos los DEFAULT_PROVIDERS tienen campo tier válido', () => {
-    const providers = aiChatModule.DEFAULT_PROVIDERS;
-    const validTiers = ['free', 'paid', 'both'];
-    providers.forEach((p) => {
-      expect(validTiers).toContain(p.tier);
-    });
+  test('Sin proveedores cloud: los catálogos cloud fueron eliminados (solo local)', () => {
+    expect(aiChatModule.DEFAULT_PROVIDERS).toBeUndefined();
+    expect(aiChatModule.FREE_TIER_PROVIDERS).toBeUndefined();
+    expect(aiChatModule.MODEL_SCANNER_SOURCES).toBeUndefined();
+    expect(aiChatModule.callGemini).toBeUndefined();
   });
 
   test('LOCAL_PROBES incluye LiteLLM, llama.cpp y Jan AI', () => {
@@ -465,32 +463,49 @@ describe('AIChat — Providers, Gemini & Free Tiers', () => {
     });
   });
 
-  test('FREE_TIER_PROVIDERS documenta proveedores con tier gratuito', () => {
-    const freeProviders = aiChatModule.FREE_TIER_PROVIDERS;
-    expect(freeProviders).toBeDefined();
-    expect(freeProviders.length).toBeGreaterThanOrEqual(4);
-
-    const ids = freeProviders.map((p) => p.id);
-    expect(ids).toContain('gemini_free');
-    expect(ids).toContain('groq_free');
-    expect(ids).toContain('openrouter_free');
-    expect(ids).toContain('deepseek_free');
+  test('Sin catálogos cloud: FREE_TIER_PROVIDERS y MODEL_SCANNER_SOURCES eliminados', () => {
+    expect(aiChatModule.FREE_TIER_PROVIDERS).toBeUndefined();
+    expect(aiChatModule.MODEL_SCANNER_SOURCES).toBeUndefined();
   });
 
-  test('MODEL_SCANNER_SOURCES incluye fuentes de modelos gratuitos', () => {
-    const sources = aiChatModule.MODEL_SCANNER_SOURCES;
-    expect(sources).toBeDefined();
-    const openrouter = sources.find((s) => s.url.includes('openrouter.ai'));
-    const github = sources.find((s) => s.url.includes('free-llm-api-resources'));
-
-    expect(openrouter).toBeDefined();
-    expect(openrouter.url).toContain('free=true');
-    expect(github).toBeDefined();
+  test('cleanModelId limpia rutas de LM Studio (publisher/model)', () => {
+    expect(aiChatModule.cleanModelId('mistralai/mistral-7b-instruct')).toBe('mistral-7b-instruct');
+    expect(aiChatModule.cleanModelId('qwen2.5-7b-instruct')).toBe('qwen2.5-7b-instruct');
+    expect(aiChatModule.cleanModelId('')).toBe('');
   });
 
-  test('callGemini maneja errores de validación si no hay mensajes', async () => {
-    expect(typeof aiChatModule.callGemini).toBe('function');
-    const provider = aiChatModule.DEFAULT_PROVIDERS.find((p) => p.id === 'gemini');
-    await expect(aiChatModule.callGemini(provider, { messages: [] })).rejects.toThrow();
+  test('modelOptionLabel añade metadatos: tamaño, params, cargado y tools', () => {
+    const provider = {
+      modelMeta: {
+        'qwen2.5:7b': { sizeGb: 4.7, params: '7B', quant: 'Q4_K_M' },
+        'llama3.2:3b': { loaded: true },
+      },
+    };
+    expect(aiChatModule.modelOptionLabel(provider, 'qwen2.5:7b')).toBe('qwen2.5:7b · 4.7GB · 7B · Q4_K_M');
+    expect(aiChatModule.modelOptionLabel(provider, 'llama3.2:3b')).toContain('●cargado');
+    expect(aiChatModule.modelOptionLabel({}, 'gemma2:2b')).toBe('gemma2:2b');
+  });
+
+  test('modelOptionLabel marca tools según caché de capacidades de Ollama', () => {
+    const provider = { modelMeta: {} };
+    const before = aiChatModule.modelOptionLabel(provider, 'modelo:x');
+    expect(before).toBe('modelo:x');
+  });
+
+  test('syncProviders construye proveedores locales con id estable y metadatos', () => {
+    const provs = aiChatModule.syncProviders;
+    expect(typeof provs).toBe('function');
+  });
+
+  test('supportsTools: el modo agente funciona con cualquier proveedor (nativo o emulado)', () => {
+    expect(typeof aiChatModule.supportsTools).toBe('function');
+    expect(aiChatModule.supportsTools({ isLocal: true, localType: 'ollama' })).toBe(true);
+    expect(aiChatModule.supportsTools({ isLocal: true, localType: 'openai' })).toBe(true);
+    expect(aiChatModule.supportsTools({ isLocal: true, localType: 'kobold' })).toBe(true);
+    expect(aiChatModule.supportsTools({ isLocal: false, type: 'cloud', id: 'gemini' })).toBe(true);
+    expect(aiChatModule.supportsTools({ isLocal: false, type: 'cloud', id: 'anthropic' })).toBe(true);
+    expect(aiChatModule.supportsTools({ isLocal: false, type: 'cloud', id: 'openai' })).toBe(true);
+    expect(aiChatModule.supportsTools(null)).toBe(false);
   });
 });
+

@@ -8,6 +8,7 @@ declare const marked: any;
 declare const JSZip: any;
 declare const Dexie: any;
 declare const DOMPurify: any;
+declare const SafeStore: any;
 
 interface Window {
   [key: string]: any;

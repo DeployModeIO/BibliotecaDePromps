@@ -11,9 +11,15 @@ const ids = [
   'chatClose',
   'chatToggle',
   'aiConfigPanel',
-  'aiConfigList',
-  'aiConfigAdd',
   'aiMaxTokens',
+  'aiAgentMode',
+  'aiAgentForce',
+  'aiAgentCapsStatus',
+  'aiAgentProjectDir',
+  'aiAgentServerUrl',
+  'aiAgentServerToken',
+  'aiAgentServerStatus',
+  'aiAgentServerDetect',
 ];
 ids.forEach((id) => {
   const found = html.includes('id="' + id + '"') || html.includes("id='" + id + "'");

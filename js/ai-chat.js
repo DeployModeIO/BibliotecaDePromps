@@ -82,340 +82,6 @@ const AIChat = (() => {
     },
   ];
 
-  /* ============================================================
-     DEFAULT PROVIDERS — Proveedores Cloud (Free Tier & Paid)
-     ============================================================ */
-  const DEFAULT_PROVIDERS = [
-    {
-      id: 'gemini',
-      name: 'Google Gemini',
-      endpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
-      type: 'cloud',
-      tier: 'both',
-      apiKey: '',
-      models: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-2.0-pro'],
-      defaultModel: 'gemini-2.5-flash',
-      modelsEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
-      authType: 'query',
-      note: 'Tier gratuito: 1500 req/día para gemini-2.5-flash / gemini-2.0-flash. Sin costo para flash-lite o con API key gratuita de Google AI Studio.',
-    },
-    {
-      id: 'groq',
-      name: 'Groq',
-      endpoint: 'https://api.groq.com/openai/v1/chat/completions',
-      type: 'cloud',
-      tier: 'free',
-      apiKey: '',
-      models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768', 'deepseek-r1-distill-llama-70b', 'qwen-2.5-32b'],
-      defaultModel: 'llama-3.3-70b-versatile',
-      modelsEndpoint: 'https://api.groq.com/openai/v1/models',
-      note: 'Tier gratuito con límites de ratio (RPM/TPM). Inferencia LPU de ultra-baja latencia.',
-    },
-    {
-      id: 'openrouter',
-      name: 'OpenRouter',
-      endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-      type: 'cloud',
-      tier: 'both',
-      apiKey: '',
-      models: [
-        'openai/gpt-4o',
-        'anthropic/claude-3.5-sonnet',
-        'google/gemini-2.5-flash',
-        'google/gemini-2.0-flash',
-        'meta-llama/llama-4-maverick:free',
-        'google/gemini-2.5-flash:free',
-        'deepseek/deepseek-chat:free',
-        'mistral/mistral-small:free',
-        'meta-llama/llama-3.2-3b-instruct:free',
-        'google/gemini-2.0-flash-exp:free',
-      ],
-      defaultModel: 'openai/gpt-4o',
-      modelsEndpoint: 'https://openrouter.ai/api/v1/models',
-      note: 'Modelos con sufijo :free (ej. meta-llama/llama-4-maverick:free) son gratuitos vía OpenRouter.',
-    },
-    {
-      id: 'deepseek',
-      name: 'DeepSeek',
-      endpoint: 'https://api.deepseek.com/v1/chat/completions',
-      type: 'cloud',
-      tier: 'both',
-      apiKey: '',
-      models: ['deepseek-chat', 'deepseek-reasoner'],
-      defaultModel: 'deepseek-chat',
-      modelsEndpoint: 'https://api.deepseek.com/v1/models',
-      note: 'deepseek-chat y deepseek-reasoner cuentan con tier gratuito / créditos iniciales con registro.',
-    },
-    {
-      id: 'openai',
-      name: 'OpenAI',
-      endpoint: 'https://api.openai.com/v1/chat/completions',
-      type: 'cloud',
-      tier: 'paid',
-      apiKey: '',
-      models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'o1', 'o3-mini', 'o4-mini'],
-      defaultModel: 'gpt-4o-mini',
-      modelsEndpoint: 'https://api.openai.com/v1/models',
-      note: 'API oficial de OpenAI (modelos GPT-4o, GPT-4.1, razonadores o1, o3-mini, o4-mini).',
-    },
-    {
-      id: 'anthropic',
-      name: 'Anthropic',
-      endpoint: 'https://api.anthropic.com/v1/messages',
-      type: 'cloud',
-      tier: 'paid',
-      apiKey: '',
-      models: ['claude-sonnet-4-20250514', 'claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-opus-4-20250514'],
-      defaultModel: 'claude-sonnet-4-20250514',
-      headers: { 'anthropic-version': '2023-06-01' },
-      modelsEndpoint: 'https://api.anthropic.com/v1/models',
-      authType: 'x-api-key',
-      note: 'API oficial de Anthropic Claude.',
-    },
-    {
-      id: 'alibaba',
-      name: 'Alibaba Token Plan',
-      endpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions',
-      type: 'cloud',
-      tier: 'both',
-      apiKey: '',
-      models: ['qwen-max', 'qwen-plus', 'qwen-turbo', 'deepseek-r1', 'deepseek-v3', 'llama3-70b', 'qwen2.5-72b'],
-      defaultModel: 'qwen-plus',
-      modelsEndpoint: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/models',
-      note: 'Plan de tokens gratuitos con registro en Alibaba Cloud Model Studio.',
-    },
-    {
-      id: 'mistral',
-      name: 'Mistral AI',
-      endpoint: 'https://api.mistral.ai/v1/chat/completions',
-      type: 'cloud',
-      tier: 'both',
-      apiKey: '',
-      models: ['mistral-large-latest', 'mistral-medium-latest', 'mistral-small-latest', 'pixtral-large-latest', 'codestral-latest'],
-      defaultModel: 'mistral-large-latest',
-      modelsEndpoint: 'https://api.mistral.ai/v1/models',
-      note: 'Modelos Mistral, Pixtral y Codestral. Tier gratuito / créditos de prueba disponibles.',
-    },
-    {
-      id: 'together',
-      name: 'Together AI',
-      endpoint: 'https://api.together.xyz/v1/chat/completions',
-      type: 'cloud',
-      tier: 'both',
-      apiKey: '',
-      models: [
-        'meta-llama/Llama-3.3-70B-Instruct-Turbo',
-        'mistralai/Mixtral-8x22B-Instruct-v0.1',
-        'Qwen/Qwen2.5-72B-Instruct-Turbo',
-        'deepseek-ai/DeepSeek-R1',
-      ],
-      defaultModel: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
-      modelsEndpoint: 'https://api.together.xyz/v1/models',
-      note: 'Tier gratuito con créditos de bienvenida para inferencia open-source.',
-    },
-    {
-      id: 'perplexity',
-      name: 'Perplexity',
-      endpoint: 'https://api.perplexity.ai/chat/completions',
-      type: 'cloud',
-      tier: 'paid',
-      apiKey: '',
-      models: ['sonar-pro', 'sonar', 'sonar-reasoning-pro'],
-      defaultModel: 'sonar-pro',
-      modelsEndpoint: 'https://api.perplexity.ai/models',
-      note: 'Modelos Sonar de búsqueda y razonamiento online ($10 free credit on signup).',
-    },
-    {
-      id: 'xai',
-      name: 'xAI / Grok',
-      endpoint: 'https://api.x.ai/v1/chat/completions',
-      type: 'cloud',
-      tier: 'paid',
-      apiKey: '',
-      models: ['grok-2-1212', 'grok-2-vision-1212', 'grok-beta'],
-      defaultModel: 'grok-2-1212',
-      modelsEndpoint: 'https://api.x.ai/v1/models',
-      note: 'Modelos Grok de xAI ($25 free credit on signup).',
-    },
-    {
-      id: 'cohere',
-      name: 'Cohere',
-      endpoint: 'https://api.cohere.ai/v2/chat',
-      type: 'cloud',
-      tier: 'both',
-      apiKey: '',
-      models: ['command-r-plus', 'command-r', 'command'],
-      defaultModel: 'command-r-plus',
-      modelsEndpoint: 'https://api.cohere.ai/v2/models',
-      note: 'Modelos Command R / Command R+ (trial keys disponibles sin costo).',
-    },
-    {
-      id: 'cerebras',
-      name: 'Cerebras',
-      endpoint: 'https://api.cerebras.ai/v1/chat/completions',
-      type: 'cloud',
-      tier: 'free',
-      apiKey: '',
-      models: ['llama3.3-70b', 'llama-3.1-8b'],
-      defaultModel: 'llama3.3-70b',
-      modelsEndpoint: 'https://api.cerebras.ai/v1/models',
-      note: 'Inferencia ultra rápida con Wafer-Scale Engine (free tier with rate limits).',
-    },
-  ];
-
-  /* ============================================================
-     FREE TIER CATALOG & MODEL SCANNER SOURCES
-     ============================================================ */
-  const FREE_TIER_PROVIDERS = [
-    {
-      id: 'gemini_free',
-      name: 'Google Gemini Free Tier',
-      endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
-      models: ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'],
-      tier: 'free',
-      description: 'Sin API key requerida para modelos lite o API key gratuita desde Google AI Studio (1500 req/día).',
-      url: 'https://aistudio.google.com/',
-    },
-    {
-      id: 'groq_free',
-      name: 'Groq Free Tier',
-      endpoint: 'https://api.groq.com/openai/v1/chat/completions',
-      models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768', 'deepseek-r1-distill-llama-70b', 'qwen-2.5-32b'],
-      tier: 'free',
-      description: 'Inferencia ultra rápida con tier gratuito sujeto a límites de ratio.',
-      url: 'https://console.groq.com/',
-    },
-    {
-      id: 'cerebras_free',
-      name: 'Cerebras Free Tier',
-      endpoint: 'https://api.cerebras.ai/v1/chat/completions',
-      models: ['llama3.3-70b', 'llama-3.1-8b'],
-      tier: 'free',
-      description: 'Inferencia ultra rápida por hardware Wafer-Scale Engine con tier gratuito.',
-      url: 'https://cloud.cerebras.ai/',
-    },
-    {
-      id: 'openrouter_free',
-      name: 'OpenRouter Free Models',
-      endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-      models: [
-        'meta-llama/llama-4-maverick:free',
-        'google/gemini-2.5-flash:free',
-        'deepseek/deepseek-chat:free',
-        'mistral/mistral-small:free',
-        'meta-llama/llama-3.2-3b-instruct:free',
-        'google/gemini-2.0-flash-exp:free',
-      ],
-      tier: 'free',
-      description: 'Modelos con sufijo :free accesibles sin costo.',
-      url: 'https://openrouter.ai/models?free=true',
-    },
-    {
-      id: 'deepseek_free',
-      name: 'DeepSeek Free Tier',
-      endpoint: 'https://api.deepseek.com/v1/chat/completions',
-      models: ['deepseek-chat', 'deepseek-reasoner'],
-      tier: 'free',
-      description: 'deepseek-chat incluye tier gratuito / créditos iniciales al registrarse.',
-      url: 'https://platform.deepseek.com/',
-    },
-    {
-      id: 'mistral_free',
-      name: 'Mistral AI Free Trial',
-      endpoint: 'https://api.mistral.ai/v1/chat/completions',
-      models: ['mistral-small-latest', 'codestral-latest', 'mistral-large-latest'],
-      tier: 'free',
-      description: 'Créditos iniciales y nivel gratuito de experimentación en La Plateforme.',
-      url: 'https://console.mistral.ai/',
-    },
-    {
-      id: 'together_free',
-      name: 'Together AI Free Credits',
-      endpoint: 'https://api.together.xyz/v1/chat/completions',
-      models: [
-        'meta-llama/Llama-3.3-70B-Instruct-Turbo',
-        'mistralai/Mixtral-8x22B-Instruct-v0.1',
-        'Qwen/Qwen2.5-72B-Instruct-Turbo',
-        'deepseek-ai/DeepSeek-R1',
-      ],
-      tier: 'free',
-      description: 'Créditos gratuitos de bienvenida para inferencia de modelos open-source.',
-      url: 'https://www.together.ai/',
-    },
-    {
-      id: 'cohere_free',
-      name: 'Cohere Trial Tier',
-      endpoint: 'https://api.cohere.ai/v2/chat',
-      models: ['command-r-plus', 'command-r', 'command'],
-      tier: 'free',
-      description: 'Trial API Keys gratuitas para evaluación y prototipado.',
-      url: 'https://dashboard.cohere.com/',
-    },
-  ];
-
-  const MODEL_SCANNER_SOURCES = [
-    {
-      name: 'OpenRouter Free Models API',
-      url: 'https://openrouter.ai/api/v1/models?free=true',
-      type: 'api',
-      description: 'Endpoint de OpenRouter que lista modelos con tier gratuito (:free) en tiempo real.',
-    },
-    {
-      name: 'Free LLM API Resources (GitHub)',
-      url: 'https://raw.githubusercontent.com/cheahjs/free-llm-api-resources/main/README.md',
-      type: 'document',
-      description: 'Lista comunitaria curada de APIs y proveedores LLM con opciones gratuitas.',
-    },
-    {
-      name: 'Google AI Studio Gemini Free',
-      url: 'https://ai.google.dev/pricing',
-      type: 'portal',
-      description: 'Documentación oficial del tier gratuito de Gemini (1500 req/día para Gemini 2.0/2.5 Flash).',
-    },
-    {
-      name: 'Groq Cloud Rate Limits',
-      url: 'https://console.groq.com/docs/rate-limits',
-      type: 'portal',
-      description: 'Límites y cuotas de inferencia gratuita de Groq Cloud.',
-    },
-    {
-      name: 'Mistral AI Documentation',
-      url: 'https://docs.mistral.ai/getting-started/models/',
-      type: 'portal',
-      description: 'Documentación oficial y catálogo de modelos de Mistral AI.',
-    },
-    {
-      name: 'Together AI Models Catalog',
-      url: 'https://docs.together.ai/docs/inference-models',
-      type: 'portal',
-      description: 'Lista y especificaciones de modelos open-source en Together AI.',
-    },
-    {
-      name: 'Perplexity AI Model Cards',
-      url: 'https://docs.perplexity.ai/guides/model-cards',
-      type: 'portal',
-      description: 'Modelos Sonar y capacidades de búsqueda en tiempo real de Perplexity.',
-    },
-    {
-      name: 'xAI Grok Documentation',
-      url: 'https://docs.x.ai/docs/models',
-      type: 'portal',
-      description: 'Guía oficial de modelos Grok y visión de xAI.',
-    },
-    {
-      name: 'Cohere Models API Documentation',
-      url: 'https://docs.cohere.com/v2/docs/models',
-      type: 'portal',
-      description: 'Documentación de modelos Command R y Command R+ en Cohere API v2.',
-    },
-    {
-      name: 'Cerebras Inference Documentation',
-      url: 'https://inference-docs.cerebras.ai/models',
-      type: 'portal',
-      description: 'Modelos Llama 3.3 optimizados para Wafer-Scale Engine en Cerebras Cloud.',
-    },
-  ];
-
   const state = {
     providers: [],
     activeProvider: null,
@@ -426,10 +92,18 @@ const AIChat = (() => {
     saveDir: null,
     autoDetectedLocal: [],
     maxTokens: 16384,
+    agentMode: false,
+    agentProjectDir: '',
+    agentServerUrl: 'http://127.0.0.1:4864',
+    agentServerToken: '',
+    agentServer: { ok: false, info: null },
+    ollamaToolsCache: {},
+    localApiKeys: {},
   };
 
   const el = {};
   let initialized = false;
+  let agentAbortRequested = false;
 
   function safeGet(key, fallback) {
     try {
@@ -457,64 +131,29 @@ const AIChat = (() => {
     state.activeConvId = safeGet('activeConvId', null);
     state.autoDetectedLocal = safeGet('autoDetectedLocal', []);
     state.maxTokens = safeGet('maxTokens', 16384);
-  }
-
-  /* Persiste los proveedores con las API keys cifradas en reposo (AES-GCM).
-     En memoria las keys siguen en claro para poder usarse; solo se cifra lo
-     que se escribe a localStorage. Fire-and-forget: el cifrado es rápido. */
-  async function persistProvidersEncrypted() {
-    try {
-      let toStore = state.providers;
-      if (window.BPICrypto) {
-        const ok = await window.BPICrypto.isAvailable();
-        if (ok) {
-          toStore = await Promise.all(
-            state.providers.map(async (p) => {
-              if (!p.apiKey) return p;
-              const enc = await window.BPICrypto.encrypt(p.apiKey);
-              return Object.assign({}, p, { apiKey: enc });
-            })
-          );
-        }
-      }
-      safeSet('providers', toStore);
-    } catch {
-      safeSet('providers', state.providers);
-    }
-  }
-
-  /* Descifra las keys cargadas del storage. Las corruptas/legacy ilegibles
-     se vacían y el usuario deberá pegarlas de nuevo (fail-closed). */
-  async function hydrateProviderKeys() {
-    if (!window.BPICrypto) return;
-    try {
-      await window.BPICrypto.migrateKeys();
-      if (!(await window.BPICrypto.isAvailable())) return;
-      for (const p of state.providers) {
-        if (!p.apiKey || typeof p.apiKey !== 'string') continue;
-        if (p.apiKey.startsWith('bpi2_') || p.apiKey.startsWith('bpi_enc_')) {
-          const dec = await window.BPICrypto.decrypt(p.apiKey);
-          p.apiKey = dec === null ? '' : dec;
-        }
-      }
-      // Refrescar el input si el proveedor activo tenía key
-      if (el.apiKeyInput) {
-        const active = state.providers.find((pr) => pr.id === state.activeProvider);
-        if (active && active.type === 'cloud') el.apiKeyInput.value = active.apiKey || '';
-      }
-    } catch (err) {
-      console.warn('[AIChat] hydrateProviderKeys:', err && err.message);
-    }
+    state.agentMode = safeGet('agentMode', false);
+    state.agentProjectDir = safeGet('agentProjectDir', '');
+    state.agentServerUrl = safeGet('agentServerUrl', 'http://127.0.0.1:4864');
+    state.agentServerToken = safeGet('agentServerToken', '');
+    state.ollamaToolsCache = safeGet('ollamaToolsCache', {});
+    if (!state.ollamaToolsCache || typeof state.ollamaToolsCache !== 'object') state.ollamaToolsCache = {};
+    state.localApiKeys = safeGet('localApiKeys', {});
+    if (!state.localApiKeys || typeof state.localApiKeys !== 'object') state.localApiKeys = {};
   }
 
   function saveState() {
-    persistProvidersEncrypted();
     safeSet('activeProvider', state.activeProvider);
     safeSet('activeModel', state.activeModel);
     persistConversations();
     safeSet('activeConvId', state.activeConvId);
     safeSet('autoDetectedLocal', state.autoDetectedLocal);
     safeSet('maxTokens', state.maxTokens);
+    safeSet('agentMode', state.agentMode);
+    safeSet('agentProjectDir', state.agentProjectDir);
+    safeSet('agentServerUrl', state.agentServerUrl);
+    safeSet('agentServerToken', state.agentServerToken);
+    safeSet('ollamaToolsCache', state.ollamaToolsCache);
+    safeSet('localApiKeys', state.localApiKeys);
   }
 
   function persistConversations() {
@@ -555,348 +194,265 @@ const AIChat = (() => {
 
   /* ---------- API detection ---------- */
 
+  function cleanModelId(id) {
+    const s = String(id || '').trim();
+    if (!s) return s;
+    const parts = s.split('/');
+    return parts[parts.length - 1] || s;
+  }
+
+  function modelOptionLabel(provider, name) {
+    const meta = (provider && provider.modelMeta && provider.modelMeta[name]) || {};
+    const parts = [name];
+    if (meta.sizeGb) parts.push(meta.sizeGb + 'GB');
+    if (meta.params) parts.push(meta.params);
+    if (meta.quant && meta.quant !== 'F16' && meta.quant !== 'F32') parts.push(meta.quant);
+    if (meta.ctx) parts.push(Math.round(meta.ctx / 1024) + 'k ctx');
+    if (meta.loaded) parts.push('●cargado');
+    const toolsKnown = meta.tools !== undefined ? !!meta.tools : state.ollamaToolsCache[name] !== undefined ? state.ollamaToolsCache[name] === true : null;
+    if (toolsKnown) parts.push(toolsKnown ? '⚡tools' : 'sin tools');
+    return parts.join(' · ');
+  }
+
+  /* Sonda de capacidades de Ollama (/api/show → capabilities.tools) en segundo
+     plano: alimenta los badges ⚡ del selector y la auto-elección del modo agente. */
+  function probeOllamaCapabilities(provider) {
+    if (!provider || provider.localType !== 'ollama' || provider.corsBlocked) return;
+    const origin = new URL(provider.endpoint, typeof location !== 'undefined' ? location.href : 'http://localhost/')
+      .origin;
+    const models = (provider.models || []).slice(0, 30);
+    let updated = false;
+    Promise.allSettled(
+      models.map(async (name) => {
+        if (state.ollamaToolsCache[name] !== undefined) return;
+        try {
+          const ctrl = new AbortController();
+          const t = setTimeout(() => ctrl.abort(), 5000);
+          const r = await fetch(origin + '/api/show', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model: name }),
+            signal: ctrl.signal,
+          });
+          clearTimeout(t);
+          if (!r.ok) return;
+          const d = await r.json();
+          state.ollamaToolsCache[name] = !!(Array.isArray(d.capabilities) && d.capabilities.indexOf('tools') !== -1);
+          updated = true;
+        } catch {
+          /* modelo sin capacidades conocidas */
+        }
+      })
+    ).then(async () => {
+      let changed = false;
+      if (updated) {
+        safeSet('ollamaToolsCache', state.ollamaToolsCache);
+        changed = true;
+        console.log('[AIChat] capacidades Ollama actualizadas:', Object.keys(state.ollamaToolsCache).length, 'modelos');
+      }
+      /* /api/ps: qué modelos están cargados en memoria ahora mismo */
+      try {
+        const ps = await fetch(origin + '/api/ps');
+        if (ps.ok) {
+          const pd = await ps.json();
+          const loaded = new Set((pd.models || []).map((m) => m.name || m.model));
+          const entry = (state.autoDetectedLocal || []).find((r) => r.type === 'ollama');
+          if (entry && entry.modelMeta) {
+            let touched = false;
+            Object.keys(entry.modelMeta).forEach((name) => {
+              const want = loaded.has(name);
+              if (!!entry.modelMeta[name].loaded !== want) {
+                entry.modelMeta[name].loaded = want;
+                touched = true;
+              }
+            });
+            if (touched) changed = true;
+          }
+        }
+      } catch {
+        /* /api/ps opcional */
+      }
+      if (changed) {
+        syncProviders();
+        renderProviderSelect();
+      }
+    });
+  }
+
+  /* LM Studio expone su API nativa /api/v0/models con estado de carga, cuantización
+     y contexto. Si no está disponible (versiones antiguas u otros servidores
+     OpenAI-compatibles), se ignora en silencio. */
+  async function enrichLmStudioModels(probeUrl, meta, apiKey) {
+    try {
+      const base = String(probeUrl || '').replace(/\/v1\/models\/?$/, '');
+      if (!base || base === probeUrl) return;
+      const headers = { Accept: 'application/json' };
+      if (apiKey) headers['Authorization'] = 'Bearer ' + apiKey;
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 2500);
+      const r = await fetch(base + '/api/v0/models', { headers, signal: ctrl.signal });
+      clearTimeout(t);
+      if (!r.ok) return;
+      const d = await r.json();
+      (d.data || d || []).forEach((m) => {
+        if (!m || !m.id) return;
+        const prev = meta[m.id] || {};
+        meta[m.id] = Object.assign(prev, {
+          loaded: m.state === 'loaded' || m.state === 'loading',
+          quant: m.quantization || prev.quant,
+          arch: m.arch || prev.arch,
+          ctx: m.max_context_length || prev.ctx,
+          tools: Array.isArray(m.tools) ? m.tools.length > 0 : prev.tools,
+        });
+      });
+    } catch {
+      /* API nativa no disponible: seguimos con /v1/models */
+    }
+  }
+
+  async function probeOne(probe) {
+    const t0 = Date.now();
+    const apiKey = (state.localApiKeys || {})[probe.name] || '';
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 3000);
+    try {
+      let resp;
+      const headers = {};
+      if (apiKey) headers['Authorization'] = 'Bearer ' + apiKey;
+      try {
+        resp = await fetch(probe.url, { signal: ctrl.signal, headers });
+      } catch (corsErr) {
+        if (probe.type === 'ollama') {
+          try {
+            await fetch(probe.url, { signal: ctrl.signal, mode: 'no-cors' });
+            return {
+              ...probe,
+              models: [],
+              modelMeta: {},
+              status: 'online',
+              corsBlocked: true,
+              latencyMs: Date.now() - t0,
+            };
+          } catch {
+            /* no-cors también falló */
+          }
+        }
+        throw corsErr;
+      }
+      clearTimeout(t);
+      if (resp.status === 401) {
+        return { ...probe, models: [], modelMeta: {}, status: 'auth-required', authRequired: true, latencyMs: Date.now() - t0 };
+      }
+      if (!resp.ok) return null;
+      const rawModels = [];
+      const modelMeta = {};
+      try {
+        const data = await resp.json();
+        if (probe.type === 'ollama') {
+          (data.models || data || []).forEach((m) => {
+            const name = m.name || m.model || String(m);
+            rawModels.push(name);
+            modelMeta[name] = {
+              sizeGb: m.size ? Math.round(m.size / 1e7) / 100 : undefined,
+              params: m.details && m.details.parameter_size,
+              quant: m.details && m.details.quantization_level,
+              family: m.details && m.details.family,
+            };
+          });
+        } else if (probe.type === 'kobold') {
+          rawModels.push(data.result || data.model || 'kobold-model');
+        } else {
+          (data.data || data.models || data || []).forEach((m) => {
+            const id = m.id || m.name || String(m);
+            rawModels.push(id);
+            modelMeta[id] = { ctx: m.context_length || m.max_context_length };
+          });
+        }
+      } catch {
+        /* respuesta sin JSON: lista vacía pero servidor vivo */
+      }
+      const models = rawModels.filter(isAgentCapableModel);
+      if (probe.type === 'openai') {
+        await enrichLmStudioModels(probe.url, modelMeta, apiKey);
+      }
+      return { ...probe, models, modelMeta, status: 'online', latencyMs: Date.now() - t0 };
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(t);
+    }
+  }
+
+  function isAgentCapableModel(name) {
+    const n = String(name || '').toLowerCase();
+    if (!n) return false;
+    if (/embed|embedding|nomic-embed|bge-|e5-|gte-|mxbai-/.test(n)) return false;
+    if (/mimo-vl|vl-miloco|vl-|vision.*base|llava|moondream|minicpm-v|qwen2-vl|idefics|florence/.test(n)) return false;
+    if (/bonsai-27b(?!.*instruct)/i.test(n)) return false;
+    if (/glm-4\.6v-flash(?!.*instruct)/i.test(n)) return false;
+    if (/qwen2\.5-coder|qwen3\.5|qwen2\.5.*instruct|qwen2.*chat/.test(n)) return true;
+    if (/gemma-.*it(?:-|$)|gemma-.*instruct|gemma-.*chat/.test(n)) return true;
+    if (/mistral.*instruct|mistral.*chat/.test(n)) return true;
+    if (/llama-?3(?!.*base).*instruct|llama-?3(?!.*base).*chat/.test(n)) return true;
+    if (/deepseek-r1|deepseek-v3|deepseek.*instruct/.test(n)) return true;
+    if (/gpt-oss-20b/.test(n)) return true;
+    if (/instruct|chat|coder|tool|agent|oss/.test(n)) return true;
+    return false;
+  }
+
   async function detectLocal() {
     state.detecting = true;
     updateStatus('escaneando locales...');
-    const results = [];
-    for (const probe of LOCAL_PROBES) {
-      try {
-        const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), 3000);
-        // Try cors first; Ollama needs OLLAMA_ORIGINS=* env var set on Windows
-        let resp;
-        try {
-          resp = await fetch(probe.url, { signal: ctrl.signal });
-        } catch (corsErr) {
-          // Fallback: try no-cors (opaque response — can't read body, but can check if reachable)
-          if (probe.type === 'ollama') {
-            try {
-              resp = await fetch(probe.url, { signal: ctrl.signal, mode: 'no-cors' });
-              // If we get here, Ollama is reachable but CORS blocks reading the response
-              // Use a pre-defined model list as fallback
-              results.push({
-                ...probe,
-                models: ['deepseek-r1:8b', 'deepseek-r1:14b', 'deepseek-coder', 'llama3.2', 'codellama', 'mistral', 'gemma2'],
-                status: 'online',
-                corsBlocked: true,
-              });
-              console.log('[AIChat] detectLocal found Ollama (CORS-blocked, using fallback model list)');
-              continue;
-            } catch {
-              /* no-cors also failed */
-            }
-          }
-          throw corsErr;
-        }
-        clearTimeout(t);
-        if (resp.ok) {
-          let models = [];
-          try {
-            const data = await resp.json();
-            if (probe.type === 'ollama') {
-              models = (data.models || data || []).map((m) => m.name || m.model || m);
-            } else if (probe.type === 'kobold') {
-              models = [data.result || data.model || 'kobold-model'];
-            } else {
-              models = (data.data || data.models || data || []).map((m) => m.id || m.name || m);
-            }
-          } catch {
-            /* ignore parse errors */
-          }
-          results.push({ ...probe, models, status: 'online' });
-          console.log('[AIChat] detectLocal found:', probe.name, models.length, 'models');
-        }
-      } catch (err) {
-        console.log('[AIChat] detectLocal probe', probe.name, 'failed:', err.message || 'offline');
-      }
-    }
+    const settled = await Promise.all(LOCAL_PROBES.map((p) => probeOne(p)));
+    const results = settled.filter((r) => r);
     state.autoDetectedLocal = results;
     state.detecting = false;
     syncProviders();
     saveState();
     renderProviderSelect();
     updateStatus();
+    probeOllamaCapabilities(results.find((r) => r.type === 'ollama'));
     if (results.length) {
-      showToast('Locales detectados: ' + results.map((r) => r.name).join(', '));
+      const authBlocked = results.filter((r) => r.authRequired);
+      if (authBlocked.length && authBlocked.length === results.length) {
+        showToast('🔒 ' + authBlocked.map((r) => r.name).join(', ') + ' requiere llave (passkey) — Configuración avanzada');
+      } else {
+        showToast(
+          'Locales detectados: ' +
+            results.map((r) => r.name + (r.latencyMs != null ? ' (' + r.latencyMs + ' ms)' : '')).join(', ') +
+            (authBlocked.length ? ' · 🔒 ' + authBlocked.map((r) => r.name).join(', ') + ' requiere llave' : '')
+        );
+      }
     } else {
       showToast('No se detectaron servidores locales');
     }
     return results;
   }
 
-  async function detectModels() {
-    const provider = state.providers.find((p) => p.id === state.activeProvider);
-    if (!provider) {
-      showToast('Seleccione un proveedor primero');
-      return;
-    }
-    if (provider.isLocal) {
-      showToast('Proveedor local — modelos ya detectados automáticamente');
-      return;
-    }
-    if (!provider.apiKey && provider.id !== 'gemini') {
-      showToast('Ingrese una API Key primero');
-      return;
-    }
-    let modelsUrl =
-      provider.modelsEndpoint ||
-      provider.endpoint.replace('/chat/completions', '/models').replace('/messages', '/models').replace('/chat', '/models');
-    const isGemini = provider.id === 'gemini' || (provider.endpoint || '').includes('generativelanguage');
-    if (provider.authType === 'query' && provider.apiKey && !isGemini) {
-      modelsUrl += (modelsUrl.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(provider.apiKey);
-    }
-    el.detectModelsBtn.textContent = '...';
-    el.detectModelsBtn.disabled = true;
-    updateStatus('detectando modelos...');
-    try {
-      const headers = {};
-      if (isGemini && provider.apiKey) {
-        // SEGURIDAD: la key viaja en header, no en la URL (no queda en logs/referrers)
-        headers['x-goog-api-key'] = provider.apiKey;
-      } else if (provider.authType === 'x-api-key') {
-        headers['x-api-key'] = provider.apiKey;
-      } else if (provider.authType !== 'query' && provider.apiKey) {
-        headers['Authorization'] = 'Bearer ' + provider.apiKey;
-      }
-      if (provider.headers) Object.assign(headers, provider.headers);
-
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 10000);
-      const resp = await fetch(modelsUrl, { headers, signal: ctrl.signal });
-      clearTimeout(t);
-      if (resp.ok) {
-        const data = await resp.json();
-        let models = [];
-
-        // Special handler for Gemini models.list API and other formats
-        if (Array.isArray(data.models)) {
-          models = data.models
-            .filter((m) => {
-              if (m && m.supportedGenerationMethods && Array.isArray(m.supportedGenerationMethods)) {
-                return m.supportedGenerationMethods.includes('generateContent');
-              }
-              return true;
-            })
-            .map((m) => {
-              const name = (m && (m.name || m.id)) || (typeof m === 'string' ? m : '');
-              return name.replace(/^models\//, '');
-            })
-            .filter(Boolean);
-        } else if (Array.isArray(data.data)) {
-          models = data.data
-            .map((m) => {
-              const name = (m && (m.id || m.name)) || (typeof m === 'string' ? m : '');
-              return name.replace(/^models\//, '');
-            })
-            .filter(Boolean);
-        } else if (Array.isArray(data)) {
-          models = data
-            .map((m) => {
-              const name = (m && (m.id || m.name)) || (typeof m === 'string' ? m : '');
-              return name.replace(/^models\//, '');
-            })
-            .filter(Boolean);
-        }
-
-        models = [...new Set(models)];
-
-        if (models.length) {
-          provider.models = models;
-          if (!provider.models.includes(provider.defaultModel)) {
-            provider.defaultModel = models[0];
-          }
-          state.activeModel = provider.models.includes(state.activeModel) ? state.activeModel : models[0];
-          saveState();
-          renderModelSelect(provider);
-          el.modelSelect.value = state.activeModel;
-          updateStatus();
-          console.log('[AIChat] detectModels: ' + models.length + ' modelos detectados para ' + provider.name, models);
-          showToast('Detectados ' + models.length + ' modelos en ' + provider.name);
-          showTryAllButton(provider);
-        } else {
-          console.warn('[AIChat] detectModels: respuesta OK pero sin modelos reconocidos', data);
-          showToast('Respuesta OK pero sin modelos — formato no reconocido');
-        }
-      } else {
-        const errText = await resp.text().catch(() => '');
-        console.error('[AIChat] detectModels error ' + resp.status + ':', errText);
-        if (resp.status === 429) {
-          showToast('Límite de ratio excedido (429 Rate Limit) — espera unos segundos o revisa tu cuota');
-        } else if (resp.status === 401 || resp.status === 403) {
-          showToast('API Key inválida o sin permisos (' + resp.status + ')');
-        } else {
-          showToast('Error ' + resp.status + ': ' + (errText.substring(0, 80) || 'sin detalle'));
-        }
-      }
-    } catch (err) {
-      if (err.name === 'AbortError') {
-        showToast('Timeout (10s) — endpoint no responde');
-      } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-        showToast('CORS bloqueado o sin red — use un proxy o API que permita browser');
-      } else {
-        showToast('Error: ' + err.message);
-      }
-    }
-    el.detectModelsBtn.textContent = 'Detectar';
-    el.detectModelsBtn.disabled = false;
-    updateStatus();
-  }
-
-  function showTryAllButton(provider) {
-    let tryBtn = document.getElementById('aiTryAllModels');
-    const targetParent = el.detectModelsBtn ? el.detectModelsBtn.parentElement : null;
-    if (!tryBtn && targetParent) {
-      tryBtn = document.createElement('button');
-      tryBtn.id = 'aiTryAllModels';
-      tryBtn.className = 'chat-api-detect';
-      tryBtn.title = 'Probar disponibilidad de todos los modelos detectados';
-      tryBtn.textContent = 'Probar todos';
-      tryBtn.addEventListener('click', () => {
-        const activeProv = state.providers.find((p) => p.id === state.activeProvider) || provider;
-        if (activeProv) tryAllModels(activeProv);
-      });
-      if (el.rescanLocalBtn && el.rescanLocalBtn.nextSibling) {
-        targetParent.insertBefore(tryBtn, el.rescanLocalBtn.nextSibling);
-      } else if (el.detectModelsBtn.nextSibling) {
-        targetParent.insertBefore(tryBtn, el.detectModelsBtn.nextSibling);
-      } else {
-        targetParent.appendChild(tryBtn);
-      }
-    }
-    if (tryBtn) {
-      tryBtn.style.display = '';
-    }
-  }
-
-  async function tryAllModels(provider) {
-    if (!provider || !provider.models || !provider.models.length) {
-      showToast('No hay modelos para probar');
-      return;
-    }
-    const tryBtn = document.getElementById('aiTryAllModels');
-    if (tryBtn) {
-      tryBtn.disabled = true;
-      tryBtn.textContent = 'Probando...';
-    }
-    showToast('Probando ' + provider.models.length + ' modelos de ' + provider.name + '...');
-    updateStatus('probando modelos...');
-    const workingModels = [];
-    const failedModels = [];
-
-    for (const model of provider.models) {
-      try {
-        const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), 7000);
-        let ok = false;
-
-        if (provider.id === 'gemini' || (provider.endpoint && provider.endpoint.includes('generativelanguage'))) {
-          const testUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent';
-          const testHeaders = { 'Content-Type': 'application/json' };
-          if (provider.apiKey) testHeaders['x-goog-api-key'] = provider.apiKey;
-          const r = await fetch(testUrl, {
-            method: 'POST',
-            headers: testHeaders,
-            body: JSON.stringify({
-              contents: [{ role: 'user', parts: [{ text: 'ping' }] }],
-              generationConfig: { maxOutputTokens: 5 },
-            }),
-            signal: ctrl.signal,
-          });
-          ok = r.ok;
-        } else {
-          const headers = { 'Content-Type': 'application/json' };
-          if (provider.apiKey) {
-            if (provider.authType === 'x-api-key') headers['x-api-key'] = provider.apiKey;
-            else headers['Authorization'] = 'Bearer ' + provider.apiKey;
-          }
-          if (provider.headers) Object.assign(headers, provider.headers);
-
-          const r = await fetch(provider.endpoint, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
-              model,
-              messages: [{ role: 'user', content: 'ping' }],
-              max_tokens: 5,
-            }),
-            signal: ctrl.signal,
-          });
-          ok = r.ok;
-        }
-        clearTimeout(t);
-        if (ok) {
-          workingModels.push(model);
-          console.log('[AIChat] Modelo OK: ' + model);
-        } else {
-          failedModels.push(model);
-          console.warn('[AIChat] Modelo falló: ' + model);
-        }
-      } catch (err) {
-        failedModels.push(model);
-        console.warn('[AIChat] Modelo error (' + model + '):', err.message);
-      }
-    }
-
-    if (tryBtn) {
-      tryBtn.disabled = false;
-      tryBtn.textContent = 'Probar todos';
-    }
-    updateStatus();
-    console.log('[AIChat] Resumen prueba modelos: ' + workingModels.length + ' OK, ' + failedModels.length + ' fallaron');
-    showToast('Prueba: ' + workingModels.length + '/' + provider.models.length + ' modelos funcionales');
-    if (workingModels.length) {
-      appendSystemMsg(
-        '✅ **Prueba de modelos (' +
-          escapeHtml(provider.name) +
-          ')**:\n• **Funcionales (' +
-          workingModels.length +
-          '):** ' +
-          workingModels.join(', ') +
-          (failedModels.length ? '\n• **No disponibles (' + failedModels.length + '):** ' + failedModels.join(', ') : '')
-      );
-    } else {
-      appendSystemMsg('⚠️ **Prueba de modelos (' + escapeHtml(provider.name) + ')**: Ningún modelo respondió exitosamente.');
-    }
-  }
-
+  /* Sincroniza state.providers desde los locales auto-detectados (única fuente:
+     servidores locales; no hay proveedores cloud). */
   function syncProviders() {
-    const localProviders = state.autoDetectedLocal.map((l) => ({
-      id: 'local_' + l.name.toLowerCase().replace(/[^a-z0-9]+/g, '_'),
-      name: l.name + ' (Local)',
-      endpoint: l.chatEndpoint,
-      type: 'local',
-      tier: 'free',
-      apiKey: 'local',
-      models: l.models.length ? l.models : ['default'],
-      defaultModel: l.models[0] || 'default',
+    const locals = (state.autoDetectedLocal || []).map((d) => ({
+      id: 'local_' + String(d.name).toLowerCase().replace(/[^a-z0-9]+/g, '_'),
+      name: d.name,
       isLocal: true,
-      localType: l.type,
+      localType: d.type,
+      type: d.type,
+      endpoint: d.chatEndpoint,
+      models: d.models || [],
+      modelMeta: d.modelMeta || {},
+      defaultModel: (d.models || [])[0] || '',
+      corsBlocked: !!d.corsBlocked,
+      authRequired: !!d.authRequired,
+      latencyMs: d.latencyMs,
+      apiKey: (state.localApiKeys || {})[d.name] || '',
     }));
-
-    const presetIds = DEFAULT_PROVIDERS.map((p) => p.id);
-    const customProviders = state.providers.filter((p) => p.type === 'custom');
-    const otherCloud = state.providers.filter((p) => p.type === 'cloud' && !presetIds.includes(p.id));
-
-    const merged = [...localProviders];
-
-    DEFAULT_PROVIDERS.forEach((def) => {
-      const saved = state.providers.find((p) => p.id === def.id);
-      if (saved) {
-        // @ts-ignore error de inferencia de tipo por falta de isLocal/localType
-        merged.push({
-          ...def,
-          apiKey: saved.apiKey !== undefined ? saved.apiKey : def.apiKey,
-          models: saved.models && saved.models.length > 1 ? saved.models : def.models,
-        });
-      } else {
-        // @ts-ignore error de inferencia de tipo por falta de isLocal/localType
-        merged.push({ ...def });
-      }
-    });
-
-    merged.push(...otherCloud, ...customProviders);
-
-    state.providers = merged;
+    state.providers = locals;
+    if (!locals.length) {
+      state.activeProvider = null;
+    } else if (!locals.find((p) => p.id === state.activeProvider)) {
+      state.activeProvider = locals[0].id;
+    }
   }
 
   /* ---------- API calls ---------- */
@@ -914,29 +470,29 @@ const AIChat = (() => {
       appendSystemMsg('No hay proveedor activo. Seleccione uno en el panel de configuración.');
       return;
     }
+    if (provider.authRequired && !provider.apiKey) {
+      appendSystemMsg(
+        '🔒 ' + provider.name + ' exige passkey (HTTP 401). LM Studio: Developer → Permission Management → copia la passkey y pégala en Configuración avanzada → Llave de servidores locales.'
+      );
+      return;
+    }
 
     updateStatus('generando...');
     const msgEl = appendAssistantPlaceholder();
     showStopButton();
+    agentAbortRequested = false;
 
     try {
       let response;
 
-      // Try streaming first for OpenAI-compatible providers (not gemini, not ollama, not kobold)
-      if (
-        !provider.isLocal &&
-        provider.id !== 'gemini' &&
-        !(provider.endpoint && provider.endpoint.includes('generativelanguage')) &&
-        provider.type === 'cloud' &&
-        provider.id !== 'anthropic'
-      ) {
-        response = await streamOpenAI(provider, conv, msgEl);
-      } else if (provider.id === 'gemini' || (provider.endpoint && provider.endpoint.includes('generativelanguage'))) {
-        response = await callGemini(provider, conv);
+      if (state.agentMode) {
+        response = await runAgentTurn(provider, conv, msgEl);
       } else if (provider.isLocal && provider.localType === 'ollama') {
         response = await streamOllama(provider, conv, msgEl);
       } else if (provider.isLocal && provider.localType === 'kobold') {
         response = await callKobold(provider, conv);
+      } else if (provider.isLocal && provider.localType === 'openai') {
+        response = await streamOpenAI(provider, conv, msgEl);
       } else {
         response = await callOpenAICompatible(provider, conv);
       }
@@ -971,6 +527,7 @@ const AIChat = (() => {
       btn.textContent = '⏹';
       btn.title = 'Detener generación';
       btn.addEventListener('click', () => {
+        agentAbortRequested = true;
         if (abortController) abortController.abort();
       });
       el.chatSend.parentElement.appendChild(btn);
@@ -1017,6 +574,7 @@ const AIChat = (() => {
     if (!resp.ok) throw new Error(await resp.text());
 
     let fullText = '';
+    let reasoning = '';
     const reader = resp.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
@@ -1034,21 +592,32 @@ const AIChat = (() => {
         const data = trimmed.slice(6);
         if (data === '[DONE]') break;
         try {
-          const json = JSON.parse(data);
-          const delta = json.choices?.[0]?.delta?.content;
-          if (delta) {
-            fullText += delta;
-            msgEl.innerHTML = renderMarkdown(fullText) + '<span class="typing-cursor">|</span>';
-            msgEl.dataset.streamed = '1';
-            scrollChat();
-          }
+      const json = JSON.parse(data);
+      const delta = json.choices?.[0]?.delta?.content;
+      const think = json.choices?.[0]?.delta?.reasoning_content || json.choices?.[0]?.delta?.reasoning;
+      if (think) reasoning += think;
+      if (delta || (think && !delta)) {
+        if (delta) {
+          fullText += delta;
+          msgEl.innerHTML = renderMarkdown(fullText) + '<span class="typing-cursor">|</span>';
+          msgEl.dataset.streamed = '1';
+          scrollChat();
+        } else if (reasoning) {
+          /* LM Studio con separateReasoningContentInAPI: mostrar razonamiento
+             mientras no llega el contenido final */
+          msgEl.innerHTML = renderMarkdown('💭 ' + reasoning.slice(-600)) + '<span class="typing-cursor">|</span>';
+          msgEl.dataset.streamed = '1';
+          scrollChat();
+        }
+      }
         } catch {
           /* ignore partial */
         }
       }
     }
-    msgEl.innerHTML = renderMarkdown(fullText);
-    return fullText;
+    const finalText = fullText || reasoning;
+    msgEl.innerHTML = renderMarkdown(finalText);
+    return finalText;
   }
 
   async function streamOllama(provider, conv, msgEl) {
@@ -1066,6 +635,7 @@ const AIChat = (() => {
           model: state.activeModel || provider.defaultModel,
           messages,
           stream: true,
+          keep_alive: '30m',
           options: { num_predict: state.maxTokens || 16384 },
         }),
         signal: abortController.signal,
@@ -1090,6 +660,7 @@ const AIChat = (() => {
     if (!resp.ok) throw new Error(await resp.text());
 
     let fullText = '';
+    let reasoning = '';
     const reader = resp.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
@@ -1106,19 +677,27 @@ const AIChat = (() => {
         try {
           const json = JSON.parse(line);
           const delta = json.message?.content || json.response;
-          if (delta) {
-            fullText += delta;
-            msgEl.innerHTML = renderMarkdown(fullText) + '<span class="typing-cursor">|</span>';
-            msgEl.dataset.streamed = '1';
-            scrollChat();
+          const think = json.message?.thinking;
+          if (think) reasoning += think;
+          if (delta || (think && !delta)) {
+            if (delta) fullText += delta;
+            /* modelos razonadores: mientras no hay contenido visible se
+               muestra el razonamiento (deepseek-r1, qwen3, gpt-oss) */
+            const shown = fullText || (reasoning ? '💭 ' + reasoning.slice(-600) : '');
+            if (shown) {
+              msgEl.innerHTML = renderMarkdown(shown) + '<span class="typing-cursor">|</span>';
+              msgEl.dataset.streamed = '1';
+              scrollChat();
+            }
           }
         } catch {
           /* ignore */
         }
       }
     }
-    msgEl.innerHTML = renderMarkdown(fullText);
-    return fullText;
+    const finalText = fullText || reasoning;
+    msgEl.innerHTML = renderMarkdown(finalText);
+    return finalText;
   }
 
   async function _callOllama(provider, conv) {
@@ -1132,6 +711,7 @@ const AIChat = (() => {
         model: state.activeModel || provider.defaultModel,
         messages,
         stream: false,
+        keep_alive: '30m',
         options: { num_predict: state.maxTokens || 16384 },
       }),
     });
@@ -1182,117 +762,8 @@ const AIChat = (() => {
 
     if (!resp.ok) throw new Error(await resp.text());
     const data = await resp.json();
-    return data.choices?.[0]?.message?.content || data.content?.[0]?.text || JSON.stringify(data);
-  }
-
-  async function callGemini(provider, conv) {
-    const model = state.activeModel || provider.defaultModel || 'gemini-2.0-flash';
-    const apiKey = provider.apiKey || '';
-
-    const streamUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
-    const generateUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-
-    // SEGURIDAD: la API key viaja en el header x-goog-api-key, nunca en la URL
-    const authHeaders = { 'Content-Type': 'application/json' };
-    if (apiKey) authHeaders['x-goog-api-key'] = apiKey;
-
-    const contents = [];
-    for (const m of conv.messages) {
-      if (m.role === 'assistant' && m.content.startsWith('ERROR:')) continue;
-      const role = m.role === 'assistant' ? 'model' : 'user';
-      if (contents.length > 0 && contents[contents.length - 1].role === role) {
-        contents[contents.length - 1].parts.push({ text: m.content });
-      } else {
-        contents.push({ role, parts: [{ text: m.content }] });
-      }
-    }
-
-    if (!contents.length) {
-      throw new Error('No hay mensajes válidos para enviar a Gemini.');
-    }
-
-    const payload = {
-      contents,
-      generationConfig: {
-        maxOutputTokens: state.maxTokens || 16384,
-        temperature: 0.7,
-      },
-    };
-
-    // Try SSE streaming first
-    try {
-      const resp = await fetch(streamUrl, {
-        method: 'POST',
-        headers: authHeaders,
-        body: JSON.stringify(payload),
-      });
-
-      if (resp.ok && resp.body && typeof resp.body.getReader === 'function') {
-        const reader = resp.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let done = false;
-        let fullText = '';
-        let buffer = '';
-
-        while (!done) {
-          const { value, done: readerDone } = await reader.read();
-          done = readerDone;
-          if (value) {
-            buffer += decoder.decode(value, { stream: !done });
-            const lines = buffer.split('\n');
-            buffer = lines.pop() || '';
-            for (const line of lines) {
-              const trimmed = line.trim();
-              if (trimmed.startsWith('data: ')) {
-                const jsonStr = trimmed.slice(6);
-                try {
-                  const data = JSON.parse(jsonStr);
-                  const candidates = data.candidates || [];
-                  for (const cand of candidates) {
-                    const parts = cand.content?.parts || [];
-                    for (const part of parts) {
-                      if (part.text) fullText += part.text;
-                    }
-                  }
-                } catch {
-                  /* ignore partial json */
-                }
-              }
-            }
-          }
-        }
-        if (fullText) return fullText;
-      } else if (!resp.ok) {
-        const errText = await resp.text().catch(() => '');
-        throw new Error(errText || `Gemini API error (${resp.status})`);
-      }
-    } catch (err) {
-      if (
-        err.message.includes('API key not valid') ||
-        err.message.includes('API_KEY_INVALID') ||
-        err.message.includes('Gemini API error')
-      ) {
-        throw err;
-      }
-    }
-
-    // Standard generateContent fallback
-    const resp = await fetch(generateUrl, {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify(payload),
-    });
-
-    if (!resp.ok) {
-      const errText = await resp.text().catch(() => '');
-      throw new Error(errText || `Gemini API error (${resp.status})`);
-    }
-
-    const data = await resp.json();
-    const parts = data.candidates?.[0]?.content?.parts || [];
-    const text = parts.map((p) => p.text || '').join('');
-    if (text) return text;
-    return JSON.stringify(data);
+    const msg = data.choices?.[0]?.message;
+    return msg?.content || msg?.reasoning_content || msg?.reasoning || data.content?.[0]?.text || JSON.stringify(data);
   }
 
   /* ---------- file saving ---------- */
@@ -1431,8 +902,15 @@ const AIChat = (() => {
     loadState();
     syncProviders();
     renderProviderSelect();
-    renderConfigList();
     if (el.maxTokensSelect) el.maxTokensSelect.value = String(state.maxTokens || 16384);
+    if (el.agentModeToggle) el.agentModeToggle.checked = !!state.agentMode;
+    if (el.agentForceBtn) {
+      el.agentForceBtn.setAttribute('aria-pressed', state.agentMode ? 'true' : 'false');
+      if (state.agentMode) el.agentForceBtn.textContent = '⚡ Modo agente COMPLETO activo (leer + escribir + comandos + web)';
+    }
+    if (el.agentProjectDir) el.agentProjectDir.value = state.agentProjectDir || '';
+    if (el.agentServerUrl) el.agentServerUrl.value = state.agentServerUrl;
+    if (el.agentServerToken) el.agentServerToken.value = state.agentServerToken;
     bindEvents();
     loadConversations(() => {
       renderMessages();
@@ -1442,11 +920,11 @@ const AIChat = (() => {
     if (!state.providers.length || state.autoDetectedLocal.length === 0) {
       detectLocal().catch((err) => console.error('[AIChat] detectLocal failed:', err));
     }
+    renderAgentCapabilityUI();
+    detectAgentServer();
     initialized = true;
     initMermaid();
-    // SEGURIDAD: descifrar API keys del storage (hydratación asíncrona)
-    hydrateProviderKeys();
-    console.log('[AIChat] Initialized — providers:', state.providers.length, 'active:', state.activeProvider);
+    console.log('[AIChat] Initialized — providers:', state.providers.length, 'active:', state.activeProvider, 'agent:', state.agentMode);
   }
 
   let mermaidReady = false;
@@ -1471,19 +949,23 @@ const AIChat = (() => {
     el.chatInput = document.getElementById('chatInput');
     el.chatSend = document.getElementById('chatSend');
     el.chatStatus = document.getElementById('chatStatus');
-    el.configPanel = document.getElementById('aiConfigPanel');
-    el.configList = document.getElementById('aiConfigList');
-    el.configAdd = document.getElementById('aiConfigAdd');
     el.saveDirBtn = document.getElementById('aiSaveDirBtn');
     el.saveDirLabel = document.getElementById('aiSaveDirLabel');
     el.newConvBtn = document.getElementById('aiNewConv');
     el.convList = document.getElementById('aiConvList');
     el.saveFilesBtn = document.getElementById('aiSaveFiles');
     el.convDelAll = document.getElementById('aiConvDelAll');
-    el.apiKeyInput = document.getElementById('aiApiKey');
-    el.detectModelsBtn = document.getElementById('aiDetectModels');
-    el.rescanLocalBtn = document.getElementById('aiRescanLocal');
     el.maxTokensSelect = document.getElementById('aiMaxTokens');
+    el.rescanLocalBtn = document.getElementById('aiRescanLocal');
+    el.localApiKeyInput = document.getElementById('aiLocalApiKey');
+    el.agentForceBtn = document.getElementById('aiAgentForce');
+    el.agentCapsStatus = document.getElementById('aiAgentCapsStatus');
+    el.agentProjectDir = document.getElementById('aiAgentProjectDir');
+    el.agentModeToggle = document.getElementById('aiAgentMode');
+    el.agentServerUrl = document.getElementById('aiAgentServerUrl');
+    el.agentServerToken = document.getElementById('aiAgentServerToken');
+    el.agentServerStatus = document.getElementById('aiAgentServerStatus');
+    el.agentServerDetectBtn = document.getElementById('aiAgentServerDetect');
   }
 
   function bindEvents() {
@@ -1501,13 +983,61 @@ const AIChat = (() => {
         }
       });
     }
-    if (el.configAdd) el.configAdd.addEventListener('click', () => addCustomProvider());
     if (el.saveDirBtn) el.saveDirBtn.addEventListener('click', () => selectSaveDir());
     if (el.newConvBtn) el.newConvBtn.addEventListener('click', () => newConversation());
     if (el.saveFilesBtn) el.saveFilesBtn.addEventListener('click', () => saveCurrentFiles());
     if (el.convDelAll) el.convDelAll.addEventListener('click', () => deleteAllConversations());
 
-    // Delegate code block actions (Run, Copy, Save) — event listeners survive innerHTML
+    if (el.agentModeToggle) {
+      el.agentModeToggle.addEventListener('change', () => {
+        if (el.agentModeToggle.checked) enableAgentFullMode();
+        else disableAgentFullMode();
+      });
+    }
+    if (el.agentForceBtn) el.agentForceBtn.addEventListener('click', () => toggleAgentFullMode());
+    if (el.agentProjectDir) {
+      el.agentProjectDir.addEventListener('change', () => {
+        state.agentProjectDir = sanitizeProjectDir(el.agentProjectDir.value);
+        el.agentProjectDir.value = state.agentProjectDir;
+        saveState();
+        renderAgentCapabilityUI();
+      });
+    }
+    if (el.agentServerUrl) {
+      el.agentServerUrl.addEventListener('change', () => {
+        state.agentServerUrl = el.agentServerUrl.value.trim().replace(/\/+$/, '');
+        el.agentServerUrl.value = state.agentServerUrl;
+        saveState();
+        detectAgentServer();
+      });
+    }
+    if (el.agentServerToken) {
+      el.agentServerToken.addEventListener('change', () => {
+        state.agentServerToken = el.agentServerToken.value.trim();
+        saveState();
+        detectAgentServer();
+      });
+    }
+    if (el.agentServerDetectBtn) el.agentServerDetectBtn.addEventListener('click', () => detectAgentServer());
+    if (el.rescanLocalBtn)
+      el.rescanLocalBtn.addEventListener('click', () => {
+        if (state.detecting) return;
+        detectLocal().catch((err) => console.error('[AIChat] rescan failed:', err));
+      });
+    if (el.localApiKeyInput) {
+      el.localApiKeyInput.addEventListener('change', () => {
+        const provider = state.providers.find((p) => p.id === state.activeProvider);
+        if (!provider) {
+          showToast('Seleccione primero un servidor local');
+          return;
+        }
+        state.localApiKeys[provider.name] = el.localApiKeyInput.value.trim();
+        saveState();
+        showToast('Llave guardada para ' + provider.name + ' — re-escaneando...');
+        detectLocal().catch(() => {});
+      });
+    }
+
     if (el.chatMessages) {
       el.chatMessages.addEventListener('click', (e) => {
         const runBtn = e.target.closest('.code-run-btn');
@@ -1547,49 +1077,7 @@ const AIChat = (() => {
         }
       });
     }
-    if (el.apiKeyInput) {
-      el.apiKeyInput.addEventListener('input', () => {
-        const provider = state.providers.find((p) => p.id === state.activeProvider);
-        if (provider && provider.type === 'cloud') {
-          provider.apiKey = el.apiKeyInput.value;
-          saveState();
-        }
-      });
-    }
-    if (el.detectModelsBtn) {
-      el.detectModelsBtn.addEventListener('click', () => {
-        console.log('[AIChat] detectModels clicked');
-        detectModels().catch((err) => console.error('[AIChat] detectModels error:', err));
-      });
-    } else {
-      console.warn('[AIChat] detectModelsBtn not found in DOM');
-    }
-    if (el.rescanLocalBtn) {
-      el.rescanLocalBtn.addEventListener('click', () => {
-        console.log('[AIChat] rescanLocal clicked');
-        detectLocal().catch((err) => console.error('[AIChat] detectLocal error:', err));
-      });
-    } else {
-      console.warn('[AIChat] rescanLocalBtn not found in DOM');
-    }
-    if (el.maxTokensSelect) {
-      el.maxTokensSelect.addEventListener('change', () => {
-        state.maxTokens = parseInt(el.maxTokensSelect.value, 10);
-        saveState();
-        showToast('Max tokens: ' + state.maxTokens.toLocaleString());
-      });
-    }
-    if (el.configPanel) {
-      el.configPanel.addEventListener('click', (e) => {
-        if (e.target.closest('.ai-cfg-remove')) {
-          const id = e.target.closest('.ai-cfg-remove').dataset.id;
-          removeProvider(id);
-        }
-      });
-    }
-    console.log('[AIChat] Events bound — providerSelect:', !!el.providerSelect, 'detectModelsBtn:', !!el.detectModelsBtn);
 
-    // Resize handle for chat drawer
     const resizeHandle = document.getElementById('chatResizeHandle');
     if (resizeHandle && el.chatDrawer) {
       let resizeStartX = 0;
@@ -1619,7 +1107,6 @@ const AIChat = (() => {
         resizeHandle.classList.remove('active');
         document.body.style.userSelect = '';
         document.body.style.cursor = '';
-        // Persist width preference
         try {
           localStorage.setItem('aichat_width', el.chatDrawer.style.width);
         } catch {
@@ -1627,7 +1114,6 @@ const AIChat = (() => {
         }
       });
 
-      // Restore saved width
       try {
         const savedWidth = localStorage.getItem('aichat_width');
         if (savedWidth) el.chatDrawer.style.width = savedWidth;
@@ -1636,7 +1122,6 @@ const AIChat = (() => {
       }
     }
 
-    // Sandbox events
     const sandboxClose = document.getElementById('sandboxCloseBtn');
     const sandboxFullscreen = document.getElementById('sandboxFullscreenBtn');
     const sandboxDownload = document.getElementById('sandboxDownloadBtn');
@@ -1704,19 +1189,7 @@ const AIChat = (() => {
       renderModelSelect(provider);
       state.activeModel = provider.defaultModel || provider.models[0] || '';
       el.modelSelect.value = state.activeModel;
-      if (provider.type === 'cloud') {
-        el.apiKeyInput.value = provider.apiKey || '';
-        el.apiKeyInput.parentElement.style.display = '';
-        if (provider.id === 'gemini') {
-          el.apiKeyInput.placeholder = 'API Key (Google AI Studio / opcional para flash-lite)...';
-        } else if (provider.tier === 'free') {
-          el.apiKeyInput.placeholder = 'API Key (gratuita / según proveedor)...';
-        } else {
-          el.apiKeyInput.placeholder = 'API Key...';
-        }
-      } else {
-        el.apiKeyInput.parentElement.style.display = 'none';
-      }
+      if (el.localApiKeyInput) el.localApiKeyInput.value = (state.localApiKeys || {})[provider.name] || '';
     }
     saveState();
     updateStatus();
@@ -1727,20 +1200,15 @@ const AIChat = (() => {
     saveState();
   }
 
-  function getTierBadgeText(tier) {
-    if (tier === 'free') return ' [GRATIS]';
-    if (tier === 'both') return ' [FREE TIER]';
-    return '';
-  }
-
   function renderProviderSelect() {
-    el.providerSelect.innerHTML = '<option value="">-- Seleccionar IA --</option>';
+    el.providerSelect.innerHTML = '<option value="">-- Servidor local --</option>';
     state.providers.forEach((p) => {
       const opt = document.createElement('option');
       opt.value = p.id;
-      const icon = p.isLocal ? '🖥️' : '☁️';
-      const badge = getTierBadgeText(p.tier);
-      opt.textContent = icon + ' ' + p.name + badge;
+      const bits = [p.name];
+      if (p.latencyMs != null) bits.push(p.latencyMs + ' ms');
+      if (p.authRequired) bits.push('🔒 requiere llave');
+      opt.textContent = bits.join(' · ');
       el.providerSelect.appendChild(opt);
     });
     if (state.activeProvider) {
@@ -1755,16 +1223,15 @@ const AIChat = (() => {
     provider.models.forEach((m) => {
       const opt = document.createElement('option');
       opt.value = m;
-      let label = m;
-      if (m.includes(':free') || m === 'gemini-2.0-flash-lite') {
-        label += ' [GRATIS]';
-      } else if (m.startsWith('gemini-2.0-flash') || m.startsWith('gemini-2.5-flash')) {
-        label += ' [FREE TIER]';
-      }
-      opt.textContent = label;
+      const label = modelOptionLabel(provider, m);
+      if (label !== m) opt.textContent = label;
+      else if (/[/\\]/.test(m)) opt.textContent = cleanModelId(m) + '  (' + m + ')';
+      else opt.textContent = m;
       el.modelSelect.appendChild(opt);
     });
-    if (state.activeModel && provider.models.includes(state.activeModel)) {
+    /* conserva la elección del usuario si sigue disponible (evita que el
+       re-render en segundo plano de capacidades pise la selección) */
+    if (state.activeModel && provider.models.indexOf(state.activeModel) !== -1) {
       el.modelSelect.value = state.activeModel;
     } else {
       el.modelSelect.value = provider.defaultModel || provider.models[0] || '';
@@ -2069,108 +1536,6 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
     saveGeneratedFiles(files);
   }
 
-  function addCustomProvider() {
-    const name = prompt('Nombre del proveedor:');
-    if (!name) return;
-    const endpoint = prompt('URL del endpoint (ej: https://api.ejemplo.com/v1/chat/completions):');
-    if (!endpoint) return;
-    const apiKey = prompt('API Key (opcional):') || '';
-    const models = prompt('Modelos (separados por coma):', 'default') || 'default';
-    const id = 'custom_' + name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
-    const provider = {
-      id,
-      name,
-      endpoint,
-      type: 'custom',
-      tier: 'paid',
-      apiKey,
-      models: models.split(',').map((s) => s.trim()),
-      defaultModel: models.split(',')[0].trim(),
-    };
-    state.providers.push(provider);
-    state.activeProvider = id;
-    state.activeModel = provider.defaultModel;
-    saveState();
-    renderProviderSelect();
-    el.providerSelect.value = id;
-    renderModelSelect(provider);
-    updateStatus();
-    renderConfigList();
-  }
-
-  function removeProvider(id) {
-    state.providers = state.providers.filter((p) => p.id !== id);
-    if (state.activeProvider === id) {
-      state.activeProvider = state.providers[0]?.id || null;
-      state.activeModel = '';
-    }
-    saveState();
-    renderProviderSelect();
-    if (state.activeProvider) el.providerSelect.value = state.activeProvider;
-    updateStatus();
-    renderConfigList();
-  }
-
-  function renderConfigList() {
-    if (!el.configList) return;
-    el.configList.innerHTML = '';
-    const presetIds = DEFAULT_PROVIDERS.map((p) => p.id);
-    const cloudPresets = state.providers.filter((p) => p.type === 'cloud' && presetIds.includes(p.id));
-    const custom = state.providers.filter((p) => p.type === 'custom');
-    const otherCloud = state.providers.filter((p) => p.type === 'cloud' && !presetIds.includes(p.id));
-    const all = [...cloudPresets, ...otherCloud, ...custom];
-    if (!all.length) {
-      el.configList.innerHTML = '<div class="ai-cfg-empty">Agregue proveedores personalizados con el botón +</div>';
-      return;
-    }
-    all.forEach((p) => {
-      const div = document.createElement('div');
-      div.className = 'ai-cfg-item';
-      const tierBadge = p.tier
-        ? '<span class="ai-cfg-tier tier-' + escapeHtml(p.tier) + '">' + escapeHtml(p.tier.toUpperCase()) + '</span>'
-        : '';
-      const noteHtml = p.note ? '<div class="ai-cfg-note">' + escapeHtml(p.note) + '</div>' : '';
-      div.innerHTML =
-        '<div class="ai-cfg-info">' +
-        '<div class="ai-cfg-header">' +
-        '<span class="ai-cfg-name">' +
-        escapeHtml(p.name) +
-        '</span>' +
-        tierBadge +
-        '</div>' +
-        '<span class="ai-cfg-endpoint">' +
-        escapeHtml(p.endpoint.substring(0, 45)) +
-        (p.endpoint.length > 45 ? '...' : '') +
-        '</span>' +
-        noteHtml +
-        '</div>' +
-        '<div class="ai-cfg-key-row">' +
-        '<input type="password" class="ai-cfg-key" data-id="' +
-        p.id +
-        '" placeholder="API Key' +
-        (p.tier === 'free' || p.id === 'gemini' ? ' (opcional/gratis)...' : '...') +
-        '" value="' +
-        escapeHtml(p.apiKey || '') +
-        '" autocomplete="off">' +
-        '<button class="ai-cfg-remove" data-id="' +
-        p.id +
-        '" title="Eliminar proveedor">✕</button>' +
-        '</div>';
-      el.configList.appendChild(div);
-    });
-
-    el.configList.querySelectorAll('.ai-cfg-key').forEach((input) => {
-      input.addEventListener('input', () => {
-        const id = input.dataset.id;
-        const provider = state.providers.find((p) => p.id === id);
-        if (provider) {
-          provider.apiKey = input.value;
-          saveState();
-        }
-      });
-    });
-  }
-
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
   }
@@ -2184,6 +1549,851 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
     t._timer = setTimeout(() => {
       t.className = 'toast';
     }, 3000);
+  }
+
+  /* ============================================================
+     MODO AGENTE — motor con herramientas (Ollama nativo + emulado)
+     ============================================================ */
+
+  function getAgentLib() {
+    if (typeof window !== 'undefined' && window.AgentTools) return window.AgentTools;
+    if (typeof globalThis !== 'undefined' && globalThis.AgentTools) return globalThis.AgentTools;
+    return null;
+  }
+
+  function isToolsUnsupportedError(err) {
+    const s = String((err && err.message) || err || '');
+    return /does not support tools|not support.*tools|tools.*not supported|unsupported.*tool/i.test(s);
+  }
+
+  function getToolFamily(provider) {
+    if (!provider) return 'openai';
+    const ep = String(provider.endpoint || '');
+    if (provider.isLocal && provider.localType === 'ollama') return 'ollama';
+    if (ep.includes(':11434') || ep.includes('/api/chat')) return 'ollama';
+    if (provider.isLocal && provider.localType === 'kobold') return 'kobold';
+    if (provider.id === 'anthropic' || ep.includes('api.anthropic.com')) return 'anthropic';
+    if (provider.id === 'gemini' || ep.includes('generativelanguage')) return 'gemini';
+    return 'openai';
+  }
+
+  function supportsTools(provider) {
+    if (!provider) return false;
+    if (provider.isLocal) return true;
+    return ['ollama', 'openai', 'anthropic', 'gemini'].indexOf(getToolFamily(provider)) !== -1;
+  }
+
+  const TOOL_MODEL_PATTERNS = [
+    /qwen/i,
+    /mistral/i,
+    /llama3\.[12]/i,
+    /command-?r/i,
+    /deepseek/i,
+    /firefunction/i,
+    /functionary/i,
+    /hermes/i,
+    /nemotron/i,
+    /granite/i,
+  ];
+
+  function preferAgentModel(provider) {
+    if (!provider || !Array.isArray(provider.models) || !provider.models.length) return '';
+    /* 1º: capacidad tools confirmada por /api/show (caché) */
+    const capHit = provider.models.find((m) => state.ollamaToolsCache[m] === true);
+    if (capHit) return capHit;
+    /* 2º: patrones conocidos de tool-calling */
+    for (const re of TOOL_MODEL_PATTERNS) {
+      const hit = provider.models.find((m) => re.test(String(m)));
+      if (hit) return hit;
+    }
+    return provider.defaultModel || '';
+  }
+
+  function capForModel(value, limit) {
+    const max = typeof limit === 'number' && limit > 0 ? limit : 1200;
+    let s;
+    try {
+      s = typeof value === 'string' ? value : JSON.stringify(value);
+    } catch {
+      s = String(value);
+    }
+    if (s == null) s = '';
+    if (s.length <= max) return s;
+    return s.slice(0, max) + '…(recortado)';
+  }
+
+  function parseLooseJson(raw) {
+    const s = String(raw == null ? '' : raw).trim();
+    if (!s) return { ok: false };
+    try {
+      return { ok: true, value: JSON.parse(s) };
+    } catch {
+      /* reintento con recorte */
+    }
+    const start = s.indexOf('{');
+    const end = s.lastIndexOf('}');
+    if (start !== -1 && end > start) {
+      try {
+        return { ok: true, value: JSON.parse(s.slice(start, end + 1)) };
+      } catch {
+        return { ok: false };
+      }
+    }
+    return { ok: false };
+  }
+
+  function normalizeToolArgAliases(args) {
+    if (!args || typeof args !== 'object' || Array.isArray(args)) return args;
+    if (args.path === undefined && args.file !== undefined) {
+      args.path = args.file;
+      delete args.file;
+    } else if (args.path === undefined && args.filename !== undefined) {
+      args.path = args.filename;
+      delete args.filename;
+    } else if (args.path === undefined && args.filepath !== undefined) {
+      args.path = args.filepath;
+      delete args.filepath;
+    }
+    return args;
+  }
+
+  function parseToolArgsObj(raw) {
+    if (raw == null) return {};
+    if (typeof raw === 'object') return normalizeToolArgAliases(raw);
+    const parsed = parseLooseJson(raw);
+    return parsed.ok && parsed.value && typeof parsed.value === 'object' ? normalizeToolArgAliases(parsed.value) : {};
+  }
+
+  function extractToolObjects(obj) {
+    if (!obj || typeof obj !== 'object') return [];
+    if (Array.isArray(obj.tool_calls)) {
+      return obj.tool_calls.map((tc) => normalizeToolCall(tc)).filter(Boolean);
+    }
+    const direct = normalizeToolCall(obj);
+    return direct ? [direct] : [];
+  }
+
+  function normalizeToolCall(tc) {
+    if (!tc || typeof tc !== 'object') return null;
+    const name = (tc.function && tc.function.name) || tc.name || tc.tool || tc.function_name;
+    if (!name || typeof name !== 'string') return null;
+    const rawArgs =
+      tc.function && tc.function.arguments !== undefined
+        ? tc.function.arguments
+        : tc.arguments !== undefined
+          ? tc.arguments
+          : tc.args !== undefined
+            ? tc.args
+            : tc.parameters;
+    if (rawArgs === undefined) return null;
+    return { name, args: parseToolArgsObj(rawArgs) };
+  }
+
+  function parseEmulatedToolCalls(text) {
+    const calls = [];
+    let malformed = 0;
+    let out = String(text || '');
+
+    out = out.replace(/```(?:tool|tool_calls|function)[ \t]*\r?\n?([\s\S]*?)```/gi, (m, body) => {
+      const parsed = parseLooseJson(body);
+      if (!parsed.ok) {
+        malformed++;
+        return '';
+      }
+      const found = extractToolObjects(parsed.value);
+      if (!found.length) {
+        malformed++;
+        return '';
+      }
+      calls.push(...found);
+      return '';
+    });
+
+    out = out.replace(/\[TOOL_CALLS\][ \t]*(\{[\s\S]*)/gi, (m, body) => {
+      const parsed = parseLooseJson(body);
+      if (!parsed.ok) {
+        malformed++;
+        return '';
+      }
+      calls.push(...extractToolObjects(parsed.value));
+      return '';
+    });
+
+    out = out.replace(/<tool_call>[ \t]*\r?\n?([\s\S]*?)<\/tool_call>/gi, (m, body) => {
+      const parsed = parseLooseJson(body);
+      if (!parsed.ok) {
+        malformed++;
+        return '';
+      }
+      calls.push(...extractToolObjects(parsed.value));
+      return '';
+    });
+
+    out = out.replace(/```json[ \t]*\r?\n?([\s\S]*?)```/gi, (m, body) => {
+      const parsed = parseLooseJson(body);
+      if (!parsed.ok) return m;
+      const found = extractToolObjects(parsed.value);
+      if (found.length) {
+        calls.push(...found);
+        return '';
+      }
+      return m;
+    });
+
+    out = out.replace(/`(\{[^`\n]{10,2000}\})`/g, (m, body) => {
+      const parsed = parseLooseJson(body);
+      if (!parsed.ok) return m;
+      const found = extractToolObjects(parsed.value);
+      if (found.length) {
+        calls.push(...found);
+        return '';
+      }
+      return m;
+    });
+
+    return { calls, text: out.trim(), malformed };
+  }
+
+  function salvageCodeBlocks(text) {
+    const src = String(text || '');
+    const blocks = [];
+    const re = /```([a-zA-Z0-9+#]*)[ \t]*\r?\n([\s\S]*?)```/g;
+    let m;
+    while ((m = re.exec(src))) {
+      const lang = (m[1] || '').toLowerCase();
+      const content = m[2] || '';
+      if (['', 'json', 'tool', 'text', 'txt', 'md', 'bash', 'sh', 'yaml', 'yml'].indexOf(lang) !== -1) continue;
+      if (content.trim().length < 40) continue;
+      blocks.push({ lang, content, index: m.index });
+    }
+    const extMap = {
+      html: ['html', 'htm'],
+      css: ['css'],
+      js: ['js', 'mjs'],
+      javascript: ['js', 'mjs'],
+      python: ['py'],
+      py: ['py'],
+      ts: ['ts'],
+      typescript: ['ts'],
+    };
+    const defaultName = {
+      html: 'index.html',
+      css: 'styles.css',
+      js: 'app.js',
+      javascript: 'app.js',
+      python: 'main.py',
+      py: 'main.py',
+      ts: 'app.ts',
+      typescript: 'app.ts',
+    };
+    const byPath = new Map();
+    for (const b of blocks) {
+      const exts = extMap[b.lang];
+      if (!exts) continue;
+      const before = src.slice(0, b.index);
+      const mentionRe = new RegExp('[\\w.-]+\\.(?:' + exts.join('|') + ')\\b', 'i');
+      const mention = before.match(mentionRe);
+      const path = mention ? mention[0] : defaultName[b.lang] || 'archivo.' + exts[0];
+      byPath.set(path, b.content);
+    }
+    const calls = [];
+    byPath.forEach((content, path) => {
+      calls.push({ name: 'write_file', args: { path, content } });
+    });
+    return calls;
+  }
+
+  async function agentEngine(cfg, conv, opts) {
+    const options = opts || {};
+    const maxIterations = options.maxIterations || 8;
+    const onMode = typeof options.onMode === 'function' ? options.onMode : null;
+    const shouldStop = typeof options.shouldStop === 'function' ? options.shouldStop : null;
+    const runner = cfg.runner;
+    const family = cfg.family || 'openai';
+    const toolNames = cfg.toolNames || [];
+
+    let mode = null;
+    let iterations = 0;
+    let repeated = false;
+    let stopped = false;
+    let finalText = '';
+    let emptyPushes = 0;
+    let emuNudges = 0;
+    let malformedStreak = 0;
+    let lastSig = '';
+    let sigStreak = 0;
+    let invalidStreak = 0;
+    let lastInvalidTool = '';
+    let history = null;
+
+    const REQUIRED_ARGS = {
+      write_file: ['path', 'content'],
+      read_file: ['path'],
+      append_file: ['path', 'content'],
+      edit_file: ['path', 'find', 'replace'],
+      insert_line: ['path', 'line', 'content'],
+      list_files: [],
+      search_files: ['pattern'],
+      move_file: ['from', 'to'],
+      delete_file: ['path'],
+      delete_dir: ['path'],
+      run_command: ['command'],
+      web_fetch: ['url'],
+    };
+    const PATH_TOOLS = new Set([
+      'write_file',
+      'read_file',
+      'append_file',
+      'edit_file',
+      'insert_line',
+      'move_file',
+      'delete_file',
+      'delete_dir',
+      'list_files',
+      'create_directory',
+    ]);
+
+    function validateCall(name, args) {
+      if (!args || typeof args !== 'object') return 'args vacíos o nulos';
+      const req = REQUIRED_ARGS[name] || [];
+      for (const k of req) {
+        if (args[k] == null || String(args[k]).trim() === '') return 'argumento requerido vacío: ' + k;
+      }
+      const p = args.path || args.from || args.to || '';
+      const sp = String(p).trim();
+      if (PATH_TOOLS.has(name) && (!sp || sp === '.' || sp === '..')) return 'ruta inválida: ' + sp;
+      if (name === 'run_command' && !String(args.command || '').trim()) return 'comando vacío';
+      if (name === 'web_fetch' && !/^https?:\/\//i.test(String(args.url || ''))) return 'url inválida (http/https)';
+      return null;
+    }
+
+    const executeCalls = async (calls) => {
+      const results = [];
+      for (const call of calls) {
+        if (shouldStop && shouldStop()) {
+          stopped = true;
+          break;
+        }
+        const validationError = validateCall(call.name, call.args);
+        if (validationError) {
+          invalidStreak = lastInvalidTool === call.name ? invalidStreak + 1 : 1;
+          lastInvalidTool = call.name;
+          results.push({ name: call.name, content: 'OBSERVACIÓN ' + call.name + ' → validación: ' + validationError + '. Reintenta con los argumentos correctos.' });
+          if (invalidStreak >= 3) {
+            finalText = 'Bucle de llamadas inválidas en "' + lastInvalidTool + '": demasiados intentos con argumentos incorrectos. Se detuvo la generación.';
+            break;
+          }
+          continue;
+        }
+        lastInvalidTool = '';
+        invalidStreak = 0;
+        if (typeof options.onTool === 'function') options.onTool(call.name, call.args, null);
+        let obs;
+        try {
+          const r = await runner.run(call.name, call.args == null ? {} : call.args);
+          obs = 'OBSERVACIÓN ' + call.name + ' → ' + capForModel(r, 1200);
+        } catch (err) {
+          if (typeof options.onTool === 'function') options.onTool(call.name, call.args, err);
+          obs = 'OBSERVACIÓN ' + call.name + ' → ERROR: ' + ((err && err.message) || String(err));
+        }
+        results.push({ name: call.name, content: obs });
+      }
+      return results;
+    };
+
+    const trackRepeats = (calls) => {
+      const sig = JSON.stringify(calls.map((c) => [c.name, c.args]));
+      if (sig === lastSig) sigStreak++;
+      else {
+        lastSig = sig;
+        sigStreak = 1;
+      }
+      return sigStreak >= 3;
+    };
+
+    const startNativeAllowed = async () => {
+      if (family === 'ollama' && typeof cfg.ollamaSupportsTools === 'function') {
+        const st = await cfg.ollamaSupportsTools();
+        if (st === false) return false;
+      }
+      return true;
+    };
+
+    const switchToEmulated = () => {
+      mode = 'emulated';
+      if (onMode) onMode(mode);
+      history = cfg.initHistory(conv, mode);
+    };
+
+    mode = (await startNativeAllowed()) ? 'native' : 'emulated';
+    if (onMode) onMode(mode);
+    history = cfg.initHistory(conv, mode);
+
+    while (iterations < maxIterations) {
+      if (shouldStop && shouldStop()) {
+        stopped = true;
+        break;
+      }
+      iterations++;
+
+      if (mode === 'native') {
+        let step;
+        try {
+          step = await cfg.nativeStep(history);
+        } catch (err) {
+          if (isToolsUnsupportedError(err)) {
+            switchToEmulated();
+            continue;
+          }
+          throw err;
+        }
+
+        const rawCalls = step.rawCalls || [];
+        let calls = step.calls || [];
+
+        if (!calls.length && !rawCalls.length && emptyPushes === 0 && iterations === 1 && toolNames.length &&
+            /(¿|\?|lo siento|disculp|perd[oó]n|quieres que|puedo|deber[ií]a)/i.test(step.content || '')) {
+          emptyPushes++;
+          history.msgs.push({
+            role: 'user',
+            content: 'SÍ: hazlo ahora sin preguntar. Ejecuta ya las herramientas que necesites (write_file, run_command…). No pidas permiso.',
+          });
+          continue;
+        }
+
+        if (!calls.length && !rawCalls.length) {
+          const probe = parseEmulatedToolCalls(step.content || '');
+          if (probe.calls.length) {
+            switchToEmulated();
+            continue;
+          }
+          const rescued = toolNames.indexOf('write_file') !== -1 ? salvageCodeBlocks(step.content || '') : [];
+          if (rescued.length) {
+            const results = await executeCalls(rescued);
+            if (stopped) break;
+            history.msgs.push({ role: 'assistant', content: step.content || '' });
+            history.msgs.push({
+              role: 'user',
+              content: 'RESCATE AUTOMÁTICO: se guardaron los bloques de código mostrados con write_file (' + rescued.map((c) => c.args.path).join(', ') + '). Continúa o entrega el resumen final.',
+            });
+            if (trackRepeats(rescued)) {
+              repeated = true;
+              break;
+            }
+            continue;
+          }
+        }
+
+        if (!calls.length) {
+          if (step.content && String(step.content).trim()) {
+            finalText = step.content;
+            break;
+          }
+          if (emptyPushes < 2) {
+            emptyPushes++;
+            history.msgs.push({
+              role: 'user',
+              content: emptyPushes === 1 ? 'Continúa: ejecuta la siguiente herramienta o entrega el resultado final.' : 'Último aviso: si no hay más herramientas, escribe ahora el resumen final.',
+            });
+            continue;
+          }
+          finalText = '';
+          break;
+        }
+
+        const results = await executeCalls(calls);
+        if (stopped) break;
+        if (typeof cfg.pushNative === 'function') cfg.pushNative(history, step, results);
+        if (trackRepeats(calls)) {
+          repeated = true;
+          break;
+        }
+        continue;
+      }
+
+      /* ── mode === 'emulated' ── */
+      const text = await cfg.emulatedText(history, conv);
+      const parsedCalls = parseEmulatedToolCalls(text);
+
+      if (!parsedCalls.calls.length && parsedCalls.malformed) {
+        malformedStreak++;
+        if (malformedStreak >= 3) {
+          finalText = text;
+          break;
+        }
+        history.msgs.push({ role: 'assistant', content: text || '' });
+        history.msgs.push({
+          role: 'user',
+          content: 'JSON inválido en el bloque ```tool. Devuelve de nuevo el bloque con JSON VÁLIDO en una sola línea: {"name":"write_file","args":{"path":"...","content":"..."}}',
+        });
+        continue;
+      }
+      malformedStreak = 0;
+
+      if (!parsedCalls.calls.length) {
+        const rescued = toolNames.indexOf('write_file') !== -1 ? salvageCodeBlocks(text || '') : [];
+        if (rescued.length) {
+          const results = await executeCalls(rescued);
+          if (stopped) break;
+          history.msgs.push({ role: 'assistant', content: text || '' });
+          history.msgs.push({
+            role: 'user',
+            content: 'RESCATE AUTOMÁTICO: se guardaron los bloques de código mostrados con write_file (' + rescued.map((c) => c.args.path).join(', ') + '). Continúa o entrega el resumen final.',
+          });
+          if (trackRepeats(rescued)) {
+            repeated = true;
+            break;
+          }
+          continue;
+        }
+        const mentionsTools = toolNames.some((n) => (text || '').indexOf(n) !== -1) || /```/.test(text || '');
+        if (mentionsTools && emuNudges < 2) {
+          emuNudges++;
+          history.msgs.push({ role: 'assistant', content: text || '' });
+          history.msgs.push({
+            role: 'user',
+            content: 'AÚN NO EJECUTADO: no describas ni repitas la acción, EJECÚTALA ahora mismo con un bloque ```tool con JSON válido de una línea (usa "path" para el archivo). Si ya terminaste, responde solo el resumen sin mencionar herramientas.',
+          });
+          continue;
+        }
+        finalText = text || '';
+        break;
+      }
+
+      const results = await executeCalls(parsedCalls.calls);
+      if (stopped) break;
+      history.msgs.push({ role: 'assistant', content: parsedCalls.text || '' });
+      history.msgs.push({ role: 'user', content: results.map((r) => r.content).join('\n') });
+      if (trackRepeats(parsedCalls.calls)) {
+        repeated = true;
+        break;
+      }
+    }
+
+    return { finalText, mode, iterations, repeated, stopped };
+  }
+
+  /* ---------- transporte real del agente ---------- */
+
+  function sanitizeProjectDir(value) {
+    let s = String(value == null ? '' : value).trim().replace(/\\/g, '/');
+    s = s.replace(/^\.\/+/, '').replace(/^\/+/, '').replace(/\/+$/, '');
+    if (!s || s === '.') return '';
+    if (/^[a-zA-Z]:/.test(s) || s.split('/').indexOf('..') !== -1) return '';
+    return s;
+  }
+
+  function buildAgentCaps() {
+    const serverOk = !!(state.agentServer && state.agentServer.ok);
+    return {
+      server: serverOk,
+      filesystem: true,
+      commands: serverOk,
+      web: serverOk,
+    };
+  }
+
+  async function probeOllamaTools(provider) {
+    const model = state.activeModel || provider.defaultModel || '';
+    if (!model) return null;
+    if (Object.prototype.hasOwnProperty.call(state.ollamaToolsCache, model)) return state.ollamaToolsCache[model];
+    let result = null;
+    try {
+      const base = new URL(provider.endpoint, typeof location !== 'undefined' ? location.href : 'http://localhost/');
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 5000);
+      const resp = await fetch(base.origin + '/api/show', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model }),
+        signal: ctrl.signal,
+      });
+      clearTimeout(t);
+      if (resp.ok) {
+        const data = await resp.json();
+        const caps = data && Array.isArray(data.capabilities) ? data.capabilities : [];
+        if (caps.length) result = caps.indexOf('tools') !== -1;
+      }
+    } catch {
+      result = null;
+    }
+    state.ollamaToolsCache[model] = result;
+    return result;
+  }
+
+  function agentFetch(provider, body) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (provider.apiKey) headers['Authorization'] = 'Bearer ' + provider.apiKey;
+    return fetch(provider.endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+      signal: abortController ? abortController.signal : undefined,
+    });
+  }
+
+  /* Sesión de transporte reutilizable por el chat y por los tests E2E:
+     sess = { provider, model, maxTokens, systemContent } */
+  async function agentCoreNativeStep(sess, history, tools, family) {
+    const provider = sess.provider;
+    const model = sess.model || provider.defaultModel;
+    const Lib = getAgentLib();
+    let resp;
+    if (family === 'ollama') {
+      resp = await agentFetch(provider, {
+        model,
+        messages: history.msgs,
+        tools,
+        stream: false,
+        keep_alive: '30m',
+        options: { num_predict: sess.maxTokens || 16384, temperature: 0.7 },
+      });
+    } else if (family === 'kobold') {
+      const prompt =
+        history.msgs.map((m) => (m.role === 'user' ? 'Usuario: ' : 'Agente: ') + m.content).join('\n\n') + '\nAgente:';
+      resp = await agentFetch(provider, { prompt, max_length: Math.min(sess.maxTokens || 4096, 4096) });
+    } else {
+      resp = await agentFetch(provider, {
+        model,
+        messages: history.msgs,
+        tools: tools.map((t) => ({ type: 'function', function: t.function })),
+        stream: false,
+        max_tokens: sess.maxTokens || 16384,
+        temperature: 0.7,
+      });
+    }
+    if (!resp.ok) throw new Error((await resp.text().catch(() => '')) || 'Error ' + resp.status);
+    const data = await resp.json();
+    const msg =
+      family === 'ollama' ? data.message || {} : (data.choices && data.choices[0] && data.choices[0].message) || {};
+    const rawCalls = msg.tool_calls || [];
+    const calls = rawCalls.map((tc, i) => ({
+      id: tc.id || 'call_' + i,
+      name: (tc.function && tc.function.name) || tc.name,
+      args: Lib.parseToolArguments(
+        tc.function && tc.function.arguments !== undefined ? tc.function.arguments : tc.arguments
+      ),
+    }));
+    return { content: msg.content || msg.reasoning_content || msg.reasoning || msg.thinking || '', rawCalls, calls };
+  }
+
+  async function agentCoreEmulatedStep(sess, history, toolNames, family) {
+    const provider = sess.provider;
+    const model = sess.model || provider.defaultModel;
+    let resp;
+    if (family === 'kobold') {
+      const prompt =
+        history.msgs.map((m) => (m.role === 'user' ? 'Usuario: ' : 'Agente: ') + m.content).join('\n\n') + '\nAgente:';
+      resp = await agentFetch(provider, { prompt, max_length: Math.min(sess.maxTokens || 4096, 4096) });
+      if (!resp.ok) throw new Error((await resp.text().catch(() => '')) || 'Error ' + resp.status);
+      const data = await resp.json();
+      return (data.results && data.results[0] && data.results[0].text) || '';
+    }
+    const body = { stream: false, temperature: 0.7 };
+    if (family === 'ollama') {
+      body.model = model;
+      body.messages = history.msgs;
+      body.keep_alive = '30m';
+      body.options = { num_predict: sess.maxTokens || 16384, temperature: 0.7 };
+    } else {
+      body.model = model;
+      body.messages = history.msgs;
+      body.max_tokens = sess.maxTokens || 16384;
+    }
+    resp = await agentFetch(provider, body);
+    if (!resp.ok) throw new Error((await resp.text().catch(() => '')) || 'Error ' + resp.status);
+    const data = await resp.json();
+    if (family === 'ollama') return (data.message && (data.message.content || data.message.thinking)) || '';
+    const em = data.choices && data.choices[0] && data.choices[0].message;
+    return (em && (em.content || em.reasoning_content || em.reasoning)) || '';
+  }
+
+  const EMULATED_PROTOCOL_NOTE =
+    '\n\nHerramientas disponibles: {TOOLS}\nCuando necesites actuar, responde SOLO con bloques ```tool cuyo contenido sea JSON de una línea: {"name":"<herramienta>","args":{...}}. El nombre del archivo SIEMPRE va en el argumento "path". Si ya no hay nada que ejecutar, responde en texto normal sin bloques.';
+
+  /* Fábrica pública de configuración del motor (usada por el chat y por los E2E) */
+  function createAgentConfig(ctx, runner) {
+    const provider = ctx.provider;
+    const family = getToolFamily(provider);
+    const tools = ctx.tools || [];
+    const toolNames = tools.map((t) => t.function.name);
+    const Lib = getAgentLib();
+    const sess = {
+      provider,
+      model: ctx.model || provider.defaultModel,
+      maxTokens: ctx.maxTokens,
+      systemContent: ctx.systemPrompt || (Lib ? Lib.SYSTEM_PROMPT : ''),
+    };
+
+    return {
+      family,
+      runner,
+      toolNames,
+      ollamaSupportsTools:
+        family === 'ollama'
+          ? async () => null
+          : async () => true,
+      initHistory: (conv, mode) => {
+        const historyMsgs = Array.isArray(conv) ? conv : conv && Array.isArray(conv.messages) ? conv.messages : [];
+        return {
+          mode,
+          msgs: [{ role: 'system', content: sess.systemContent + (mode === 'emulated' ? EMULATED_PROTOCOL_NOTE.replace('{TOOLS}', toolNames.join(', ')) : '') }].concat(
+            historyMsgs
+              .filter((msg) => msg.role !== 'assistant' || !String(msg.content || '').startsWith('ERROR:'))
+              .map((msg) => ({ role: msg.role, content: String(msg.content || '') }))
+          ),
+        };
+      },
+      nativeStep: (history) => agentCoreNativeStep(sess, history, tools, family),
+      pushNative: (history, step, results) => {
+        const asst = { role: 'assistant', content: step.content || '' };
+        if (step.rawCalls && step.rawCalls.length) asst.tool_calls = step.rawCalls;
+        history.msgs.push(asst);
+        (results || []).forEach((r) => history.msgs.push({ role: 'tool', content: r.content }));
+      },
+      emulatedText: (history) => agentCoreEmulatedStep(sess, history, toolNames, family),
+    };
+  }
+
+  async function runAgentTurn(provider, conv, msgEl) {
+    const Lib = getAgentLib();
+    if (!Lib) throw new Error('Catálogo de herramientas (js/agent-tools.js) no disponible');
+    const serverOk = !!(state.agentServer && state.agentServer.ok);
+    const runnerOpts = serverOk
+      ? { server: { baseUrl: state.agentServerUrl, token: state.agentServerToken }, prefix: state.agentProjectDir }
+      : { prefix: state.agentProjectDir };
+    const runner = Lib.createToolRunner(runnerOpts);
+    const tools = Lib.filterToolsByCapabilities(buildAgentCaps());
+    const toolNames = tools.map((t) => t.function.name);
+    const family = getToolFamily(provider);
+
+    appendSystemMsg(
+      '🤖 Modo agente — ' +
+        toolNames.length +
+        ' herramientas · ' +
+        (serverOk ? 'workspace del servidor agente' : 'memoria virtual (ZIP al terminar)') +
+        (state.agentProjectDir ? ' · 📂 ' + state.agentProjectDir : '')
+    );
+
+    abortController = new AbortController();
+
+    const cfg = createAgentConfig(
+      {
+        provider,
+        model: state.activeModel || provider.defaultModel,
+        maxTokens: state.maxTokens,
+        tools,
+      },
+      runner
+    );
+    if (family === 'ollama') cfg.ollamaSupportsTools = () => probeOllamaTools(provider);
+
+    const res = await agentEngine(cfg, conv, {
+      shouldStop: () => agentAbortRequested,
+      maxIterations: 14,
+      onMode: (m) => appendSystemMsg(m === 'native' ? '🧠 Tool-calling nativo' : '🧩 Tool-calling emulado (JSON)'),
+    });
+
+    if (runner.isVirtual) {
+      const files = runner.getVirtualFiles() || [];
+      if (files.length) {
+        await saveGeneratedFiles(files.map((f) => ({ name: f.name, content: f.content })));
+        appendSystemMsg('💾 ' + files.length + ' archivo(s) generados en memoria virtual y guardados');
+      }
+    }
+    return res.finalText || (res.stopped ? '⏹ Agente detenido.' : '');
+  }
+
+  async function detectAgentServer() {
+    if (el.agentServerStatus) {
+      el.agentServerStatus.className = 'ai-cfg-status off';
+      el.agentServerStatus.textContent = '⚪ Comprobando conexión…';
+    }
+    const base = String(state.agentServerUrl || '').trim().replace(/\/+$/, '');
+    let ok = false;
+    let info = null;
+    if (base) {
+      try {
+        const headers = { Accept: 'application/json' };
+        if (state.agentServerToken) headers['X-Agent-Token'] = state.agentServerToken;
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 4000);
+        const resp = await fetch(base + '/health', { headers, signal: ctrl.signal });
+        clearTimeout(t);
+        if (resp.ok) {
+          info = await resp.json();
+          ok = !!(info && (info.ok === undefined || info.ok));
+        }
+      } catch {
+        ok = false;
+      }
+    }
+    state.agentServer = { ok, info };
+    renderAgentCapabilityUI();
+    if (el.agentServerStatus) {
+      if (ok) {
+        const root = (info && (info.defaultRoot || (info.roots && info.roots[0]))) || 'workspace';
+        el.agentServerStatus.className = 'ai-cfg-status on';
+        el.agentServerStatus.textContent = '🟢 Conectado — workspace: ' + root + (info && info.version ? ' · v' + info.version : '');
+      } else {
+        el.agentServerStatus.className = 'ai-cfg-status off';
+        el.agentServerStatus.textContent = '🔴 Sin conexión — el agente trabajará en memoria virtual (ZIP al final).';
+      }
+    }
+    return ok;
+  }
+
+  function renderAgentCapabilityUI() {
+    if (!el.agentCapsStatus) return;
+    const serverOk = !!(state.agentServer && state.agentServer.ok);
+    const info = state.agentServer && state.agentServer.info;
+    const root = info ? info.defaultRoot || (info.roots || [])[0] : null;
+    const parts = [];
+    parts.push('📁 ' + (root ? 'Workspace: ' + root : 'Sin servidor: memoria virtual'));
+    parts.push('💻 Comandos: ' + (serverOk ? '✔ disponible' : '✖ requieren servidor'));
+    parts.push('🌐 ' + (serverOk ? '✔ sin CORS' : 'vía navegador (CORS)'));
+    if (state.agentProjectDir) parts.push('📂 Carpeta: ' + state.agentProjectDir);
+    el.agentCapsStatus.textContent = parts.join(' · ');
+    el.agentCapsStatus.className = 'ai-cfg-status ' + (serverOk ? 'on' : 'off');
+  }
+
+  function enableAgentFullMode() {
+    state.agentMode = true;
+    if (el.agentModeToggle) el.agentModeToggle.checked = true;
+    if (el.agentForceBtn) {
+      el.agentForceBtn.textContent = '⚡ Modo agente COMPLETO activo (leer + escribir + comandos + web)';
+      el.agentForceBtn.setAttribute('aria-pressed', 'true');
+    }
+    const active = state.providers.find((p) => p.id === state.activeProvider);
+    if (!active) {
+      const prov = state.providers.find((p) => p.localType === 'ollama') || state.providers[0];
+      if (prov) {
+        state.activeProvider = prov.id;
+        state.activeModel = preferAgentModel(prov) || prov.defaultModel || prov.models[0] || '';
+        renderProviderSelect();
+        if (el.providerSelect) el.providerSelect.value = prov.id;
+        if (el.modelSelect) el.modelSelect.value = state.activeModel;
+        updateStatus();
+      }
+    }
+    renderAgentCapabilityUI();
+    saveState();
+    detectAgentServer();
+  }
+
+  function disableAgentFullMode() {
+    state.agentMode = false;
+    if (el.agentModeToggle) el.agentModeToggle.checked = false;
+    if (el.agentForceBtn) {
+      el.agentForceBtn.textContent = '⚡ Activar modo agente COMPLETO (leer + escribir + comandos + web)';
+      el.agentForceBtn.setAttribute('aria-pressed', 'false');
+    }
+    saveState();
+  }
+
+  function toggleAgentFullMode() {
+    if (state.agentMode) disableAgentFullMode();
+    else enableAgentFullMode();
   }
 
   /* ---------- public API ---------- */
@@ -2203,20 +2413,37 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
       setTimeout(() => sendMessage(promptText), 400);
     },
     getStatus() {
-      return { provider: state.activeProvider, model: state.activeModel, saveDir: state.saveDir?.name };
+      return {
+        provider: state.activeProvider,
+        model: state.activeModel,
+        saveDir: state.saveDir?.name,
+        agentMode: state.agentMode,
+        agentServer: state.agentServer && state.agentServer.ok,
+      };
     },
     selectSaveDir,
     saveGeneratedFiles,
     detectLocal,
-    detectModels,
-    tryAllModels,
-    callGemini,
     openSandbox,
-    DEFAULT_PROVIDERS,
     LOCAL_PROBES,
-    FREE_TIER_PROVIDERS,
-    MODEL_SCANNER_SOURCES,
+    detectAgentServer,
+    enableAgentFullMode,
+    disableAgentFullMode,
+    agentEngine,
+    createAgentConfig,
+    parseEmulatedToolCalls,
+    salvageCodeBlocks,
+    isToolsUnsupportedError,
+    getToolFamily,
+    supportsTools,
+    capForModel,
+    preferAgentModel,
+    modelOptionLabel,
+    cleanModelId,
+    syncProviders,
+    isAgentCapableModel,
   };
 })();
 
-window.AIChat = AIChat;
+if (typeof window !== 'undefined') window.AIChat = AIChat;
+if (typeof module !== 'undefined' && module.exports) module.exports = AIChat;

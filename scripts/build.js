@@ -71,6 +71,7 @@ fs.mkdirSync(jsDir, { recursive: true });
 const jsToMinify = [
   'app.js',
   'ai-chat.js',
+  'agent-tools.js',
   'platform-tests.js',
   'store.js',
   'crypto.js',

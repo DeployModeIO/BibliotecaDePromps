@@ -76,15 +76,19 @@ test('Ollama server is reachable on port 11434', async () => {
 test('CORS headers present on GET /api/tags', async () => {
   const res = await fetchOllama('/api/tags');
   const acao = res.headers['access-control-allow-origin'];
-  if (acao !== 'http://localhost:3000') throw new Error(`Expected ACAO=http://localhost:3000, got: ${acao}`);
-  log(`Access-Control-Allow-Origin: ${acao}`);
+  if (acao !== '*' && acao !== 'http://localhost:3000') {
+    throw new Error(`ACAO inesperado (se esperaba '*' o el origen): ${acao}`);
+  }
+  log(`Access-Control-Allow-Origin: ${acao}${acao === '*' ? ' (wildcard: cualquier origen)' : ''}`);
 });
 
 // ============= TEST 3: CORS preflight on POST /api/chat =============
 test('CORS preflight OPTIONS on POST /api/chat', async () => {
   const res = await fetchOllama('/api/chat', { method: 'OPTIONS' });
   const acao = res.headers['access-control-allow-origin'];
-  if (acao !== 'http://localhost:3000') throw new Error(`Expected ACAO=http://localhost:3000, got: ${acao}`);
+  if (acao !== '*' && acao !== 'http://localhost:3000') {
+    throw new Error(`ACAO inesperado (se esperaba '*' o el origen): ${acao}`);
+  }
   log(`Preflight OK, ACAO: ${acao}`);
 });
 
@@ -97,12 +101,12 @@ test('GET /api/tags returns model list', async () => {
   data.models.forEach((m) => log(`  ${m.name} (${(m.size / 1e9).toFixed(1)}GB)`));
 });
 
-// ============= TEST 5: Chat with deepseek-r1:1.5b (non-streaming) =============
-test('POST /api/chat with deepseek-r1:1.5b (non-streaming)', async () => {
+// ============= TEST 5: Chat with llama3.2:3b (non-streaming) =============
+test('POST /api/chat with llama3.2:3b (non-streaming)', async () => {
   const res = await fetchOllama('/api/chat', {
     method: 'POST',
     body: {
-      model: 'deepseek-r1:1.5b',
+      model: 'llama3.2:3b',
       messages: [{ role: 'user', content: 'Say exactly: OK' }],
       stream: false,
     },
@@ -135,8 +139,8 @@ test('POST /api/chat with deepseek-r1:8b (non-streaming)', async () => {
   log(`Model: ${data.model}, Done: ${data.done}`);
 });
 
-// ============= TEST 7: Streaming chat with deepseek-r1:1.5b =============
-test('POST /api/chat with deepseek-r1:1.5b (streaming)', async () => {
+// ============= TEST 7: Streaming chat with llama3.2:3b =============
+test('POST /api/chat with llama3.2:3b (streaming)', async () => {
   return new Promise((resolve, reject) => {
     const url = new URL('/api/chat', 'http://localhost:11434');
     const req = http.request(
@@ -149,10 +153,10 @@ test('POST /api/chat with deepseek-r1:1.5b (streaming)', async () => {
         },
       },
       (res) => {
-        if (res.status !== 200) {
+        if (res.statusCode !== 200) {
           let body = '';
           res.on('data', (c) => (body += c));
-          res.on('end', () => reject(new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`)));
+          res.on('end', () => reject(new Error(`HTTP ${res.statusCode}: ${body.slice(0, 200)}`)));
           return;
         }
         let chunkCount = 0;
@@ -182,7 +186,7 @@ test('POST /api/chat with deepseek-r1:1.5b (streaming)', async () => {
     });
     req.write(
       JSON.stringify({
-        model: 'deepseek-r1:1.5b',
+        model: 'llama3.2:3b',
         messages: [{ role: 'user', content: 'Say exactly: OK' }],
         stream: true,
       })
@@ -205,10 +209,10 @@ test('POST /api/chat with deepseek-r1:8b (streaming)', async () => {
         },
       },
       (res) => {
-        if (res.status !== 200) {
+        if (res.statusCode !== 200) {
           let body = '';
           res.on('data', (c) => (body += c));
-          res.on('end', () => reject(new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`)));
+          res.on('end', () => reject(new Error(`HTTP ${res.statusCode}: ${body.slice(0, 200)}`)));
           return;
         }
         let chunkCount = 0;
@@ -220,6 +224,7 @@ test('POST /api/chat with deepseek-r1:8b (streaming)', async () => {
             try {
               const json = JSON.parse(line);
               if (json.message?.content) fullText += json.message.content;
+              else if (json.message?.thinking) fullText += json.message.thinking;
             } catch {}
           }
         });

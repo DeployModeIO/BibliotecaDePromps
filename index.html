@@ -227,25 +227,46 @@
       </div>
 
       <div class="chat-select-row">
-        <select id="aiProviderSelect" class="chat-select" aria-label="Proveedor IA">
-          <option value="">-- Detectar IA --</option>
+        <select id="aiProviderSelect" class="chat-select" aria-label="Servidor local">
+          <option value="">-- Servidor local --</option>
         </select>
         <select id="aiModelSelect" class="chat-select" aria-label="Modelo">
           <option value="">-- Modelo --</option>
         </select>
+        <button
+          class="ai-cfg-btn"
+          id="aiRescanLocal"
+          type="button"
+          title="Re-escanear servidores locales (Ollama, LM Studio, vLLM...)"
+          aria-label="Re-escanear servidores locales"
+        >
+          🔄
+        </button>
       </div>
 
-      <div class="chat-api-row" id="aiApiRow">
-        <input
-          type="password"
-          class="chat-api-key"
-          id="aiApiKey"
-          placeholder="API Key..."
-          autocomplete="off"
-          aria-label="API Key del proveedor seleccionado"
-        />
-        <button class="chat-api-detect" id="aiDetectModels" title="Detectar modelos disponibles">Detectar</button>
-        <button class="chat-api-detect" id="aiRescanLocal" title="Re-escanear servidores locales">Re-scan</button>
+      <div class="chat-agent-bar" id="aiAgentBar">
+        <button
+          class="ai-agent-force"
+          id="aiAgentForce"
+          type="button"
+          aria-pressed="false"
+          title="Activa el modo agente: el modelo puede leer, escribir y editar archivos, ejecutar comandos del servidor agente y consultar la web sin CORS"
+        >
+          ⚡ Activar modo agente COMPLETO (leer + escribir + comandos + web)
+        </button>
+        <div class="ai-agent-project">
+          <label for="aiAgentProjectDir">📂 Carpeta del proyecto (dentro del workspace)</label>
+          <input
+            type="text"
+            id="aiAgentProjectDir"
+            class="ai-cfg-input"
+            placeholder="proyecto"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Carpeta donde el agente escribirá los archivos"
+          />
+        </div>
+        <div class="ai-cfg-status off" id="aiAgentCapsStatus" role="status"></div>
       </div>
 
       <div class="chat-conv-list" id="aiConvList"></div>
@@ -290,9 +311,56 @@
             </select>
           </div>
           <div class="ai-cfg-section">
-            <span class="ai-cfg-title">Proveedores personalizados</span>
-            <div class="ai-cfg-list" id="aiConfigList"></div>
-            <button class="ai-cfg-btn" id="aiConfigAdd">+ Agregar proveedor</button>
+            <span class="ai-cfg-title">🔑 Llave de servidores locales (opcional)</span>
+            <div class="ai-cfg-row">
+              <input
+                type="password"
+                id="aiLocalApiKey"
+                class="ai-cfg-input"
+                placeholder="Passkey del servidor seleccionado"
+                autocomplete="off"
+                aria-label="Llave API del servidor local seleccionado"
+              />
+            </div>
+            <p class="ai-cfg-note">
+              Solo si el servidor responde 401. LM Studio: Developer → Permission Management → copiar la passkey del cliente. Se guarda por servidor y se re-escanea al cambiarla.
+            </p>
+          </div>
+          <div class="ai-cfg-section">
+            <span class="ai-cfg-title">🤖 Modo agente (herramientas)</span>
+            <label class="ai-cfg-toggle">
+              <input type="checkbox" id="aiAgentMode" />
+              <span>Alternativa al botón ⚡ (arriba): permite que el modelo lea, escriba y edite archivos del proyecto.</span>
+            </label>
+          </div>
+          <div class="ai-cfg-section">
+            <span class="ai-cfg-title">🖥️ Servidor agente (comandos / web)</span>
+            <div class="ai-cfg-row">
+              <input
+                type="text"
+                id="aiAgentServerUrl"
+                class="ai-cfg-input"
+                placeholder="http://127.0.0.1:4864"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="URL del servidor agente"
+              />
+              <button class="ai-cfg-btn" id="aiAgentServerDetect">Probar</button>
+            </div>
+            <div class="ai-cfg-row">
+              <input
+                type="password"
+                id="aiAgentServerToken"
+                class="ai-cfg-input"
+                placeholder="Token (opcional)"
+                autocomplete="off"
+                aria-label="Token del servidor agente"
+              />
+            </div>
+            <div class="ai-cfg-status off" id="aiAgentServerStatus" role="status">⚪ Comprobando conexión…</div>
+            <p class="ai-cfg-note">
+              Conexión automática: el servicio local se inicia solo con Windows y la app lo detecta y reconecta sola. No hay que ejecutar nada a mano.
+            </p>
           </div>
         </div>
       </details>
@@ -400,6 +468,7 @@
     <script src="js/usage-tracker.js" defer></script>
     <script src="js/vendor/dexie.min.js" defer></script>
     <script src="js/store.js" defer></script>
+    <script src="js/agent-tools.js" defer></script>
     <script src="js/ai-chat.js" defer></script>
     <script src="js/app.js" defer></script>
   </body>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'biblioteca-promps-v3.6';
+const CACHE_NAME = 'biblioteca-promps-v3.9';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -7,6 +7,7 @@ const ASSETS_TO_CACHE = [
   '/css/styles.css',
   '/js/app.js',
   '/js/ai-chat.js',
+  '/js/agent-tools.js',
   '/js/store.js',
   '/js/crypto.js',
   '/js/usage-tracker.js',
@@ -78,6 +79,24 @@ self.addEventListener('fetch', (event) => {
             .catch(() => new Response('', { status: 504 }));
         })
       )
+    );
+    return;
+  }
+
+  // Navegaciones (documentos HTML): PRIORIDAD-RED con fallback a caché.
+  // Así el usuario siempre ve la última versión del index.html cuando hay red
+  // (evita el "no veo el botón nuevo" por caché obsoleta), y funciona offline si no.
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request).then((cached) => cached || caches.match('/index.html')))
     );
     return;
   }
