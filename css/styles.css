@@ -887,6 +887,274 @@ footer .hazard-line {
   }
 }
 /* ============================================================
+   BENTO GRID — grid asimétrico de tarjetas de métricas /
+   funcionalidades. Port del componente "bento-grid" (shadcn)
+   al sistema de diseño del proyecto: tokens SLDS, dark/light,
+   patrón de puntos al hover, lift suave y velo de gradiente.
+   ============================================================ */
+/* ---- tokens locales del componente ---- */
+:root {
+  --bento-dot: rgb(226 232 240 / 5%); /* puntos del patrón (tema oscuro) */
+  --bento-glow-a: var(--brand-dim); /* gradiente del velo — inicio */
+  --bento-glow-b: var(--info-dim); /* gradiente del velo — fin */
+  --bento-shadow: 0 2px 12px rgb(2 6 23 / 12%);
+}
+
+[data-theme=light] {
+  --bento-dot: rgb(15 23 42 / 6%);
+  --bento-shadow: 0 2px 12px rgb(24 27 37 / 8%);
+}
+
+/* ---- grid ---- */
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* dentro del dashboard ocupa todo el ancho del body */
+.dashboard-body .bento-grid {
+  grid-column: 1/-1;
+}
+
+@media (width >= 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .bento-item-span2 {
+    grid-column: span 2;
+  }
+}
+/* ---- item ---- */
+.bento-item {
+  position: relative;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem;
+  overflow: hidden;
+  transition: transform 0.3s var(--ease-out), border-color 0.3s ease, box-shadow 0.3s ease;
+  /* patrón de puntos (visible al hover) */
+}
+.bento-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at center, var(--bento-dot) 1px, transparent 1px);
+  background-size: 4px 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.bento-item {
+  /* velo de gradiente diagonal (visible al hover) */
+}
+.bento-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 25%, var(--bento-glow-a) 55%, var(--bento-glow-b) 85%, transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+a.bento-item {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.bento-item:hover,
+.bento-item-active {
+  transform: translateY(-2px);
+  border-color: var(--line-2);
+  box-shadow: var(--bento-shadow);
+}
+.bento-item:hover::before, .bento-item:hover::after,
+.bento-item-active::before,
+.bento-item-active::after {
+  opacity: 1;
+}
+
+/* ---- fila superior: icono + status ---- */
+.bento-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.bento-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  background: var(--bg-3);
+  transition: background 0.3s ease, transform 0.3s var(--ease-out);
+}
+.bento-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.bento-item:hover .bento-icon,
+.bento-item-active .bento-icon {
+  background: linear-gradient(135deg, var(--bento-glow-a), var(--bento-glow-b));
+  transform: scale(1.06);
+}
+
+.bento-status {
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 0.32rem 0.55rem;
+  border-radius: 8px;
+  background: var(--bg-3);
+  color: var(--txt-2);
+  white-space: nowrap;
+  transition: background 0.3s ease;
+}
+
+.bento-status-ok {
+  background: var(--ok-dim);
+  color: var(--ok-fg);
+}
+
+.bento-status-warn {
+  background: var(--warn-dim);
+  color: var(--warn-fg);
+}
+
+.bento-status-info {
+  background: var(--info-dim);
+  color: var(--info);
+}
+
+.bento-status-err {
+  background: var(--err-dim);
+  color: var(--err-fg);
+}
+
+/* ---- cuerpo ---- */
+.bento-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.bento-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-family: var(--f-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--txt);
+}
+
+.bento-meta {
+  font-family: var(--f-mono);
+  font-size: 0.64rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--txt-3);
+}
+
+.bento-num {
+  font-family: var(--f-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--brand);
+}
+
+.bento-desc {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--txt-2);
+}
+
+/* ---- pie: tags + cta ---- */
+.bento-foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.bento-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.bento-tag {
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.03em;
+  padding: 0.24rem 0.5rem;
+  border-radius: 6px;
+  background: var(--bg-3);
+  color: var(--txt-3);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.bento-tag:hover {
+  background: var(--line);
+  color: var(--txt-2);
+}
+
+.bento-cta {
+  font-family: var(--f-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.05em;
+  color: var(--txt-3);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.3s ease, transform 0.3s var(--ease-out), color 0.3s ease;
+}
+
+.bento-item:hover .bento-cta,
+.bento-item-active .bento-cta {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--brand);
+}
+
+/* ---- accesibilidad: sin movimiento ---- */
+@media (prefers-reduced-motion: reduce) {
+  .bento-item,
+  .bento-item::before,
+  .bento-item::after,
+  .bento-icon,
+  .bento-tag,
+  .bento-cta {
+    transition: none;
+  }
+  .bento-item:hover,
+  .bento-item-active {
+    transform: none;
+  }
+}
+/* ============================================================
    CATEGORY PANELS — grid cards for each industry
    ============================================================ */
 .cat-grid {
@@ -2709,7 +2977,7 @@ footer .hazard-line {
 
 .dashboard {
   width: 90vw;
-  max-width: 800px;
+  max-width: 900px;
   max-height: 85vh;
   background: var(--bg-1);
   border: 1px solid var(--line);

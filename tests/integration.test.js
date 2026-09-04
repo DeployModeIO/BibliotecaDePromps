@@ -177,6 +177,16 @@ describe('SCSS Architecture', () => {
     expect(main).toContain('base/reset');
     expect(main).toContain('themes/light');
     expect(main).toContain('layout/topbar');
+    expect(main).toContain('components/bento');
+  });
+
+  test('bento grid component exists with expected API', () => {
+    const bento = fs.readFileSync(path.join(__dirname, '..', 'scss', 'components', '_bento.scss'), 'utf8');
+    expect(bento).toContain('.bento-grid');
+    expect(bento).toContain('.bento-item');
+    expect(bento).toContain('.bento-item-span2');
+    expect(bento).toContain('.bento-item-active');
+    expect(bento).toContain('.bento-status');
   });
 
   test('All partials exist', () => {

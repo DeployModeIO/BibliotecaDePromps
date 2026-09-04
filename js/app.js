@@ -1586,30 +1586,101 @@ function renderDashboard() {
         .join('')
     : '<div class="dash-timeline-item" style="color:var(--txt-3)">Sin actividad reciente</div>';
 
+  /* Bento Grid de métricas — iconos lucide inline (sin CDN, CSP-safe) */
+  const bentoSvg = (paths) =>
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+
+  const bentoItem = ({ title, meta, value, desc, icon, color, status, statusCls = '', span2 = false, hover = false, tags = [] }) => `
+    <div class="bento-item${span2 ? ' bento-item-span2' : ''}${hover ? ' bento-item-active' : ''}">
+      <div class="bento-top">
+        <span class="bento-icon" style="color:${color}">${icon}</span>
+        <span class="bento-status${statusCls ? ` bento-status-${statusCls}` : ''}">${status}</span>
+      </div>
+      <div class="bento-body">
+        <h3 class="bento-title">${title}<span class="bento-meta">${meta}</span></h3>
+        <div class="bento-num">${value}</div>
+        <p class="bento-desc">${desc}</p>
+      </div>
+      <div class="bento-foot">
+        <div class="bento-tags">${tags.map((t) => `<span class="bento-tag">#${t}</span>`).join('')}</div>
+      </div>
+    </div>`;
+
   body.innerHTML = `
-    <div class="dash-stat">
-      <div class="dash-num">${stats.totalPromptViews}</div>
-      <div class="dash-label">Prompts Vistos</div>
-    </div>
-    <div class="dash-stat">
-      <div class="dash-num">${stats.totalPromptCopies}</div>
-      <div class="dash-label">Copias Realizadas</div>
-    </div>
-    <div class="dash-stat">
-      <div class="dash-num">${stats.totalExports}</div>
-      <div class="dash-label">Exportaciones</div>
-    </div>
-    <div class="dash-stat">
-      <div class="dash-num">${stats.chatMessagesSent}</div>
-      <div class="dash-label">Mensajes Chat IA</div>
-    </div>
-    <div class="dash-stat">
-      <div class="dash-num">${(stats.chatWordsGenerated / 1000).toFixed(1)}k</div>
-      <div class="dash-label">Palabras Generadas</div>
-    </div>
-    <div class="dash-stat">
-      <div class="dash-num">${stats.sessionCount}</div>
-      <div class="dash-label">Sesiones</div>
+    <div class="bento-grid">
+      ${bentoItem({
+        title: 'Prompts Vistos',
+        meta: 'tiempo real',
+        value: stats.totalPromptViews,
+        desc: 'Métricas de uso de la biblioteca durante esta sesión.',
+        icon: bentoSvg('<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'),
+        color: 'var(--info)',
+        status: 'En vivo',
+        statusCls: 'ok',
+        span2: true,
+        hover: true,
+        tags: ['Métricas', 'Sesión'],
+      })}
+      ${bentoItem({
+        title: 'Copias Realizadas',
+        meta: 'clipboard',
+        value: stats.totalPromptCopies,
+        desc: 'Prompts copiados al portapapeles, listos para pegar en tu IA.',
+        icon: bentoSvg(
+          '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>'
+        ),
+        color: 'var(--ok)',
+        status: 'OK',
+        tags: ['Clipboard', 'Uso'],
+      })}
+      ${bentoItem({
+        title: 'Mensajes Chat IA',
+        meta: 'multi-motor',
+        value: stats.chatMessagesSent,
+        desc: 'Conversaciones enviadas al chat integrado (OpenAI, Anthropic, Groq, local…).',
+        icon: bentoSvg('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
+        color: 'var(--brand)',
+        status: 'Multi-IA',
+        statusCls: 'info',
+        tags: ['Chat', 'IA'],
+      })}
+      ${bentoItem({
+        title: 'Palabras Generadas',
+        meta: '≈ tokens IA',
+        value: `${(stats.chatWordsGenerated / 1000).toFixed(1)}k`,
+        desc: 'Volumen de texto generado por los modelos en el chat y sandbox.',
+        icon: bentoSvg(
+          '<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>'
+        ),
+        color: 'var(--warn)',
+        status: 'Gen IA',
+        statusCls: 'warn',
+        span2: true,
+        tags: ['Volumen', 'Sandbox'],
+      })}
+      ${bentoItem({
+        title: 'Exportaciones',
+        meta: 'PDF · XLSX · Email',
+        value: stats.totalExports,
+        desc: 'Documentos exportados en los formatos soportados por la biblioteca.',
+        icon: bentoSvg(
+          '<path d="M15 2H6a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/>'
+        ),
+        color: 'var(--amber-2)',
+        status: 'Multi-formato',
+        span2: true,
+        tags: ['PDF', 'Excel', 'Email'],
+      })}
+      ${bentoItem({
+        title: 'Sesiones',
+        meta: 'histórico local',
+        value: stats.sessionCount,
+        desc: 'Sesiones registradas por el tracker de uso (almacenamiento local).',
+        icon: bentoSvg('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),
+        color: 'var(--info)',
+        status: 'Sync',
+        tags: ['Local', 'Tracker'],
+      })}
     </div>
     <div class="dash-chart">
       <h4>🏆 Top Prompts Más Usados</h4>
