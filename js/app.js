@@ -1352,9 +1352,12 @@ class PromptLibrary {
         /* eslint-disable-next-line no-console */
         console.log('[SW] registrado — modo offline listo');
         /* Buscar nuevas versiones cada 30 min sin esperar a una navegación */
-        setInterval(() => {
-          reg.update().catch(() => {});
-        }, 30 * 60 * 1000);
+        setInterval(
+          () => {
+            reg.update().catch(() => {});
+          },
+          30 * 60 * 1000
+        );
       })
       /* eslint-disable-next-line no-console */
       .catch((err) => console.warn('[SW] fallo:', err));

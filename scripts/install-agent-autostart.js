@@ -33,7 +33,9 @@ function escapeVbs(s) {
 }
 
 function buildVbs() {
-  const defaultRoots = [path.join(REPO, 'proyectos-agent'), path.join(os.homedir(), 'Desktop'), path.join(os.homedir(), 'Documents')].join(';');
+  const defaultRoots = [path.join(REPO, 'proyectos-agent'), path.join(os.homedir(), 'Desktop'), path.join(os.homedir(), 'Documents')].join(
+    ';'
+  );
   const roots = process.env.AGENT_ROOTS || defaultRoots;
   const envLines = [
     ['AGENT_ROOTS', roots],

@@ -66,9 +66,17 @@ async function main() {
   await runner.run('append_file', { path: 'demo/hola.txt', content: '\nlínea 3 (appended)' });
   report('fs', 'append_file añade al final', (await runner.run('read_file', { path: 'demo/hola.txt' })).content.includes('línea 3'));
   await runner.run('edit_file', { path: 'demo/hola.txt', old_text: 'línea 1', new_text: 'LÍNEA UNO' });
-  report('fs', 'edit_file reemplaza', (await runner.run('read_file', { path: 'demo/hola.txt', start_line: 1, end_line: 1 })).content === 'LÍNEA UNO');
+  report(
+    'fs',
+    'edit_file reemplaza',
+    (await runner.run('read_file', { path: 'demo/hola.txt', start_line: 1, end_line: 1 })).content === 'LÍNEA UNO'
+  );
   await runner.run('insert_line', { path: 'demo/hola.txt', line: 1, content: '# cabecera' });
-  report('fs', 'insert_line', (await runner.run('read_file', { path: 'demo/hola.txt', start_line: 1, end_line: 1 })).content === '# cabecera');
+  report(
+    'fs',
+    'insert_line',
+    (await runner.run('read_file', { path: 'demo/hola.txt', start_line: 1, end_line: 1 })).content === '# cabecera'
+  );
   const ls = await runner.run('list_files', {});
   report('fs', 'list_files', ls.files.includes('demo/hola.txt'), ls.files.join(', '));
   const sr = await runner.run('search_files', { pattern: 'LÍNEA UNO' });
@@ -91,14 +99,24 @@ async function main() {
   const cmd = await runner.run('run_command', { command: 'node -e "console.log(2+3)"' });
   report('cmd', 'node via cmd', cmd.exitCode === 0 && cmd.stdout.includes('5'), JSON.stringify(cmd.stdout.trim()));
   const ps = await runner.run('run_command', { command: 'Write-Output (Get-Location).Path', shell: 'powershell' });
-  report('cmd', 'powershell via shell:powershell cwd=Test', ps.stdout.trim().toLowerCase() === WS.toLowerCase().replace(/\//g, '\\'), ps.stdout.trim() || ps.stderr.slice(0, 80));
+  report(
+    'cmd',
+    'powershell via shell:powershell cwd=Test',
+    ps.stdout.trim().toLowerCase() === WS.toLowerCase().replace(/\//g, '\\'),
+    ps.stdout.trim() || ps.stderr.slice(0, 80)
+  );
   const ver = await runner.run('run_command', { command: 'node --version && npm --version' });
   report('cmd', '&& encadenado', /v\d+/.test(ver.stdout), ver.stdout.trim().replace(/\r?\n/g, ' | '));
 
   /* ---- Fase 3: web fetch ---- */
   console.log('\nFase 3 — web_fetch');
   const wfLocal = await runner.run('web_fetch', { url: OLLAMA_CHAT.replace('/api/chat', '/api/tags') });
-  report('web', 'web_fetch documento local (Ollama tags)', wfLocal.status === 200 && wfLocal.text.includes('models'), wfLocal.text.slice(0, 60));
+  report(
+    'web',
+    'web_fetch documento local (Ollama tags)',
+    wfLocal.status === 200 && wfLocal.text.includes('models'),
+    wfLocal.text.slice(0, 60)
+  );
   try {
     const wfExt = await runner.run('web_fetch', { url: 'https://example.com', max_chars: 500 });
     report('web', 'web_fetch externo (example.com)', /example domain/i.test(wfExt.text), wfExt.text.slice(0, 70));
@@ -120,7 +138,16 @@ async function main() {
   const picked = pickBasicPrompt(promptDB);
   console.log('   Prompt elegido: [' + picked.id + '] ' + picked.titulo + ' (' + picked.prompt.length + ' chars)');
 
-  const provider = { name: 'Ollama', isLocal: true, localType: 'ollama', endpoint: OLLAMA_CHAT, models: ['qwen2.5:7b'], defaultModel: 'qwen2.5:7b', apiKey: 'local' };  const ctx = {
+  const provider = {
+    name: 'Ollama',
+    isLocal: true,
+    localType: 'ollama',
+    endpoint: OLLAMA_CHAT,
+    models: ['qwen2.5:7b'],
+    defaultModel: 'qwen2.5:7b',
+    apiKey: 'local',
+  };
+  const ctx = {
     provider,
     model: 'qwen2.5:7b',
     maxTokens: 4096,
@@ -135,20 +162,40 @@ async function main() {
   const resNative = await AIChat.agentEngine(cfgNative, [{ role: 'user', content: picked.prompt }], {
     maxIterations: 8,
     onMode: (m) => (nativeMode = m),
-    onTool: (n, a, e) => console.log('     🛠 ' + n + ' ' + String((a && (a.path || a.command)) || '') + (e ? ' ⚠ ' + String(e).slice(0, 60) : '')),
+    onTool: (n, a, e) =>
+      console.log('     🛠 ' + n + ' ' + String((a && (a.path || a.command)) || '') + (e ? ' ⚠ ' + String(e).slice(0, 60) : '')),
   });
   const filesNow = fs.readdirSync(WS, { recursive: true }).filter((f) => fs.statSync(path.join(WS, f)).isFile());
-  report('model', 'loop nativo terminó', resNative.iterations > 0, 'modo=' + nativeMode + ' iters=' + resNative.iterations + ' ' + ((Date.now() - t0) / 1000).toFixed(0) + 's final=' + JSON.stringify((resNative.finalText || '').slice(0, 90)));
+  report(
+    'model',
+    'loop nativo terminó',
+    resNative.iterations > 0,
+    'modo=' +
+      nativeMode +
+      ' iters=' +
+      resNative.iterations +
+      ' ' +
+      ((Date.now() - t0) / 1000).toFixed(0) +
+      's final=' +
+      JSON.stringify((resNative.finalText || '').slice(0, 90))
+  );
   report('model', 'el modelo escribió archivos en Test con qwen2.5:7b', filesNow.length > 0, filesNow.join(', '));
   if (filesNow.length) {
     const mainFile = filesNow.find((f) => /\.html$/i.test(f)) || filesNow[0];
     const content = fs.readFileSync(path.join(WS, mainFile), 'utf8');
-    report('model', mainFile + ' parece código real', content.length > 150 && /(<[a-z!]|function|const)/i.test(content), content.length + ' bytes; inicio: ' + content.slice(0, 80).replace(/\r?\n/g, ' '));
+    report(
+      'model',
+      mainFile + ' parece código real',
+      content.length > 150 && /(<[a-z!]|function|const)/i.test(content),
+      content.length + ' bytes; inicio: ' + content.slice(0, 80).replace(/\r?\n/g, ' ')
+    );
     /* el agente leyó/validó: test de lectura post-generación */
     const rl = await runner.run('read_file', { path: String(mainFile).split(path.sep).join('/') });
     report('model', 'read_file lee lo generado por el modelo', rl.content.length === content.length);
     /* el modelo puede validar con comandos: probamos nosotros */
-    const check = await runner.run('run_command', { command: 'node -e "const fs=require(\'fs\');console.log(fs.readdirSync(process.cwd()).join(\',\'))"' });
+    const check = await runner.run('run_command', {
+      command: "node -e \"const fs=require('fs');console.log(fs.readdirSync(process.cwd()).join(','))\"",
+    });
     report('model', 'run_command ve los archivos del proyecto', check.stdout.includes(path.basename(String(mainFile)).split('.')[0]));
   }
 
@@ -163,15 +210,34 @@ async function main() {
   };
   const cfgEmu = AIChat.createAgentConfig(ctxEmu, runner);
   cfgEmu.ollamaSupportsTools = async () => false; // fuerza el protocolo emulado con un modelo real
-  const resEmu = await AIChat.agentEngine(cfgEmu, [
-    { role: 'user', content: 'Crea el archivo hola-emulado.txt cuyo contenido sea exactamente: emulacion-ok desde llama3.2:3b. Luego termina.' },
-  ], {
-    maxIterations: 5,
-    onTool: (n, a, e) => console.log('     🛠 ' + n + ' ' + String((a && (a.path || a.command)) || '') + (e ? ' ⚠ ' + String(e).slice(0, 60) : '')),
-  });
+  const resEmu = await AIChat.agentEngine(
+    cfgEmu,
+    [
+      {
+        role: 'user',
+        content: 'Crea el archivo hola-emulado.txt cuyo contenido sea exactamente: emulacion-ok desde llama3.2:3b. Luego termina.',
+      },
+    ],
+    {
+      maxIterations: 5,
+      onTool: (n, a, e) =>
+        console.log('     🛠 ' + n + ' ' + String((a && (a.path || a.command)) || '') + (e ? ' ⚠ ' + String(e).slice(0, 60) : '')),
+    }
+  );
   const emuFile = path.join(WS, 'hola-emulado.txt');
   const emuOk = fs.existsSync(emuFile) && fs.readFileSync(emuFile, 'utf8').includes('emulacion-ok');
-  report('emul', 'hola-emulado.txt escrito vía emulación JSON', emuOk, 'modo=' + resEmu.mode + ' iters=' + resEmu.iterations + (emuOk ? ' contenido=' + JSON.stringify(fs.readFileSync(emuFile, 'utf8').slice(0, 50)) : ' final=' + JSON.stringify((resEmu.finalText || '').slice(0, 120))));
+  report(
+    'emul',
+    'hola-emulado.txt escrito vía emulación JSON',
+    emuOk,
+    'modo=' +
+      resEmu.mode +
+      ' iters=' +
+      resEmu.iterations +
+      (emuOk
+        ? ' contenido=' + JSON.stringify(fs.readFileSync(emuFile, 'utf8').slice(0, 50))
+        : ' final=' + JSON.stringify((resEmu.finalText || '').slice(0, 120)))
+  );
 
   finish(server);
 }
@@ -204,7 +270,19 @@ function finish(server) {
     const okCount = rs.filter((r) => r.ok).length;
     console.log(phase + ': ' + okCount + '/' + rs.length);
   }
-  console.log('TOTAL: ' + (results.length - failures) + '/' + results.length + (failures ? ' → FALLOS: ' + results.filter((r) => !r.ok).map((r) => r.name).join(' | ') : ' → TODO OK'));
+  console.log(
+    'TOTAL: ' +
+      (results.length - failures) +
+      '/' +
+      results.length +
+      (failures
+        ? ' → FALLOS: ' +
+          results
+            .filter((r) => !r.ok)
+            .map((r) => r.name)
+            .join(' | ')
+        : ' → TODO OK')
+  );
   process.exit(failures ? 1 : 0);
 }
 

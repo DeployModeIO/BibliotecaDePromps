@@ -252,7 +252,13 @@ describe('AgentTools — runner con servidor agente (mock)', () => {
         return {
           ok: true,
           status: 200,
-          text: async () => JSON.stringify({ ok: true, status: 200, contentType: 'text/html; charset=utf-8', text: '<html><body><h1>Hola</h1><script>x()</script></body></html>' }),
+          text: async () =>
+            JSON.stringify({
+              ok: true,
+              status: 200,
+              contentType: 'text/html; charset=utf-8',
+              text: '<html><body><h1>Hola</h1><script>x()</script></body></html>',
+            }),
         };
       }
       if (String(url).includes('/files')) {
@@ -309,7 +315,6 @@ describe('AgentTools — utilidades', () => {
     await runner.run('delete_dir', { path: 'c' });
     expect((await runner.run('list_files', {})).files).not.toContain('c/b.txt');
   });
-
 
   test('stripHtml elimina etiquetas y decodifica entidades', () => {
     expect(AgentTools.stripHtml('<p>Hola <b>mundo</b></p><script>x()</script>')).toBe('Hola mundo');

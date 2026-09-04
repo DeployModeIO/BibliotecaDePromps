@@ -6,7 +6,8 @@
 const AIChat = require('../js/ai-chat.js');
 const AgentTools = require('../js/agent-tools.js');
 
-const { agentEngine, parseEmulatedToolCalls, salvageCodeBlocks, isToolsUnsupportedError, getToolFamily, capForModel, preferAgentModel } = AIChat;
+const { agentEngine, parseEmulatedToolCalls, salvageCodeBlocks, isToolsUnsupportedError, getToolFamily, capForModel, preferAgentModel } =
+  AIChat;
 
 const CONV = [{ role: 'user', content: 'crea un index.html con hola' }];
 
@@ -66,11 +67,7 @@ describe('parseEmulatedToolCalls', () => {
   });
 
   test('acepta variantes tool_calls array y arguments string', () => {
-    const text = [
-      '```tool',
-      '{"tool_calls":[{"tool":"read_file","arguments":"{\\"path\\":\\"a.txt\\"}"}]}',
-      '```',
-    ].join('\n');
+    const text = ['```tool', '{"tool_calls":[{"tool":"read_file","arguments":"{\\"path\\":\\"a.txt\\"}"}]}', '```'].join('\n');
     const r = parseEmulatedToolCalls(text);
     expect(r.calls.length).toBe(1);
     expect(r.calls[0].name).toBe('read_file');
@@ -123,7 +120,8 @@ describe('preferAgentModel', () => {
 
 describe('salvageCodeBlocks — rescate de código mostrado en el chat', () => {
   test('convierte un bloque ```html con nombre mencionado en write_file', () => {
-    const text = 'Ya llamé a write_file para crear index.html con esto:\n```html\n<!DOCTYPE html>\n<html lang="es"><body><h1>Corrosión</h1></body></html>\n```';
+    const text =
+      'Ya llamé a write_file para crear index.html con esto:\n```html\n<!DOCTYPE html>\n<html lang="es"><body><h1>Corrosión</h1></body></html>\n```';
     const calls = salvageCodeBlocks(text);
     expect(calls.length).toBe(1);
     expect(calls[0].name).toBe('write_file');
@@ -144,7 +142,8 @@ describe('salvageCodeBlocks — rescate de código mostrado en el chat', () => {
   });
 
   test('deduplica por ruta (gana el último bloque)', () => {
-    const text = 'v1:\n```html\n<html><body>version uno larguisima</body></html>\n``` luego v2:\n```html\n<html><body>version dos larguisima</body></html>\n```';
+    const text =
+      'v1:\n```html\n<html><body>version uno larguisima</body></html>\n``` luego v2:\n```html\n<html><body>version dos larguisima</body></html>\n```';
     const calls = salvageCodeBlocks(text);
     expect(calls.length).toBe(1);
     expect(calls[0].args.content).toContain('version dos');
@@ -318,7 +317,12 @@ describe('agentEngine', () => {
       nativeStep: async () => {
         n++;
         if (n === 1) return { content: '', rawCalls: [], calls: [] };
-        if (n === 2) return { content: 'ok', rawCalls: [{ id: 'z', function: { name: 'append_file', arguments: { path: 'y.txt', content: 'v' } } }], calls: [{ id: 'z', name: 'append_file', args: { path: 'y.txt', content: 'v' } }] };
+        if (n === 2)
+          return {
+            content: 'ok',
+            rawCalls: [{ id: 'z', function: { name: 'append_file', arguments: { path: 'y.txt', content: 'v' } } }],
+            calls: [{ id: 'z', name: 'append_file', args: { path: 'y.txt', content: 'v' } }],
+          };
         return { content: 'listo', rawCalls: [], calls: [] };
       },
       pushNative: () => {},
@@ -359,7 +363,8 @@ describe('agentEngine', () => {
       nativeStep: async () => {
         nativeTries++;
         return {
-          content: 'Primero generaremos la estructura:\n```json\n{"name":"write_file","args":{"path":"index.html","content":"<h1>h</h1>"}}\n```',
+          content:
+            'Primero generaremos la estructura:\n```json\n{"name":"write_file","args":{"path":"index.html","content":"<h1>h</h1>"}}\n```',
           rawCalls: [],
           calls: [],
         };
@@ -427,7 +432,8 @@ describe('agentEngine', () => {
         turn++;
         if (turn === 1) {
           return {
-            content: 'Llamé a write_file para crear index.html con el siguiente contenido:\n```html\n<!DOCTYPE html>\n<html lang="es"><body><h1>API 570</h1></body></html>\n```',
+            content:
+              'Llamé a write_file para crear index.html con el siguiente contenido:\n```html\n<!DOCTYPE html>\n<html lang="es"><body><h1>API 570</h1></body></html>\n```',
             rawCalls: [],
             calls: [],
           };

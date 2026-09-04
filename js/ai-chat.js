@@ -592,24 +592,24 @@ const AIChat = (() => {
         const data = trimmed.slice(6);
         if (data === '[DONE]') break;
         try {
-      const json = JSON.parse(data);
-      const delta = json.choices?.[0]?.delta?.content;
-      const think = json.choices?.[0]?.delta?.reasoning_content || json.choices?.[0]?.delta?.reasoning;
-      if (think) reasoning += think;
-      if (delta || (think && !delta)) {
-        if (delta) {
-          fullText += delta;
-          msgEl.innerHTML = renderMarkdown(fullText) + '<span class="typing-cursor">|</span>';
-          msgEl.dataset.streamed = '1';
-          scrollChat();
-        } else if (reasoning) {
-          /* LM Studio con separateReasoningContentInAPI: mostrar razonamiento
+          const json = JSON.parse(data);
+          const delta = json.choices?.[0]?.delta?.content;
+          const think = json.choices?.[0]?.delta?.reasoning_content || json.choices?.[0]?.delta?.reasoning;
+          if (think) reasoning += think;
+          if (delta || (think && !delta)) {
+            if (delta) {
+              fullText += delta;
+              msgEl.innerHTML = renderMarkdown(fullText) + '<span class="typing-cursor">|</span>';
+              msgEl.dataset.streamed = '1';
+              scrollChat();
+            } else if (reasoning) {
+              /* LM Studio con separateReasoningContentInAPI: mostrar razonamiento
              mientras no llega el contenido final */
-          msgEl.innerHTML = renderMarkdown('💭 ' + reasoning.slice(-600)) + '<span class="typing-cursor">|</span>';
-          msgEl.dataset.streamed = '1';
-          scrollChat();
-        }
-      }
+              msgEl.innerHTML = renderMarkdown('💭 ' + reasoning.slice(-600)) + '<span class="typing-cursor">|</span>';
+              msgEl.dataset.streamed = '1';
+              scrollChat();
+            }
+          }
         } catch {
           /* ignore partial */
         }
@@ -1949,7 +1949,7 @@ ${lang === 'javascript' || lang === 'js' || lang === 'ts' ? `<script>${code}</` 
         }
 
         const rawCalls = step.rawCalls || [];
-        let calls = step.calls || [];
+        const calls = step.calls || [];
 
         if (!calls.length && !rawCalls.length && emptyPushes === 0 && iterations === 1 && toolNames.length &&
             /(¿|\?|lo siento|disculp|perd[oó]n|quieres que|puedo|deber[ií]a)/i.test(step.content || '')) {

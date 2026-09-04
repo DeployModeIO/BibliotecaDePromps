@@ -470,7 +470,11 @@
        Evita que el agente escriba encima de otros proyectos o de la propia app. */
     let prefix = normalizePrefix(options && options.prefix);
     function normalizePrefix(p) {
-      const s = String(p == null ? '' : p).replace(/\\/g, '/').replace(/^\.?\/+/, '').replace(/\/+$/, '').trim();
+      const s = String(p == null ? '' : p)
+        .replace(/\\/g, '/')
+        .replace(/^\.?\/+/, '')
+        .replace(/\/+$/, '')
+        .trim();
       return s ? s + '/' : '';
     }
     function applyPrefix(v) {
@@ -691,7 +695,9 @@
 
     async function runCommand(command, cwd, timeout, shell) {
       if (!server) {
-        throw new Error('run_command requiere el servicio de agente local, que se reconecta automáticamente. Ahora mismo no está disponible: continúa usando write_file/edit_file.');
+        throw new Error(
+          'run_command requiere el servicio de agente local, que se reconecta automáticamente. Ahora mismo no está disponible: continúa usando write_file/edit_file.'
+        );
       }
       const data = await serverRequest(server.url, server.token, 'POST', '/command', {
         command,

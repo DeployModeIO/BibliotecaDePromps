@@ -136,9 +136,7 @@ function safePath(p, root) {
     const rel = path.relative(r, abs);
     if (!rel.startsWith('..') && !path.isAbsolute(rel)) return abs;
   }
-  throw new Error(
-    'Ruta fuera de las raíces permitidas: ' + p + ' — raíces: ' + ROOTS.join(', ') + ' (configura AGENT_ROOTS para ampliar)'
-  );
+  throw new Error('Ruta fuera de las raíces permitidas: ' + p + ' — raíces: ' + ROOTS.join(', ') + ' (configura AGENT_ROOTS para ampliar)');
 }
 
 function resolveRoot(root) {

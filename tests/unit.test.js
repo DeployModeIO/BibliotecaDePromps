@@ -220,16 +220,38 @@ this.SafeStore = {
 
 describe('isAgentCapableModel', () => {
   const { isAgentCapableModel } = require('../js/ai-chat.js');
-  test('excluye embeddings', () => { expect(isAgentCapableModel('nomic-embed-text-v1.5')).toBe(false); });
-  test('excluye VL puro (llava, moondream, mimo-vl)', () => { expect(isAgentCapableModel('llava-7b')).toBe(false); expect(isAgentCapableModel('mimo-vl-miloco-7b')).toBe(false); expect(isAgentCapableModel('minicpm-v-8b')).toBe(false); });
-  test('excluye Bonsai-27B base', () => { expect(isAgentCapableModel('Bonsai-27B-GGUF')).toBe(false); });
-  test('excluye GLM-4.6V-Flash base', () => { expect(isAgentCapableModel('GLM-4.6V-Flash-GGUF')).toBe(false); });
-  test('incluye Mistral Instruct', () => { expect(isAgentCapableModel('mistralai/mistral-7b-instruct-v0.3')).toBe(true); });
-  test('incluye Qwen2.5-Coder', () => { expect(isAgentCapableModel('lmstudio-community/Qwen2.5-Coder-14B-Instruct-GGUF')).toBe(true); });
-  test('incluye Qwen3.5', () => { expect(isAgentCapableModel('qwen3.5-9b')).toBe(true); });
-  test('incluye gemma-4-it', () => { expect(isAgentCapableModel('google/gemma-4-e4b-it')).toBe(true); });
-  test('incluye gpt-oss-20b', () => { expect(isAgentCapableModel('openai/gpt-oss-20b')).toBe(true); });
-  test('incluye deepseek-r1 instruct', () => { expect(isAgentCapableModel('deepseek-r1:8b')).toBe(true); });
+  test('excluye embeddings', () => {
+    expect(isAgentCapableModel('nomic-embed-text-v1.5')).toBe(false);
+  });
+  test('excluye VL puro (llava, moondream, mimo-vl)', () => {
+    expect(isAgentCapableModel('llava-7b')).toBe(false);
+    expect(isAgentCapableModel('mimo-vl-miloco-7b')).toBe(false);
+    expect(isAgentCapableModel('minicpm-v-8b')).toBe(false);
+  });
+  test('excluye Bonsai-27B base', () => {
+    expect(isAgentCapableModel('Bonsai-27B-GGUF')).toBe(false);
+  });
+  test('excluye GLM-4.6V-Flash base', () => {
+    expect(isAgentCapableModel('GLM-4.6V-Flash-GGUF')).toBe(false);
+  });
+  test('incluye Mistral Instruct', () => {
+    expect(isAgentCapableModel('mistralai/mistral-7b-instruct-v0.3')).toBe(true);
+  });
+  test('incluye Qwen2.5-Coder', () => {
+    expect(isAgentCapableModel('lmstudio-community/Qwen2.5-Coder-14B-Instruct-GGUF')).toBe(true);
+  });
+  test('incluye Qwen3.5', () => {
+    expect(isAgentCapableModel('qwen3.5-9b')).toBe(true);
+  });
+  test('incluye gemma-4-it', () => {
+    expect(isAgentCapableModel('google/gemma-4-e4b-it')).toBe(true);
+  });
+  test('incluye gpt-oss-20b', () => {
+    expect(isAgentCapableModel('openai/gpt-oss-20b')).toBe(true);
+  });
+  test('incluye deepseek-r1 instruct', () => {
+    expect(isAgentCapableModel('deepseek-r1:8b')).toBe(true);
+  });
 });
 describe('SafeStore', () => {
   test('SafeStore está disponible', () => {
@@ -508,4 +530,3 @@ describe('AIChat — Providers, Gemini & Free Tiers', () => {
     expect(aiChatModule.supportsTools(null)).toBe(false);
   });
 });
-
