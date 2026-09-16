@@ -79,7 +79,15 @@ const jsToMinify = [
   'bpi-worker.js',
   'lib-loader.js',
 ];
-const jsToCopy = ['prompts-data.js', 'prompts-data-extra.js', 'prompts-data-v2.js', 'prompts-data-fullstack.js'];
+const jsToCopy = [
+  'prompts-data.js',
+  'prompts-data-extra.js',
+  'prompts-data-v2.js',
+  'prompts-data-fullstack.js',
+  'prompts-data-industries.js',
+  'prompts-data-community.js',
+  'prompts-data-gpt4o.js',
+];
 
 for (const f of jsToMinify) {
   const src = path.join(ROOT, 'js', f);

@@ -33,6 +33,19 @@ Los mega-prompts son **prompts de ingeniería estructurados** que contienen:
 - 🏗️ **Full-Stack Industrial** — Aplicaciones completas con IA
 - 📚 **Capacitación** — Simuladores, e-learning industrial
 - 🔧 **Herramientas** — Utilidades para ingeniería
+- 🌍 **Comunidad (prompts.chat)** — Prompts "Actúa como" curados y traducidos
+- 🎨 **Generación de Imagen (GPT-4o)** — Prompts de imagen traducidos de awesome-gpt4o-images
+
+## 📥 Fuentes de datos
+
+La base se amplía de forma ordenada y separada por categoría desde fuentes open-source:
+
+- **[prompts.chat](https://github.com/f/prompts.chat)** (antes Awesome ChatGPT Prompts) — mega-biblioteca
+  de prompts comunitarios para IA. Licencia **CC0 1.0** (dominio público).
+  → Módulo `js/prompts-data-community.js` (`PROMPTS_DB_COMMUNITY`).
+- **[awesome-gpt4o-images](https://github.com/jamez-bondos/awesome-gpt4o-images)** — colección curada de
+  prompts de generación de imagen GPT-4o / gpt-image-1, traducidos al español. Licencia **CC BY 4.0**.
+  → Módulo `js/prompts-data-gpt4o.js` (`PROMPTS_DB_GPT4O`).
 
 ## 🚀 Características
 
@@ -146,6 +159,9 @@ BibliotecaDePromps/
 │   ├── prompts-data-extra.js  # Prompts adicionales
 │   ├── prompts-data-v2.js     # Prompts v2
 │   ├── prompts-data-fullstack.js  # Prompts full-stack
+│   ├── prompts-data-industries.js # Industrias universales (v4.0)
+│   ├── prompts-data-community.js  # Comunidad — prompts.chat (v4.1)
+│   ├── prompts-data-gpt4o.js      # Imagen GPT-4o — awesome-gpt4o-images (v4.1)
 │   ├── platform-tests.js      # Validación multi-plataforma
 │   ├── bpi-worker.js          # Web Worker (search, indexing)
 │   └── vendor/                # CDN fallbacks

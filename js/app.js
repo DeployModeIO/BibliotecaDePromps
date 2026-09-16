@@ -2,7 +2,7 @@
    BIBLIOTECA DE PROMPS INDUSTRIAL — APP CORE v3.3
    JSDoc type annotations for DX. TypeScript not required.
    ============================================================ */
-/* global PROMPTS_DB, PROMPTS_DB_EXTRA, PROMPTS_DB_V2, PROMPTS_DB_FULLSTACK, PROMPTS_SIMPLIFIED, module */
+/* global PROMPTS_DB, PROMPTS_DB_EXTRA, PROMPTS_DB_V2, PROMPTS_DB_FULLSTACK, PROMPTS_DB_INDUSTRIES, PROMPTS_DB_COMMUNITY, PROMPTS_DB_GPT4O, PROMPTS_SIMPLIFIED, module */
 
 /**
  * @typedef {{"label": string, "spec": string}} PlatformSpec
@@ -168,6 +168,54 @@ class PromptLibrary {
           });
         } else {
           merged.categorias.push(fsCat);
+        }
+      });
+    }
+
+    // Fusionar PROMPTS_DB_INDUSTRIES (Nuevas industrias universales v4.0)
+    if (typeof PROMPTS_DB_INDUSTRIES !== 'undefined') {
+      PROMPTS_DB_INDUSTRIES.categorias.forEach((indCat) => {
+        const existing = merged.categorias.find((c) => c.id === indCat.id);
+        if (existing) {
+          indCat.subcategorias.forEach((sub) => {
+            const existingSub = existing.subcategorias.find((s) => s.id === sub.id);
+            if (existingSub) existingSub.prompts.push(...sub.prompts);
+            else existing.subcategorias.push(sub);
+          });
+        } else {
+          merged.categorias.push(indCat);
+        }
+      });
+    }
+
+    // Fusionar PROMPTS_DB_COMMUNITY (prompts.chat — comunidad, v4.1)
+    if (typeof PROMPTS_DB_COMMUNITY !== 'undefined') {
+      PROMPTS_DB_COMMUNITY.categorias.forEach((comCat) => {
+        const existing = merged.categorias.find((c) => c.id === comCat.id);
+        if (existing) {
+          comCat.subcategorias.forEach((sub) => {
+            const existingSub = existing.subcategorias.find((s) => s.id === sub.id);
+            if (existingSub) existingSub.prompts.push(...sub.prompts);
+            else existing.subcategorias.push(sub);
+          });
+        } else {
+          merged.categorias.push(comCat);
+        }
+      });
+    }
+
+    // Fusionar PROMPTS_DB_GPT4O (awesome-gpt4o-images — imagen, v4.1)
+    if (typeof PROMPTS_DB_GPT4O !== 'undefined') {
+      PROMPTS_DB_GPT4O.categorias.forEach((gCat) => {
+        const existing = merged.categorias.find((c) => c.id === gCat.id);
+        if (existing) {
+          gCat.subcategorias.forEach((sub) => {
+            const existingSub = existing.subcategorias.find((s) => s.id === sub.id);
+            if (existingSub) existingSub.prompts.push(...sub.prompts);
+            else existing.subcategorias.push(sub);
+          });
+        } else {
+          merged.categorias.push(gCat);
         }
       });
     }
