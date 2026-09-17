@@ -84,23 +84,35 @@
 
     <!-- ══════════ COMMAND BAR ══════════ -->
     <section class="command">
-      <div class="search-wrap">
-        <span class="search-glyph" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <circle cx="11" cy="11" r="7" />
-            <path d="M21 21l-4.3-4.3" />
-          </svg>
-        </span>
-        <input
-          type="search"
-          id="searchInput"
-          class="search-input"
-          placeholder="BUSCAR EN TODA LA BIBLIOTECA — TÍTULO, TAG, NORMA O CONTENIDO DEL PROMPT…"
-          autocomplete="off"
-          aria-label="Buscar prompts"
-        />
-        <kbd>/</kbd>
+      <div class="search-hero">
+        <div class="search-wrap">
+          <span class="search-glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4.3-4.3" />
+            </svg>
+          </span>
+          <input
+            type="search"
+            id="searchInput"
+            class="search-input"
+            placeholder="Busca por título, tag, norma o contenido del prompt…"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Buscar prompts"
+            aria-describedby="searchStatus"
+          />
+          <button class="search-clear" id="searchClear" type="button" title="Limpiar búsqueda" aria-label="Limpiar búsqueda">✕</button>
+          <kbd class="search-hint-kbd">Ctrl K</kbd>
+        </div>
+
+        <button class="palette-trigger" id="paletteTrigger" type="button" title="Búsqueda rápida (Ctrl o ⌘ + K)">
+          <span aria-hidden="true">⌘</span> Búsqueda rápida <kbd>Ctrl K</kbd>
+        </button>
       </div>
+
+      <!-- accesos rápidos por categoría -->
+      <div class="quick-row" id="quickChips" role="group" aria-label="Accesos rápidos por categoría"></div>
 
       <div class="filters" id="filterBar" role="group" aria-label="Filtros">
         <button class="chip is-on" data-reset aria-pressed="true">Todos</button>
@@ -111,7 +123,20 @@
         <span class="chip-sep"></span>
         <button class="chip" data-type="app" aria-pressed="false">Aplicaciones</button>
         <button class="chip" data-type="tool" aria-pressed="false">Herramientas</button>
+        <span class="chip-sep"></span>
+        <button class="chip" data-source="industrial" aria-pressed="false">🏭 Industriales</button>
+        <button class="chip" data-source="prompts.chat" aria-pressed="false">🌍 Comunidad</button>
+        <button class="chip" data-source="awesome-gpt4o-images" aria-pressed="false">🎨 Imagen GPT-4o</button>
+        <span class="chip-sep"></span>
+        <label class="sort-label" for="sortSelect">Ordenar</label>
+        <select class="sort-select" id="sortSelect">
+          <option value="relevance">Relevancia</option>
+          <option value="priority">Prioridad</option>
+          <option value="title">Título (A-Z)</option>
+          <option value="fuente">Fuente</option>
+        </select>
       </div>
+      <div class="search-status" id="searchStatus" role="status" aria-live="polite"></div>
     </section>
 
     <!-- ══════════ MAIN ══════════ -->
@@ -470,6 +495,40 @@
             previsualizar, descargar o abrir.
           </p>
           <div class="generate-grid" id="generateGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ COMMAND PALETTE (Ctrl / ⌘ + K) ══════════ -->
+    <div class="palette-overlay" id="paletteOverlay" role="dialog" aria-modal="true" aria-label="Búsqueda rápida de prompts">
+      <div class="palette">
+        <div class="palette-input-row">
+          <span class="search-glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4.3-4.3" />
+            </svg>
+          </span>
+          <input
+            type="text"
+            id="paletteInput"
+            class="palette-input"
+            placeholder="Buscar prompts, sistemas, tags…"
+            autocomplete="off"
+            spellcheck="false"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="paletteList"
+            aria-describedby="paletteCount"
+          />
+          <span class="palette-count" id="paletteCount" role="status" aria-live="polite"></span>
+        </div>
+        <div class="palette-list" id="paletteList" role="listbox" aria-label="Resultados de búsqueda"></div>
+        <div class="palette-foot">
+          <span><kbd>↑</kbd><kbd>↓</kbd> navegar</span>
+          <span><kbd>↵</kbd> abrir</span>
+          <span><kbd>Esc</kbd> cerrar</span>
+          <span><kbd>⇧</kbd><kbd>F</kbd> favorito</span>
         </div>
       </div>
     </div>

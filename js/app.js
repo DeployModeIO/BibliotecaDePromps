@@ -98,12 +98,20 @@ class PromptLibrary {
     this.data = this.mergeData();
     this.index = new Map();
     this.buildIndex();
+    /* Paleta de comandos (Ctrl/⌘+K): índice plano + coincidencia actual */
+    this.searchDocs = [];
+    this.catDocs = [];
+    this.palette = { open: false, rows: [], sel: 0, q: '' };
+    this.buildSearchDocs();
     this.initSearchWorker();
 
     this.state = {
       q: '',
       priority: null,
       type: null,
+      cat: null,
+      source: null,
+      sort: 'relevance',
       platforms: new Set(this.load('platforms', ['web'])),
     };
     this.currentCategory = null;
@@ -233,6 +241,124 @@ class PromptLibrary {
     });
   }
 
+  /* ---------- índice de búsqueda plano ---------- */
+
+  /* Normaliza para buscar: minúsculas y sin acentos (que el usuario escriba
+     "gas" y encuentre "Gás/Gas LP"; "energia" encuentra "Energía"). */
+  _norm(s) {
+    return String(s)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
+
+  _escRe(s) {
+    return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  /* Convierte un término en un patrón que casa también sus variantes acentuadas. */
+  _accentFlex(term) {
+    const map = { a: 'aáàäâ', e: 'eéèëê', i: 'iíìïî', o: 'oóòöô', u: 'uúùüû', n: 'nñ' };
+    return Array.from(term)
+      .map((ch) => {
+        const k = map[ch.toLowerCase()];
+        return k ? '[' + k + k.toUpperCase() + ']' : this._escRe(ch);
+      })
+      .join('');
+  }
+
+  /* Resalta los términos buscados dentro de un texto, escapando HTML. */
+  _highlight(text, q) {
+    const terms = this._normTerms(q);
+    if (!terms.length) return this.esc(text);
+    const re = new RegExp('(' + terms.map((t) => this._accentFlex(t)).join('|') + ')', 'gi');
+    let out = '';
+    let last = 0;
+    let m;
+    while ((m = re.exec(text))) {
+      if (m[0].length === 0) {
+        re.lastIndex++;
+        continue;
+      }
+      out += this.esc(text.slice(last, m.index)) + '<span class="hl">' + this.esc(m[0]) + '</span>';
+      last = m.index + m[0].length;
+    }
+    return out + this.esc(text.slice(last));
+  }
+
+  _normTerms(q) {
+    return String(q || '')
+      .trim()
+      .split(/\s+/)
+      .map((t) => this._norm(t))
+      .filter(Boolean);
+  }
+
+  /* Etiqueta legible de la fuente/origen de un prompt. */
+  _sourceLabel(p) {
+    const f = (p && p.fuente) || 'industrial';
+    if (f === 'prompts.chat') return 'Comunidad · prompts.chat';
+    if (f === 'awesome-gpt4o-images') return 'Imagen · GPT-4o';
+    return 'Industrial';
+  }
+
+  /* Reconstruye los documentos planos usados por la paleta de comandos. */
+  buildSearchDocs() {
+    this.searchDocs = this.allPrompts().map(({ p, cat, sub }) => {
+      const hay = this._norm(
+        [p.titulo, (p.tags || []).join(' '), cat.nombre, sub.nombre, p.categoria, p.uso, this._sourceLabel(p), p.prompt].join(' ')
+      );
+      return {
+        id: p.id,
+        titulo: p.titulo || '',
+        categoria: p.categoria || '',
+        sub: sub.nombre,
+        catId: cat.id,
+        catNombre: cat.nombre,
+        catIcono: cat.icono,
+        color: cat.color,
+        tags: p.tags || [],
+        prioridad: p.prioridad || 'media',
+        fuente: this._sourceLabel(p),
+        words: this.wordCount(p.prompt || ''),
+        hay,
+        entry: { p, cat, sub },
+      };
+    });
+
+    this.catDocs = this.data.categorias.map((cat) => ({
+      id: cat.id,
+      nombre: cat.nombre,
+      icono: cat.icono,
+      color: cat.color,
+      descripcion: cat.descripcion || '',
+      total: cat.subcategorias.reduce((s, sub) => s + sub.prompts.length, 0),
+      subs: cat.subcategorias.map((s) => s.nombre),
+      hay: this._norm([cat.nombre, cat.descripcion, cat.subcategorias.map((s) => s.nombre).join(' ')].join(' ')),
+    }));
+  }
+
+  /* Puntúa un documento del índice frente a los términos (semántica AND). */
+  _scoreDoc(doc, terms) {
+    const title = this._norm(doc.titulo);
+    const tags = this._norm(doc.tags.join(' '));
+    const meta = this._norm(doc.catNombre + ' ' + doc.sub + ' ' + doc.categoria + ' ' + doc.fuente);
+    let score = 0;
+    for (const t of terms) {
+      let s = 0;
+      if (title.startsWith(t)) s += 140;
+      else if (title.includes(t)) s += 80;
+      if (tags.includes(t)) s += 50;
+      if (meta.includes(t)) s += 28;
+      if (s === 0 && doc.hay.includes(t)) s += 8;
+      if (s === 0) return 0;
+      score += s;
+    }
+    if (doc.prioridad === 'critica') score += 8;
+    else if (doc.prioridad === 'alta') score += 4;
+    return score;
+  }
+
   initSearchWorker() {
     this.worker = null;
     this.workerReady = false;
@@ -289,6 +415,15 @@ class PromptLibrary {
     const $ = (id) => document.getElementById(id);
     this.el = {
       searchInput: $('searchInput'),
+      searchClear: $('searchClear'),
+      searchStatus: $('searchStatus'),
+      quickChips: $('quickChips'),
+      sortSelect: $('sortSelect'),
+      paletteTrigger: $('paletteTrigger'),
+      paletteOverlay: $('paletteOverlay'),
+      paletteInput: $('paletteInput'),
+      paletteList: $('paletteList'),
+      paletteCount: $('paletteCount'),
       filterBar: $('filterBar'),
       homeView: $('homeView'),
       categoriesGrid: $('categoriesGrid'),
@@ -353,7 +488,9 @@ class PromptLibrary {
     this.setupReveal();
     this.renderStats();
     this.renderCategories();
+    this.renderQuickChips();
     this.bindEvents();
+    this.initPalette();
     this.startClock();
     this.updateConn();
     this.setupTheme();
@@ -570,53 +707,122 @@ class PromptLibrary {
     if (chip.hasAttribute('data-reset')) {
       this.state.priority = null;
       this.state.type = null;
+      this.state.source = null;
+      this.state.cat = null;
     } else if (chip.dataset.priority) {
       this.state.priority = this.state.priority === chip.dataset.priority ? null : chip.dataset.priority;
       this.state.type = null;
     } else if (chip.dataset.type) {
       this.state.type = this.state.type === chip.dataset.type ? null : chip.dataset.type;
       this.state.priority = null;
+    } else if (chip.dataset.source) {
+      this.state.source = this.state.source === chip.dataset.source ? null : chip.dataset.source;
     }
     this.syncChips();
     this.applyState();
   }
 
+  /* Accesos rápidos por categoría (fila bajo el buscador). */
+  renderQuickChips() {
+    const wrap = this.el.quickChips;
+    if (!wrap) return;
+    const cats = this.data.categorias;
+    wrap.innerHTML =
+      '<span class="quick-label">Sistemas</span>' +
+      cats
+        .map((c) => {
+          const n = c.subcategorias.reduce((s, sub) => s + sub.prompts.length, 0);
+          return (
+            '<button type="button" class="qchip" data-cat="' +
+            this.esc(c.id) +
+            '" style="--cat:' +
+            this.esc(c.color) +
+            '" aria-pressed="false" title="' +
+            this.esc(c.nombre) +
+            '">' +
+            this.esc(c.icono) +
+            ' ' +
+            this.esc(c.nombre) +
+            '<span class="qchip-n">' +
+            n +
+            '</span></button>'
+          );
+        })
+        .join('');
+  }
+
+  onQuickChipClick(e) {
+    const chip = e.target.closest('.qchip');
+    if (!chip) return;
+    const id = chip.dataset.cat;
+    this.state.cat = this.state.cat === id ? null : id;
+    this.syncChips();
+    this.applyState();
+  }
+
   syncChips() {
-    this.el.filterBar.querySelectorAll('.chip').forEach((chip) => {
-      let on = false;
-      if (chip.hasAttribute('data-reset')) on = !this.state.priority && !this.state.type;
-      else if (chip.dataset.priority) on = this.state.priority === chip.dataset.priority;
-      else if (chip.dataset.type) on = this.state.type === chip.dataset.type;
-      chip.classList.toggle('is-on', on);
-      chip.setAttribute('aria-pressed', String(on)); // A11y: estado anunciado
-    });
+    if (this.el.filterBar) {
+      this.el.filterBar.querySelectorAll('.chip').forEach((chip) => {
+        let on = false;
+        if (chip.hasAttribute('data-reset')) on = !this.state.priority && !this.state.type && !this.state.source && !this.state.cat;
+        else if (chip.dataset.priority) on = this.state.priority === chip.dataset.priority;
+        else if (chip.dataset.type) on = this.state.type === chip.dataset.type;
+        else if (chip.dataset.source) on = this.state.source === chip.dataset.source;
+        chip.classList.toggle('is-on', on);
+        chip.setAttribute('aria-pressed', String(on)); // A11y: estado anunciado
+      });
+    }
+    if (this.el.quickChips) {
+      this.el.quickChips.querySelectorAll('.qchip').forEach((chip) => {
+        const on = this.state.cat === chip.dataset.cat;
+        chip.classList.toggle('is-on', on);
+        chip.setAttribute('aria-pressed', String(on));
+      });
+    }
   }
 
   /* ---------- state / views ---------- */
 
   isFiltering() {
-    return !!(this.state.q || this.state.priority || this.state.type);
+    return !!(this.state.q || this.state.priority || this.state.type || this.state.source || this.state.cat);
   }
 
   matches(entry) {
     if (!this.matchesFilters(entry)) return false;
     const { p, cat } = entry;
+    if (this.state.cat && cat.id !== this.state.cat) return false;
     if (this.state.q) {
-      const hay = (p.titulo + ' ' + p.tags.join(' ') + ' ' + p.prompt + ' ' + cat.nombre).toLowerCase();
-      if (!hay.includes(this.state.q)) return false;
+      const hay = this._norm(p.titulo + ' ' + p.tags.join(' ') + ' ' + p.prompt + ' ' + cat.nombre + ' ' + (p.categoria || ''));
+      const ok = this._normTerms(this.state.q).every((t) => hay.includes(t));
+      if (!ok) return false;
     }
     return true;
   }
 
   matchesFilters(entry) {
-    const { p } = entry;
+    const { p, cat } = entry;
     if (this.state.priority && p.prioridad !== this.state.priority) return false;
     if (this.state.type) {
       const c = (p.categoria || '').toLowerCase();
       if (this.state.type === 'app' && !c.includes('aplicaci')) return false;
       if (this.state.type === 'tool' && !c.includes('herramienta')) return false;
     }
+    if (this.state.source) {
+      const f = p.fuente || 'industrial';
+      if (this.state.source === 'industrial' ? !!p.fuente : f !== this.state.source) return false;
+    }
+    if (this.state.cat && cat.id !== this.state.cat) return false;
     return true;
+  }
+
+  /* Ordena resultados según el selector (por defecto: relevancia). */
+  sortEntries(list) {
+    const rank = { critica: 0, alta: 1, media: 2 };
+    const by = this.state.sort;
+    if (by === 'priority') return list.sort((a, b) => (rank[a.p.prioridad] ?? 3) - (rank[b.p.prioridad] ?? 3));
+    if (by === 'title') return list.sort((a, b) => String(a.p.titulo).localeCompare(String(b.p.titulo), 'es'));
+    if (by === 'fuente') return list.sort((a, b) => this._sourceLabel(a.p).localeCompare(this._sourceLabel(b.p), 'es'));
+    return list;
   }
 
   applyState() {
@@ -624,7 +830,26 @@ class PromptLibrary {
     this.el.homeView.hidden = filtering || !!this.currentCategory;
     this.el.categoryView.hidden = filtering || !this.currentCategory;
     this.el.resultsView.hidden = !filtering;
+    this.syncChips();
+    this.updateStatus();
     if (filtering) this.renderResults();
+  }
+
+  /* Resumen legible de lo que se está mostrando + botón limpiar. */
+  updateStatus() {
+    const clearBtn = this.el.searchClear;
+    if (clearBtn) clearBtn.classList.toggle('is-visible', !!this.el.searchInput.value);
+    if (!this.el.searchStatus) return;
+    const bits = [];
+    if (this.state.cat) {
+      const c = this.data.categorias.find((x) => x.id === this.state.cat);
+      if (c) bits.push('Sistema: ' + c.nombre);
+    }
+    if (this.state.priority) bits.push('Prioridad: ' + this.state.priority);
+    if (this.state.type) bits.push('Tipo: ' + (this.state.type === 'app' ? 'Aplicaciones' : 'Herramientas'));
+    if (this.state.source) bits.push('Fuente: ' + this._sourceLabel({ fuente: this.state.source }));
+    if (this.state.q) bits.push('“' + this.state.q + '”');
+    this.el.searchStatus.textContent = bits.length ? 'Filtros activos — ' + bits.join(' · ') : '';
   }
 
   /* ---------- rendering ---------- */
@@ -934,7 +1159,7 @@ class PromptLibrary {
       .map(
         (v, i) => `<div style="margin-bottom:0.7rem">
         <label for="varField${i}" style="display:block;font-family:var(--f-mono);font-size:0.65rem;color:var(--txt-2);margin-bottom:0.25rem">${this.esc(v)}</label>
-        <input id="varField${i}" data-var="${this.esc(v)}" type="text" style="width:100%;padding:0.5rem 0.7rem;background:var(--bg-2);border:1px solid var(--line);border-radius:8px;color:var(--txt-1);font-size:0.85rem">
+        <input id="varField${i}" data-var="${this.esc(v)}" type="text" style="width:100%;padding:0.5rem 0.7rem;background:var(--bg-3);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:0.85rem">
       </div>`
       )
       .join('');
@@ -1430,6 +1655,417 @@ class PromptLibrary {
     }
   }
 
+  /* ---------- command palette (Ctrl / ⌘ + K) ---------- */
+
+  initPalette() {
+    const { paletteOverlay, paletteInput, paletteList, paletteTrigger } = this.el;
+    if (!paletteOverlay || !paletteInput || !paletteList) return;
+
+    if (paletteTrigger) {
+      paletteTrigger.addEventListener('click', () => this.openPalette());
+    }
+
+    // Clic sobre el backdrop cierra (patrón de diálogo modal).
+    paletteOverlay.addEventListener('mousedown', (e) => {
+      if (e.target === paletteOverlay) this.closePalette();
+    });
+
+    paletteInput.addEventListener('input', () => this.renderPalette(paletteInput.value));
+    paletteInput.addEventListener('keydown', (e) => this.onPaletteKeydown(e));
+
+    paletteList.addEventListener('click', (e) => {
+      const suggest = e.target.closest('[data-suggest]');
+      if (suggest) {
+        paletteInput.value = suggest.dataset.suggest;
+        this.renderPalette(suggest.dataset.suggest);
+        paletteInput.focus();
+        return;
+      }
+      const favBtn = e.target.closest('.prow-fav');
+      if (favBtn) {
+        const favRow = favBtn.closest('.prow');
+        if (favRow) this.togglePaletteFav(Number(favRow.dataset.i));
+        return;
+      }
+      const row = e.target.closest('.prow');
+      if (row) this.paletteActivate(Number(row.dataset.i));
+    });
+
+    // El hover sincroniza la selección de teclado (sin robar el foco del input).
+    paletteList.addEventListener('mousemove', (e) => {
+      const row = e.target.closest('.prow');
+      if (!row) return;
+      const i = Number(row.dataset.i);
+      if (i !== this.palette.sel) {
+        this.palette.sel = i;
+        this.paletteSyncActive();
+      }
+    });
+  }
+
+  openPalette(prefill) {
+    if (!this.el.paletteOverlay || this.palette.open) return;
+    this.palette.open = true;
+    this._paletteLastFocused = document.activeElement;
+    this.el.paletteOverlay.classList.add('active');
+    this.el.paletteInput.setAttribute('aria-expanded', 'true');
+    const val = typeof prefill === 'string' ? prefill : this.el.paletteInput.value;
+    this.el.paletteInput.value = val;
+    this.renderPalette(val);
+    requestAnimationFrame(() => {
+      this.el.paletteInput.focus();
+      this.el.paletteInput.select();
+    });
+  }
+
+  closePalette() {
+    if (!this.palette.open) return;
+    this.palette.open = false;
+    this.el.paletteOverlay.classList.remove('active');
+    this.el.paletteInput.setAttribute('aria-expanded', 'false');
+    this.el.paletteInput.removeAttribute('aria-activedescendant');
+    if (this._paletteLastFocused && this._paletteLastFocused.focus) {
+      try {
+        this._paletteLastFocused.focus();
+      } catch (e) {
+        /* el elemento de origen ya no está en el DOM */
+      }
+    }
+    this._paletteLastFocused = null;
+  }
+
+  /* Puntúa un sistema (categoría) frente a los términos. */
+  _scoreCatDoc(doc, terms) {
+    const name = this._norm(doc.nombre);
+    let score = 0;
+    for (const t of terms) {
+      let s = 0;
+      if (name.startsWith(t)) s += 120;
+      else if (name.includes(t)) s += 70;
+      if ((doc.subs || []).some((x) => this._norm(x).includes(t))) s += 30;
+      if (s === 0 && doc.hay.includes(t)) s += 8;
+      if (s === 0) return 0;
+      score += s;
+    }
+    return score + Math.min(doc.total, 40) / 40;
+  }
+
+  renderPalette(raw) {
+    const q = String(raw || '').trim();
+    const list = this.el.paletteList;
+    if (!list) return;
+
+    this.palette.q = q;
+    this.palette.rows = [];
+    this.palette.sel = 0;
+
+    const groups = [];
+    const terms = this._normTerms(q);
+
+    if (!terms.length) {
+      const recents = this.paletteRecentDocs();
+      if (recents.length) groups.push({ label: '⏱ Recientes', items: recents });
+      groups.push({ label: '🗂 Sistemas', items: this.catDocs.slice(0, 6).map((c) => this._catRow(c, q)) });
+      groups.push({ label: '★ Destacados', items: this.paletteSuggestDocs() });
+    } else {
+      const actions = this.paletteActions(q);
+      if (actions.length) groups.push({ label: '⚡ Acciones', items: actions });
+
+      const cats = this.catDocs
+        .map((c) => ({ c, s: this._scoreCatDoc(c, terms) }))
+        .filter((x) => x.s > 0)
+        .sort((a, b) => b.s - a.s)
+        .slice(0, 4);
+      if (cats.length) groups.push({ label: '🗂 Sistemas', items: cats.map((x) => this._catRow(x.c, q)) });
+
+      const docs = [];
+      for (const d of this.searchDocs) {
+        const s = this._scoreDoc(d, terms);
+        if (s > 0) docs.push({ d, s });
+      }
+      docs.sort((a, b) => b.s - a.s || String(a.d.titulo).localeCompare(String(b.d.titulo), 'es'));
+      groups.push({ label: '◆ Prompts', items: docs.slice(0, 40).map((x) => this._promptRow(x.d, q)) });
+    }
+
+    const total = groups.reduce((n, g) => n + g.items.length, 0);
+    if (!total) {
+      list.innerHTML = `<div class="palette-empty"><span class="glyph" aria-hidden="true">⌀</span>
+        Sin coincidencias para <b>${this.esc(q)}</b>
+        <div class="palette-suggests">${this.paletteSuggestChips()}</div></div>`;
+      this.setPaletteCount(0);
+      this.paletteSyncActive();
+      return;
+    }
+
+    list.innerHTML = groups
+      .filter((g) => g.items.length)
+      .map(
+        (g) =>
+          `<div class="palette-group" role="group"><div class="palette-group-label">${this.esc(g.label)}</div>${g.items
+            .map((it) => this._paletteRowHtml(it))
+            .join('')}</div>`
+      )
+      .join('');
+    this.setPaletteCount(total);
+    this.paletteSyncActive();
+  }
+
+  /* ---------- filas de la paleta ---------- */
+
+  _sourceCode(label) {
+    if (label.startsWith('Comunidad')) return 'COM';
+    if (label.startsWith('Imagen')) return 'IMG';
+    return 'IND';
+  }
+
+  _promptRow(doc, q) {
+    return {
+      kind: 'prompt',
+      id: doc.id,
+      icon: doc.catIcono || '◆',
+      color: doc.color,
+      title: this._highlight(doc.titulo, q),
+      sub: this.esc(`${doc.catNombre} · ${doc.sub} · ${doc.words} palabras`),
+      tag: this._sourceCode(doc.fuente),
+      dot: doc.prioridad,
+      fav: this.isFavorite(doc.id),
+    };
+  }
+
+  _catRow(cat, q) {
+    return {
+      kind: 'cat',
+      id: cat.id,
+      icon: cat.icono || '▣',
+      color: cat.color,
+      title: this._highlight(cat.nombre, q),
+      sub: this.esc(`${cat.total} prompts · ${(cat.subs || []).slice(0, 4).join(' / ')}`),
+      tag: 'SISTEMA',
+    };
+  }
+
+  _paletteRowHtml(it) {
+    const i = this.palette.rows.push(it) - 1;
+    const dot = it.dot ? `<span class="prow-dot p-${this.esc(it.dot)}" title="Prioridad ${this.esc(it.dot)}"></span>` : '';
+    const style = it.color ? ` style="color:${this.esc(it.color)}"` : '';
+    const tag = it.tag ? `<span class="prow-tag">${this.esc(it.tag)}</span>` : '';
+    // Estrella de favorito: marca visual y confirmación del atajo F.
+    const fav =
+      it.kind === 'prompt' ? `<span class="prow-fav${it.fav ? ' is-fav' : ''}" aria-hidden="true">${it.fav ? '★' : '☆'}</span>` : '';
+    // role=option + tabindex=-1: patrón combobox con aria-activedescendant.
+    return `<button type="button" tabindex="-1" class="prow" role="option" aria-selected="false" id="prow-${i}" data-i="${i}">
+      <span class="prow-icon"${style} aria-hidden="true">${this.esc(it.icon)}</span>
+      <span class="prow-main"><span class="prow-title">${it.title}</span><span class="prow-sub">${it.sub}</span></span>
+      ${tag}${dot}${fav}<span class="prow-key" aria-hidden="true">↵</span>
+    </button>`;
+  }
+
+  setPaletteCount(n) {
+    if (!this.el.paletteCount) return;
+    this.el.paletteCount.textContent = n ? `${n} RESULTADO${n === 1 ? '' : 'S'}` : 'SIN RESULTADOS';
+  }
+
+  /* Recientes: los últimos prompts usados (historial) como filas de la paleta. */
+  paletteRecentDocs() {
+    const byId = new Map(this.searchDocs.map((d) => [d.id, d]));
+    const out = [];
+    for (const h of this.history) {
+      const doc = byId.get(h.id);
+      if (doc) {
+        out.push(this._promptRow(doc, ''));
+        if (out.length >= 5) break;
+      }
+    }
+    return out;
+  }
+
+  /* Destacados: favoritos recientes y, si no hay, prompts críticos/alta prioridad. */
+  paletteSuggestDocs() {
+    const byId = new Map(this.searchDocs.map((d) => [d.id, d]));
+    const out = [];
+    for (const f of this.favorites) {
+      const doc = byId.get(f.id);
+      if (doc) {
+        out.push(this._promptRow(doc, ''));
+        if (out.length >= 6) return out;
+      }
+    }
+    if (out.length) return out;
+    const ranked = this.searchDocs.filter((d) => d.prioridad === 'critica' || d.prioridad === 'alta').slice(0, 6);
+    for (const doc of ranked) out.push(this._promptRow(doc, ''));
+    return out;
+  }
+
+  /* Acciones de navegación que coinciden con la consulta escrita. */
+  paletteActions(q) {
+    const catalog = [
+      { id: 'home', icon: '⌂', label: 'Ir al inicio', keys: 'home inicio inicio sistemas categorias' },
+      { id: 'fav', icon: '★', label: 'Ver favoritos', keys: 'favoritos fav starred destacados' },
+      { id: 'hist', icon: '⏱', label: 'Ver historial', keys: 'historial hist recientes usage' },
+      { id: 'gen', icon: '⚡', label: 'Generar aplicación', keys: 'generar app build crear' },
+      { id: 'dash', icon: '▦', label: 'Panel de control', keys: 'dashboard panel stats estadisticas' },
+      { id: 'keys', icon: '⌨', label: 'Atajos de teclado', keys: 'atajos keys help ayuda' },
+      { id: 'clear', icon: '⌫', label: 'Limpiar filtros', keys: 'limpiar reset clear filtros' },
+      { id: 'theme', icon: '◐', label: 'Cambiar tema', keys: 'tema theme dark light claro oscuro' },
+    ];
+    const terms = this._normTerms(q);
+    return catalog
+      .filter((a) => {
+        if (!terms.length) return false;
+        const hay = this._norm(a.label + ' ' + a.keys);
+        return terms.every((t) => hay.includes(t));
+      })
+      .map((a) => ({
+        kind: 'action',
+        id: a.id,
+        icon: a.icon,
+        title: this._highlight(a.label, q),
+        sub: this.esc('Acción'),
+        tag: '↵',
+      }));
+  }
+
+  /* Chips de sugerencia para el estado vacío: guían al usuario a consultas útiles. */
+  paletteSuggestChips() {
+    const picks = this.catDocs.slice(0, 4).map((c) => c.nombre);
+    return picks.map((n) => `<button type="button" class="psug" data-suggest="${this.esc(n)}">${this.esc(n)}</button>`).join('');
+  }
+
+  /* Estado del índice activo: resalta la fila, la trae a la vista y anuncia
+     la coincidencia al lector de pantalla vía aria-activedescendant. */
+  paletteSyncActive() {
+    const list = this.el.paletteList;
+    if (!list) return;
+    const rows = Array.from(list.querySelectorAll('.prow'));
+    if (!rows.length) {
+      this.el.paletteInput?.removeAttribute('aria-activedescendant');
+      return;
+    }
+    if (this.palette.sel >= rows.length) this.palette.sel = 0;
+    rows.forEach((row, i) => {
+      const on = i === this.palette.sel;
+      row.classList.toggle('is-active', on);
+      row.setAttribute('aria-selected', String(on));
+      if (on) row.scrollIntoView({ block: 'nearest' });
+    });
+    this.el.paletteInput?.setAttribute('aria-activedescendant', rows[this.palette.sel].id);
+  }
+
+  /* Alterna favorito desde la paleta sin perder la consulta ni la selección. */
+  togglePaletteFav(i) {
+    const it = this.palette.rows[Number(i)];
+    if (!it || it.kind !== 'prompt') return;
+    const entry = this.index.get(it.id);
+    if (!entry) return;
+    this.toggleFavorite(entry.prompt);
+    const keep = this.palette.sel;
+    this.renderPalette(this.palette.q);
+    if (this.palette.rows.length) {
+      this.palette.sel = Math.min(Math.max(keep, 0), this.palette.rows.length - 1);
+      this.paletteSyncActive();
+    }
+    if (this.el.paletteInput) this.el.paletteInput.focus();
+  }
+
+  onPaletteKeydown(e) {
+    const n = this.palette.rows.length;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!n) return;
+      const d = e.key === 'ArrowDown' ? 1 : -1;
+      this.palette.sel = (this.palette.sel + d + n) % n;
+      this.paletteSyncActive();
+      return;
+    }
+    if (e.key === 'PageDown' || e.key === 'PageUp') {
+      e.preventDefault();
+      if (!n) return;
+      const d = e.key === 'PageDown' ? 8 : -8;
+      this.palette.sel = Math.min(Math.max(this.palette.sel + d, 0), n - 1);
+      this.paletteSyncActive();
+      return;
+    }
+    if (e.key === 'Home' || e.key === 'End') {
+      if (!n) return;
+      e.preventDefault();
+      this.palette.sel = e.key === 'Home' ? 0 : n - 1;
+      this.paletteSyncActive();
+      return;
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      this.paletteActivate(this.palette.sel);
+      return;
+    }
+    // ⇧F marca/desmarca favorito. F a secas no se captura porque
+    // coincidiría con teclear términos como "fullstack" o "filtro".
+    // Se ignora si viene con Ctrl/⌘ para no duplicar Ctrl+⇧F (globales).
+    if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase() === 'f') {
+      e.preventDefault();
+      this.togglePaletteFav(this.palette.sel);
+    }
+    if (e.key === 'Escape') {
+      // Detiene la propagación para que el handler global no limpie además la búsqueda inline.
+      e.preventDefault();
+      e.stopPropagation();
+      this.closePalette();
+    }
+  }
+
+  paletteActivate(i) {
+    const it = this.palette.rows[Number(i)];
+    if (!it) return;
+    if (it.kind === 'prompt') {
+      this.closePalette();
+      this.openPromptById(it.id);
+      return;
+    }
+    if (it.kind === 'cat') {
+      this.closePalette();
+      this.openCategory(it.id);
+      return;
+    }
+    this.runPaletteAction(it.id);
+  }
+
+  runPaletteAction(id) {
+    const handlers = {
+      home: () => this.goHome(),
+      fav: () => {
+        this.renderFavList();
+        this.openDrawer('fav');
+      },
+      hist: () => {
+        this.renderHistList();
+        this.openDrawer('hist');
+      },
+      gen: () => this.openGenerateModal(),
+      dash: () => window.toggleDashboard(),
+      keys: () => window.toggleShortcutsModal(),
+      clear: () => this.resetAllFilters(),
+      theme: () => this.toggleTheme(),
+    };
+    const fn = handlers[id];
+    this.closePalette();
+    if (fn) fn();
+  }
+
+  /* Restablece todos los filtros y vuelve a la vista de sistemas. */
+  resetAllFilters() {
+    this.state.q = '';
+    this.state.priority = null;
+    this.state.type = null;
+    this.state.source = null;
+    this.state.cat = null;
+    this.state.sort = 'relevance';
+    if (this.el.searchInput) this.el.searchInput.value = '';
+    if (this.el.sortSelect) this.el.sortSelect.value = 'relevance';
+    this.currentCategory = null;
+    this.syncChips();
+    this.applyState();
+    this.showToast('⌫ Filtros restablecidos');
+  }
+
   /* ---------- system ---------- */
 
   startClock() {
@@ -1541,7 +2177,7 @@ window.addEventListener('unhandledrejection', (event) => {
    ============================================================ */
 (function initKeyboardShortcuts() {
   const SHORTCUTS = [
-    { keys: 'Ctrl+K', macKeys: '⌘K', desc: 'Foco en búsqueda', action: () => document.getElementById('searchInput')?.focus() },
+    { keys: 'Ctrl+K', macKeys: '⌘K', desc: 'Paleta de comandos', action: () => window.promptLibrary?.openPalette?.() },
     { keys: 'Ctrl+Shift+F', macKeys: '⌘⇧F', desc: 'Favoritos', action: () => document.getElementById('favToggle')?.click() },
     { keys: 'Ctrl+Shift+H', macKeys: '⌘⇧H', desc: 'Historial', action: () => document.getElementById('histToggle')?.click() },
     { keys: 'Ctrl+Shift+C', macKeys: '⌘⇧C', desc: 'Chat IA', action: () => document.getElementById('chatToggle')?.click() },
@@ -1634,10 +2270,15 @@ window.addEventListener('unhandledrejection', (event) => {
 
     if (!mod) return;
 
-    // Ctrl/Cmd + K: focus search
+    // Ctrl/Cmd + K: abrir la paleta de comandos (con fallback al buscador inline).
     if (e.key === 'k' || e.key === 'K') {
       e.preventDefault();
-      document.getElementById('searchInput')?.focus();
+      const lib = window.promptLibrary;
+      if (lib && typeof lib.openPalette === 'function' && lib.el.paletteOverlay) {
+        lib.palette.open ? lib.closePalette() : lib.openPalette();
+      } else {
+        document.getElementById('searchInput')?.focus();
+      }
       return;
     }
 
@@ -1677,6 +2318,11 @@ window.addEventListener('unhandledrejection', (event) => {
       document.getElementById('shortcutsModal')?.classList.remove('active');
     }
   });
+
+  // Expuesto para la paleta de comandos (Ctrl+K → "Atajos" / "Panel de control").
+  // Unica fuente de verdad: reutiliza buildShortcutsTable() y renderDashboard().
+  window.toggleShortcutsModal = toggleShortcutsModal;
+  window.toggleDashboard = toggleDashboard;
 })();
 
 /* ============================================================
