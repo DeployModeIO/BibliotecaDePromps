@@ -1,0 +1,3 @@
+var fs = require('fs');
+var c = fs.readFileSync('D:/Proyectos/BibliotecaDePromps/js/prompts-data-industries.js', 'utf8');
+console.log('Before - length:', c.length); // Match \\, u, {, hex digits, } patternc = c.replace(/\\\\u\{([0-9A-Fa-f]+)\}/g, function(m, hex) {  console.log("Found:", m, "hex:", hex);  return String.fromCodePoint(parseInt(hex, 16));});console.log("After replacement - looking for remaining...");var rem = c.match(/\\\\u\{[0-9A-Fa-f]+\}/g);console.log("Remaining after fix:", rem ? rem.length : 0);fs.writeFileSync("D:/Proyectos/BibliotecaDePromps/js/prompts-data-industries.js", c, "utf8");console.log("Done!");
