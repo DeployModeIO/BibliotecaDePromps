@@ -63,10 +63,6 @@
   }
 }
 
-.banner-icon {
-  color: var(--cat, var(--ind-herramientas));
-}
-
 .banner-stats {
   font-family: var(--f-mono);
   font-size: var(--fs-2xs);
@@ -173,7 +169,7 @@
   font-family: var(--f-mono);
   font-size: var(--fs-2xs);
   letter-spacing: 0.04em;
-  color: var(--txt-3);
+  color: var(--cat, var(--txt-3));
 }
 
 .pcard-badges {
@@ -225,7 +221,7 @@
   font-family: var(--f-mono);
   font-size: var(--fs-2xs);
   color: var(--txt-3);
-  margin-bottom: var(--space-2);
+  padding-right: var(--space-10);
 
   b {
     color: var(--txt-2);
@@ -237,6 +233,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1);
+  margin-bottom: var(--space-2);
 }
 
 .tag {

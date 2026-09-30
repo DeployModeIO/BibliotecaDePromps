@@ -86,6 +86,11 @@
   &::-webkit-search-cancel-button {
     appearance: none;
   }
+
+  /* El anillo lo pone el panel (.search-hero:focus-within): sin doble foco */
+  &:focus-visible {
+    box-shadow: none;
+  }
 }
 
 .search-clear {
@@ -127,42 +132,47 @@
   flex-shrink: 0;
 }
 
-/* ---- disparador de la paleta de comandos (acción primaria) ---- */
+/* ---- disparador de la paleta: icon-btn adyacente al campo ---- */
 
 .palette-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--f-body);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--accent-ink);
-  background: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius-sm);
-  padding: var(--space-3) var(--space-4);
-  white-space: nowrap;
-  transition:
-    background var(--dur) var(--ease),
-    border-color var(--dur) var(--ease);
+  align-self: stretch;
+  width: 48px;
+  height: auto;
+}
 
-  &:hover {
-    background: var(--accent-2);
-    border-color: var(--accent-2);
+/* ---- consola de filtros: sistemas + filtros en fieldsets ---- */
+
+.filters-console {
+  display: grid;
+  gap: var(--space-3);
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+}
+
+.console-field {
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+
+  legend {
+    font-family: var(--f-body);
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+    color: var(--txt-3);
+    padding: 0;
+    margin-bottom: var(--space-2);
   }
 
-  kbd {
-    font-family: var(--f-mono);
-    font-size: var(--fs-2xs);
-    font-weight: 500;
-    padding: var(--space-1) var(--space-1);
-    border-radius: var(--radius-xs);
-    background: rgb(34 26 4 / 20%);
-    border: 1px solid rgb(34 26 4 / 32%);
+  & + .console-field {
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-3);
   }
 }
 
-/* ---- accesos rápidos por categoría ---- */
+/* ---- accesos rápidos por sistema ---- */
 
 .quick-row {
   display: flex;
@@ -175,14 +185,6 @@
   &::-webkit-scrollbar {
     height: 5px;
   }
-}
-
-.quick-label {
-  font-family: var(--f-body);
-  font-size: var(--fs-2xs);
-  color: var(--txt-3);
-  white-space: nowrap;
-  padding-right: var(--space-1);
 }
 
 .qchip {

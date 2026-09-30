@@ -85,17 +85,6 @@
   color: var(--cat, var(--ind-herramientas));
 }
 
-.cat-icon {
-  display: block;
-  color: var(--cat, var(--ind-herramientas));
-  margin-bottom: var(--space-3);
-
-  svg {
-    width: 24px;
-    height: 24px;
-  }
-}
-
 .cat-foot {
   display: flex;
   justify-content: space-between;
@@ -110,10 +99,5 @@
 
 .cat-go {
   color: var(--cat, var(--ind-herramientas));
-  transition: transform var(--dur-fast) var(--ease);
-  display: inline-block;
-}
-
-.cat-panel:hover .cat-go {
-  transform: translateX(2px);
+  font-weight: 600;
 }

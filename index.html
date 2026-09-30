@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#0e1626" />
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; connect-src 'self' https://api.openai.com https://api.anthropic.com https://api.groq.com https://api.deepseek.com https://openrouter.ai https://dashscope-intl.aliyuncs.com https://generativelanguage.googleapis.com https://api.mistral.ai https://api.together.xyz https://api.perplexity.ai https://api.x.ai https://api.cerebras.ai https://api.cohere.ai https://api.cohere.com https://api.chatglm.cn https://open.bigmodel.cn http://localhost:*; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'self';"
@@ -24,7 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
 
@@ -45,25 +45,131 @@
             </svg>
           </div>
           <div class="brand-text">
-            <h1>Biblioteca de <em>Promps</em></h1>
-            <span class="brand-sub">Sistema de Mega-Prompts Industriales · Rev 3.5</span>
+            <div class="brand-title">Biblioteca de <em>Promps</em></div>
+            <span class="brand-sub">Sistema de mega-prompts industriales · Rev 3.5</span>
           </div>
         </div>
 
         <div class="topbar-status">
-          <div class="status-pill" id="connStatus" title="Estado de conexión">
-            <span class="dot"></span><span id="connLabel">EN LÍNEA</span>
+          <div class="plant-line">
+            <div class="status-pill" id="connStatus" title="Estado de conexión">
+              <span class="dot" aria-hidden="true"></span><span id="connLabel">EN LÍNEA</span>
+            </div>
+            <div class="clock" id="clock" title="Hora local">--:--:--</div>
           </div>
-          <div class="clock" id="clock" title="Hora local">--:--:--</div>
-          <button class="icon-btn" id="favToggle" title="Favoritos" aria-label="Ver favoritos">
-            ★<span class="badge" id="favCount"></span>
-          </button>
-          <button class="icon-btn" id="histToggle" title="Historial de uso" aria-label="Ver historial">⏱</button>
-          <button class="icon-btn" id="dashboardToggle" title="Panel de Control" aria-label="Panel de Control">📊</button>
-          <button class="icon-btn" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema">◐</button>
-          <button class="icon-btn" id="installBtn" title="Instalar aplicación" aria-label="Instalar aplicación" hidden>⬇</button>
-          <button class="icon-btn" id="generateBtn" title="Generar App" aria-label="Generar aplicación desde prompt">⚡</button>
-          <button class="icon-btn" id="chatToggle" title="Chat IA" aria-label="Abrir chat IA">💬</button>
+
+          <div class="topbar-group" role="group" aria-label="Archivo">
+            <button class="icon-btn" id="favToggle" title="Favoritos" aria-label="Ver favoritos">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 3.6l2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8z" />
+              </svg>
+              <span class="badge" id="favCount"></span>
+            </button>
+            <button class="icon-btn" id="histToggle" title="Historial de uso" aria-label="Ver historial">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3.8 12a8.2 8.2 0 1 0 2.5-5.9" />
+                <path d="M3.6 4.8v3.9h3.9" />
+                <path d="M12 8.2V12l2.7 1.7" />
+              </svg>
+            </button>
+            <button class="icon-btn" id="dashboardToggle" title="Panel de control" aria-label="Abrir panel de control">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M4.2 4.2v15.6h15.6" />
+                <path d="M8.4 16.2v-4" />
+                <path d="M12.4 16.2V8.8" />
+                <path d="M16.4 16.2v-5.6" />
+              </svg>
+            </button>
+          </div>
+
+          <span class="topbar-sep" aria-hidden="true"></span>
+
+          <div class="topbar-group" role="group" aria-label="Creación">
+            <button class="icon-btn" id="generateBtn" title="Generar aplicación" aria-label="Generar aplicación desde un prompt">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M13.4 3.2L6.2 13.4h4.9l-.5 7.4 7.2-10.2h-4.9z" />
+              </svg>
+            </button>
+            <button class="icon-btn" id="chatToggle" title="Chat IA" aria-label="Abrir chat IA">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M20.2 14.3a2.6 2.6 0 0 1-2.6 2.6H8.3L4.2 20.3V6.6a2.6 2.6 0 0 1 2.6-2.6h10.8a2.6 2.6 0 0 1 2.6 2.6z" />
+              </svg>
+            </button>
+          </div>
+
+          <span class="topbar-sep" aria-hidden="true"></span>
+
+          <div class="topbar-group" role="group" aria-label="Sistema">
+            <button class="icon-btn" id="themeToggle" title="Cambiar tema" aria-label="Cambiar tema">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="8.3" />
+                <path d="M12 3.7a8.3 8.3 0 0 1 0 16.6z" fill="currentColor" stroke="none" />
+              </svg>
+            </button>
+            <button class="icon-btn" id="installBtn" title="Instalar aplicación" aria-label="Instalar aplicación" hidden>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 4.2v9.6" />
+                <path d="M8.2 10.4L12 14.2l3.8-3.8" />
+                <path d="M5 19.4h14" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
       <div class="hazard-line"></div>
@@ -71,14 +177,11 @@
 
     <!-- ══════════ STATS STRIP ══════════ -->
     <section class="stats-strip" aria-label="Estadísticas de la biblioteca">
-      <div class="stat"><span class="stat-val" id="statPrompts">0</span><span class="stat-key">Mega-Prompts</span></div>
-      <div class="stat"><span class="stat-val" id="statIndustries">0</span><span class="stat-key">Industrias</span></div>
+      <div class="stat"><span class="stat-val" id="statPrompts">0</span><span class="stat-key">Mega-prompts</span></div>
+      <div class="stat"><span class="stat-val" id="statIndustries">0</span><span class="stat-key">Sistemas</span></div>
       <div class="stat"><span class="stat-val" id="statWords">0</span><span class="stat-key">Palabras en prompts</span></div>
       <div class="stat">
         <span class="stat-val small" id="statStandards">API · ASME · OSHA</span><span class="stat-key">Normas base</span>
-      </div>
-      <div class="stat">
-        <span class="stat-val small" style="color: var(--green)">◉ PWA READY</span><span class="stat-key">100% Offline</span>
       </div>
     </section>
 
@@ -87,7 +190,7 @@
       <div class="search-hero">
         <div class="search-wrap">
           <span class="search-glyph" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="7" />
               <path d="M21 21l-4.3-4.3" />
             </svg>
@@ -106,35 +209,60 @@
           <kbd class="search-hint-kbd">Ctrl K</kbd>
         </div>
 
-        <button class="palette-trigger" id="paletteTrigger" type="button" title="Búsqueda rápida (Ctrl o ⌘ + K)">
-          <span aria-hidden="true">⌘</span> Búsqueda rápida <kbd>Ctrl K</kbd>
+        <button
+          class="icon-btn palette-trigger"
+          id="paletteTrigger"
+          type="button"
+          title="Búsqueda rápida (Ctrl o ⌘ + K)"
+          aria-label="Abrir búsqueda rápida"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M9.4 6.2h10.4M9.4 12h10.4M9.4 17.8h10.4" />
+            <circle cx="4.9" cy="6.2" r="1.1" />
+            <circle cx="4.9" cy="12" r="1.1" />
+            <circle cx="4.9" cy="17.8" r="1.1" />
+          </svg>
         </button>
       </div>
 
-      <!-- accesos rápidos por categoría -->
-      <div class="quick-row" id="quickChips" role="group" aria-label="Accesos rápidos por categoría"></div>
-
-      <div class="filters" id="filterBar" role="group" aria-label="Filtros">
-        <button class="chip is-on" data-reset aria-pressed="true">Todos</button>
-        <span class="chip-sep"></span>
-        <button class="chip" data-priority="critica" aria-pressed="false"><i class="sq" style="--c: var(--red)"></i>Crítica</button>
-        <button class="chip" data-priority="alta" aria-pressed="false"><i class="sq" style="--c: var(--amber)"></i>Alta</button>
-        <button class="chip" data-priority="media" aria-pressed="false"><i class="sq" style="--c: var(--green)"></i>Media</button>
-        <span class="chip-sep"></span>
-        <button class="chip" data-type="app" aria-pressed="false">Aplicaciones</button>
-        <button class="chip" data-type="tool" aria-pressed="false">Herramientas</button>
-        <span class="chip-sep"></span>
-        <button class="chip" data-source="industrial" aria-pressed="false">🏭 Industriales</button>
-        <button class="chip" data-source="prompts.chat" aria-pressed="false">🌍 Comunidad</button>
-        <button class="chip" data-source="awesome-gpt4o-images" aria-pressed="false">🎨 Imagen GPT-4o</button>
-        <span class="chip-sep"></span>
-        <label class="sort-label" for="sortSelect">Ordenar</label>
-        <select class="sort-select" id="sortSelect">
-          <option value="relevance">Relevancia</option>
-          <option value="priority">Prioridad</option>
-          <option value="title">Título (A-Z)</option>
-          <option value="fuente">Fuente</option>
-        </select>
+      <div class="filters-console">
+        <fieldset class="console-field">
+          <legend>Sistemas</legend>
+          <div class="quick-row" id="quickChips" role="group" aria-label="Accesos rápidos por sistema"></div>
+        </fieldset>
+        <fieldset class="console-field">
+          <legend>Filtros</legend>
+          <div class="filters" id="filterBar" role="group" aria-label="Filtros">
+            <button class="chip is-on" data-reset aria-pressed="true">Todos</button>
+            <span class="chip-sep" aria-hidden="true"></span>
+            <button class="chip" data-priority="critica" aria-pressed="false"><i class="sq" aria-hidden="true"></i>Crítica</button>
+            <button class="chip" data-priority="alta" aria-pressed="false"><i class="sq" aria-hidden="true"></i>Alta</button>
+            <button class="chip" data-priority="media" aria-pressed="false"><i class="sq" aria-hidden="true"></i>Media</button>
+            <span class="chip-sep" aria-hidden="true"></span>
+            <button class="chip" data-type="app" aria-pressed="false">Aplicaciones</button>
+            <button class="chip" data-type="tool" aria-pressed="false">Herramientas</button>
+            <span class="chip-sep" aria-hidden="true"></span>
+            <button class="chip" data-source="industrial" aria-pressed="false">Industriales</button>
+            <button class="chip" data-source="prompts.chat" aria-pressed="false">Comunidad</button>
+            <button class="chip" data-source="awesome-gpt4o-images" aria-pressed="false">Imagen GPT-4o</button>
+            <span class="chip-sep" aria-hidden="true"></span>
+            <label class="sort-label" for="sortSelect">Orden</label>
+            <select class="sort-select" id="sortSelect">
+              <option value="relevance">Relevancia</option>
+              <option value="priority">Prioridad</option>
+              <option value="title">Título (A-Z)</option>
+              <option value="fuente">Fuente</option>
+            </select>
+          </div>
+        </fieldset>
       </div>
       <div class="search-status" id="searchStatus" role="status" aria-live="polite"></div>
     </section>
@@ -143,10 +271,11 @@
     <main>
       <section id="homeView">
         <div class="section-head">
-          <h2>Seleccione Sistema</h2>
-          <span class="rule"></span>
+          <h1>Sistemas</h1>
+          <span class="rule" aria-hidden="true"></span>
           <span class="count" id="catCount"></span>
         </div>
+        <p class="section-sub">Selecciona un sistema para ver sus mega-prompts.</p>
         <div class="cat-grid" id="categoriesGrid"></div>
       </section>
 
@@ -157,8 +286,8 @@
 
       <section id="resultsView" hidden>
         <div class="section-head">
-          <h2>Resultados de Búsqueda</h2>
-          <span class="rule"></span>
+          <h2>Resultados de búsqueda</h2>
+          <span class="rule" aria-hidden="true"></span>
           <span class="count" id="resultsCount"></span>
         </div>
         <div class="prompt-grid" id="resultsList"></div>
@@ -175,9 +304,9 @@
       </div>
     </footer>
 
-    <!-- ══════════ MODAL PROMPT ══════════ -->
+    <!-- ══════════ CAPA 1: MODALES ══════════ -->
     <div class="modal-overlay" id="promptModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal">
+      <div class="modal modal--md">
         <div class="modal-stripe" id="modalStripe"></div>
         <div class="modal-head">
           <div class="modal-id-row">
@@ -192,37 +321,189 @@
         <div class="platform-bar">
           <div class="pchips" id="platformChips" role="group" aria-label="Plataformas de generación">
             <span class="pchip-label" id="pchipLabel">Generar para:</span>
-            <button class="pchip is-on" data-platform="all" aria-pressed="true">⊕ Todas</button>
-            <button class="pchip" data-platform="web" aria-pressed="false">🌐 Web</button>
-            <button class="pchip" data-platform="android" aria-pressed="false">🤖 Android</button>
-            <button class="pchip" data-platform="ios" aria-pressed="false">🍎 iOS</button>
-            <button class="pchip" data-platform="tablet" aria-pressed="false">📱 Tablet</button>
-            <button class="pchip" data-platform="windows" aria-pressed="false">🪟 Windows</button>
+            <button class="pchip is-on" data-platform="all" aria-pressed="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="8.3" />
+                <path d="M12 8.2v7.6M8.2 12h7.6" />
+              </svg>
+              Todas
+            </button>
+            <button class="pchip" data-platform="web" aria-pressed="false">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="8.3" />
+                <path d="M3.9 12h16.2" />
+                <path d="M12 3.7c2.2 2.3 3.5 5.2 3.5 8.3s-1.3 6-3.5 8.3c-2.2-2.3-3.5-5.2-3.5-8.3s1.3-6 3.5-8.3z" />
+              </svg>
+              Web
+            </button>
+            <button class="pchip" data-platform="android" aria-pressed="false">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="5" y="10.2" width="14" height="9.3" rx="2.2" />
+                <path d="M8.8 10.2V7M15.2 10.2V7" />
+                <path d="M9.5 14h.01M14.5 14h.01" />
+              </svg>
+              Android
+            </button>
+            <button class="pchip" data-platform="ios" aria-pressed="false">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="7.7" y="3.7" width="8.6" height="16.6" rx="2" />
+                <path d="M11 17.4h2" />
+              </svg>
+              iOS
+            </button>
+            <button class="pchip" data-platform="tablet" aria-pressed="false">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="4.7" y="5.7" width="14.6" height="12.6" rx="2" />
+                <path d="M11 15.6h2" />
+              </svg>
+              Tablet
+            </button>
+            <button class="pchip" data-platform="windows" aria-pressed="false">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="4.4" y="4.4" width="6.6" height="6.6" />
+                <rect x="13" y="4.4" width="6.6" height="6.6" />
+                <rect x="4.4" y="13" width="6.6" height="6.6" />
+                <rect x="13" y="13" width="6.6" height="6.6" />
+              </svg>
+              Windows
+            </button>
           </div>
         </div>
         <div class="modal-prompt-wrap">
           <div class="modal-prompt" id="modalPromptText"></div>
         </div>
         <div class="modal-actions">
-          <button class="btn btn-primary" id="copyBtn">⧉ Copiar Prompt</button>
-          <button class="btn" id="shareBtn" title="Copiar enlace para compartir">🔗 Compartir</button>
-          <button class="btn btn-ai" id="gptBtn" title="Copia el prompt y abre ChatGPT">↗ ChatGPT</button>
-          <button class="btn btn-ai" id="claudeBtn" title="Copia el prompt y abre Claude">↗ Claude</button>
-          <button class="btn btn-chat" id="sendToChatBtn" title="Envía el prompt al chat IA lateral">💬 Enviar a Chat</button>
-          <button class="btn btn-fav" id="favoriteBtn">☆ Favorito</button>
-          <button class="btn" id="emailBtn">✉ Email</button>
-          <button class="btn" id="pdfBtn">▤ PDF</button>
-          <button class="btn" id="excelBtn">▦ Excel</button>
+          <div class="actions-primary">
+            <button class="btn btn-primary" id="copyBtn">Copiar prompt</button>
+          </div>
+          <div class="actions-group" role="group" aria-label="Enviar a IA">
+            <button class="btn btn-ai" id="gptBtn" title="Copia el prompt y abre ChatGPT">ChatGPT</button>
+            <button class="btn btn-ai" id="claudeBtn" title="Copia el prompt y abre Claude">Claude</button>
+            <button class="btn btn-chat" id="sendToChatBtn" title="Envía el prompt al chat IA lateral">Enviar al chat</button>
+          </div>
+          <div class="actions-group" role="group" aria-label="Exportar">
+            <button class="btn" id="pdfBtn">PDF</button>
+            <button class="btn" id="excelBtn">Excel</button>
+            <button class="btn" id="emailBtn">Email</button>
+          </div>
+          <div class="actions-utils" role="group" aria-label="Utilidades">
+            <button class="btn btn-fav" id="favoriteBtn">☆ Favorito</button>
+            <button class="btn" id="shareBtn" title="Copiar enlace para compartir">Compartir</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ══════════ DRAWERS ══════════ -->
-    <div class="drawer-scrim" id="drawerScrim"></div>
+    <!-- Editor de variables {{...}} del prompt -->
+    <div class="modal-overlay" id="varModal" role="dialog" aria-modal="true" aria-labelledby="varModalTitle">
+      <div class="modal modal--sm">
+        <div class="modal-head">
+          <h2 id="varModalTitle">Completar variables</h2>
+          <button class="modal-close" id="varModalClose" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="var-modal-hint">Este prompt usa variables {{...}}. Complételas para copiarlo personalizado:</p>
+          <div class="var-modal-fields" id="varModalFields"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="varModalApply">Copiar con valores</button>
+          <button class="btn" id="varModalRaw">Copiar sin completar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Atajos de teclado -->
+    <div class="modal-overlay" id="shortcutsModal" role="dialog" aria-modal="true" aria-label="Atajos de teclado">
+      <div class="modal modal--sm">
+        <div class="modal-head">
+          <h2 id="shortcutsTitle">Atajos de teclado</h2>
+          <button class="modal-close" id="shortcutsClose" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="modal-body">
+          <table class="shortcuts-table">
+            <thead>
+              <tr>
+                <th scope="col">Acción</th>
+                <th scope="col">Atajo</th>
+              </tr>
+            </thead>
+            <tbody id="shortcutsList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generar aplicación -->
+    <div class="modal-overlay" id="generateModal" role="dialog" aria-modal="true" aria-label="Generar aplicación">
+      <div class="modal modal--sm">
+        <div class="modal-head">
+          <h2>Generar aplicación desde un prompt</h2>
+          <button class="modal-close" id="generateModalClose" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-intro">
+            Cada prompt simplificado genera una aplicación HTML/CSS interactiva con diseño bento. Seleccione una para previsualizar,
+            descargar o abrir.
+          </p>
+          <div class="generate-grid" id="generateGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CAPA 2: DRAWERS ══════════ -->
+    <div class="drawer-scrim" id="drawerScrim" aria-hidden="true"></div>
 
     <aside class="drawer" id="favDrawer" role="dialog" aria-modal="true" aria-label="Favoritos">
       <div class="drawer-head">
-        <h3><span>★</span> Favoritos</h3>
+        <h3>Favoritos</h3>
         <button class="drawer-close" data-close-drawer aria-label="Cerrar">✕</button>
       </div>
       <div class="drawer-list" id="favList"></div>
@@ -230,19 +511,20 @@
 
     <aside class="drawer" id="histDrawer" role="dialog" aria-modal="true" aria-label="Historial">
       <div class="drawer-head">
-        <h3><span>⏱</span> Historial</h3>
+        <h3>Historial</h3>
         <button class="drawer-close" data-close-drawer aria-label="Cerrar">✕</button>
       </div>
       <div class="drawer-list" id="histList"></div>
     </aside>
 
-    <div class="drawer-scrim" id="chatScrim"></div>
+    <!-- ══════════ CAPA 3: CHAT IA ══════════ -->
+    <div class="drawer-scrim" id="chatScrim" aria-hidden="true"></div>
 
     <aside class="chat-drawer" id="chatDrawer" role="dialog" aria-modal="true" aria-label="Chat IA">
       <div class="chat-resize-handle" id="chatResizeHandle" title="Arrastrar para redimensionar"></div>
       <div class="chat-head">
         <div class="chat-head-left">
-          <h3><span>💬</span> Chat IA</h3>
+          <h3>Chat IA</h3>
           <span class="chat-status" id="chatStatus">Sin proveedor</span>
         </div>
         <div class="chat-head-right">
@@ -281,7 +563,7 @@
           ⚡ Activar modo agente COMPLETO (leer + escribir + comandos + web)
         </button>
         <div class="ai-agent-project">
-          <label for="aiAgentProjectDir">📂 Carpeta del proyecto (dentro del workspace)</label>
+          <label for="aiAgentProjectDir">Carpeta del proyecto (dentro del workspace)</label>
           <input
             type="text"
             id="aiAgentProjectDir"
@@ -317,7 +599,7 @@
       </div>
 
       <details class="chat-config" id="aiConfigPanel">
-        <summary>⚙ Configuración avanzada</summary>
+        <summary>Configuración avanzada</summary>
         <div class="chat-config-body">
           <div class="ai-cfg-section">
             <span class="ai-cfg-title">Carpeta de guardado</span>
@@ -337,7 +619,7 @@
             </select>
           </div>
           <div class="ai-cfg-section">
-            <span class="ai-cfg-title">🔑 Llave de servidores locales (opcional)</span>
+            <span class="ai-cfg-title">Llave de servidores locales (opcional)</span>
             <div class="ai-cfg-row">
               <input
                 type="password"
@@ -354,14 +636,14 @@
             </p>
           </div>
           <div class="ai-cfg-section">
-            <span class="ai-cfg-title">🤖 Modo agente (herramientas)</span>
-            <label class="ai-cfg-toggle">
+            <span class="ai-cfg-title">Modo agente (herramientas)</span>
+            <label class="ai-cfg-toggle" for="aiAgentMode">
               <input type="checkbox" id="aiAgentMode" />
-              <span>Alternativa al botón ⚡ (arriba): permite que el modelo lea, escriba y edite archivos del proyecto.</span>
+              <span>Activación alternativa del modo agente: permite que el modelo lea, escriba y edite archivos del proyecto.</span>
             </label>
           </div>
           <div class="ai-cfg-section">
-            <span class="ai-cfg-title">🖥️ Servidor agente (comandos / web)</span>
+            <span class="ai-cfg-title">Servidor agente (comandos / web)</span>
             <div class="ai-cfg-row">
               <input
                 type="text"
@@ -394,12 +676,12 @@
       </details>
     </aside>
 
-    <!-- ══════════ CODE SANDBOX PANEL ══════════ -->
-    <aside class="sandbox-panel" id="sandboxPanel" role="dialog" aria-modal="true" aria-label="Sandbox de Código">
+    <!-- ══════════ CAPA 4: SANDBOX ══════════ -->
+    <aside class="sandbox-panel" id="sandboxPanel" role="dialog" aria-modal="true" aria-label="Sandbox de código">
       <div class="sandbox-resize-handle" id="sandboxResizeHandle" title="Arrastrar para redimensionar"></div>
       <div class="sandbox-head">
         <div class="sandbox-head-left">
-          <h3><span>⚡</span> Sandbox Live</h3>
+          <h3>Sandbox</h3>
           <span class="sandbox-badge" id="sandboxBadge">HTML / JS</span>
         </div>
         <div class="sandbox-head-right">
@@ -426,24 +708,12 @@
       </div>
     </aside>
 
-    <div class="toast" id="toast" role="status"></div>
-
-    <!-- Install Banner -->
-    <div class="install-banner" id="installBanner" aria-live="polite">
-      <div class="install-banner-icon">🏭</div>
-      <div class="install-banner-text"><strong>Instalar como app nativa</strong> — funciona offline, sin conexión a internet</div>
-      <div class="install-banner-btns">
-        <button class="btn btn-primary" id="installBannerBtn">⚡ Instalar</button>
-        <button class="btn btn-outline" id="installDismissBtn">Ahora no</button>
-      </div>
-    </div>
-
-    <!-- Dashboard overlay -->
-    <div class="dashboard-overlay" id="dashboardOverlay" role="dialog" aria-modal="true" aria-label="Panel de Control">
+    <!-- ══════════ CAPA 5: DASHBOARD ══════════ -->
+    <div class="dashboard-overlay" id="dashboardOverlay" role="dialog" aria-modal="true" aria-label="Panel de control">
       <div class="dashboard">
         <div class="dashboard-head">
-          <h2>📊 Panel de Control</h2>
-          <button class="dashboard-close" id="dashboardClose" aria-label="Cerrar dashboard">✕</button>
+          <h2>Panel de control</h2>
+          <button class="dashboard-close" id="dashboardClose" aria-label="Cerrar panel de control">✕</button>
         </div>
         <div class="dashboard-body" id="dashboardBody">
           <div class="dash-empty">Cargando estadísticas...</div>
@@ -451,60 +721,12 @@
       </div>
     </div>
 
-    <!-- Variables editor modal ({{variables}} del prompt) -->
-    <div class="modal-overlay" id="varModal" role="dialog" aria-modal="true" aria-labelledby="varModalTitle">
-      <div class="modal" style="max-width: 560px">
-        <div class="modal-head">
-          <h2 id="varModalTitle">⚙ Completar variables</h2>
-          <button class="modal-close" id="varModalClose" aria-label="Cerrar">✕</button>
-        </div>
-        <p class="var-modal-hint">Este prompt usa variables {{...}}. Complételas para copiarlo personalizado:</p>
-        <div class="var-modal-fields" id="varModalFields"></div>
-        <div class="modal-actions">
-          <button class="btn btn-primary" id="varModalApply">⧉ Copiar con valores</button>
-          <button class="btn" id="varModalRaw">Copiar sin completar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Keyboard shortcuts help modal -->
-    <div class="modal-overlay" id="shortcutsModal" role="dialog" aria-modal="true" aria-label="Atajos de teclado">
-      <div class="modal" style="max-width: 500px">
-        <div class="modal-head">
-          <h2 id="shortcutsTitle">⌨ Atajos de Teclado</h2>
-          <button class="modal-close" id="shortcutsClose" aria-label="Cerrar">✕</button>
-        </div>
-        <div class="modal-prompt-wrap" style="max-height: 60vh; overflow-y: auto">
-          <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse">
-            <tbody id="shortcutsList"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Generate App modal -->
-    <div class="modal-overlay" id="generateModal" role="dialog" aria-modal="true" aria-label="Generar Aplicación">
-      <div class="modal" style="max-width: 700px">
-        <div class="modal-head">
-          <h2>⚡ Generar Aplicación desde Prompt</h2>
-          <button class="modal-close" id="generateModalClose" aria-label="Cerrar">✕</button>
-        </div>
-        <div class="modal-prompt-wrap" style="max-height: 65vh; overflow-y: auto">
-          <p style="color: var(--txt-2); font-size: 0.85rem; margin-bottom: 1rem">
-            Cada prompt simplificado genera una app HTML/CSS interactiva completa con diseño bento-grid profesional. Seleccione una app para
-            previsualizar, descargar o abrir.
-          </p>
-          <div class="generate-grid" id="generateGrid"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══════════ COMMAND PALETTE (Ctrl / ⌘ + K) ══════════ -->
+    <!-- ══════════ CAPA 6: PALETA DE COMANDOS (Ctrl / ⌘ + K) ══════════ -->
     <div class="palette-overlay" id="paletteOverlay" role="dialog" aria-modal="true" aria-label="Búsqueda rápida de prompts">
       <div class="palette">
         <div class="palette-input-row">
           <span class="search-glyph" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="7" />
               <path d="M21 21l-4.3-4.3" />
             </svg>
@@ -517,7 +739,7 @@
             autocomplete="off"
             spellcheck="false"
             role="combobox"
-            aria-expanded="true"
+            aria-expanded="false"
             aria-controls="paletteList"
             aria-describedby="paletteCount"
           />
@@ -530,6 +752,18 @@
           <span><kbd>Esc</kbd> cerrar</span>
           <span><kbd>⇧</kbd><kbd>F</kbd> favorito</span>
         </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CAPA 7: FEEDBACK ══════════ -->
+    <div class="toast" id="toast" role="status"></div>
+
+    <div class="install-banner" id="installBanner" aria-live="polite">
+      <div class="install-banner-icon">🏭</div>
+      <div class="install-banner-text"><strong>Instalar como app nativa</strong> — funciona offline, sin conexión a internet</div>
+      <div class="install-banner-btns">
+        <button class="btn btn-primary" id="installBannerBtn">⚡ Instalar</button>
+        <button class="btn btn-outline" id="installDismissBtn">Ahora no</button>
       </div>
     </div>
 

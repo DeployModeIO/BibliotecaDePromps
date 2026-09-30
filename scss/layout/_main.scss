@@ -12,10 +12,11 @@ main {
 
 .section-head {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--space-4);
   margin-bottom: var(--space-4);
 
+  h1,
   h2 {
     font-family: var(--f-display);
     font-size: var(--fs-lg);
@@ -35,6 +36,10 @@ main {
     }
   }
 
+  h1 {
+    font-size: var(--fs-xl);
+  }
+
   .rule {
     flex: 1;
     height: 1px;
@@ -49,6 +54,16 @@ main {
   }
 }
 
+/* Bajada de la sección: una frase que dice qué hacer aquí. */
+.section-sub {
+  font-family: var(--f-body);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-read);
+  color: var(--txt-2);
+  max-width: 68ch;
+  margin: calc(-1 * var(--space-2)) 0 var(--space-4);
+}
+
 /* Reveal neutralizado: el JS sigue añadiendo .reveal/.in,
    pero el contenido es visible siempre, sin animación de entrada. */
 .reveal {
@@ -58,17 +73,12 @@ main {
 
 /* ---- estado vacío ---- */
 .empty {
+  grid-column: 1 / -1;
   border: 1px dashed var(--line-2);
   border-radius: var(--radius-sm);
   background: var(--bg-2);
   padding: var(--space-8) var(--space-5);
   text-align: center;
-
-  .glyph {
-    display: block;
-    color: var(--txt-3);
-    margin-bottom: var(--space-3);
-  }
 
   h3 {
     font-family: var(--f-display);
@@ -80,5 +90,9 @@ main {
     font-family: var(--f-body);
     font-size: var(--fs-sm);
     color: var(--txt-3);
+  }
+
+  .btn {
+    margin-top: var(--space-4);
   }
 }

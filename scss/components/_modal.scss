@@ -47,6 +47,19 @@
   transition: transform var(--dur-slow) var(--ease);
 }
 
+/* Tamaños por contenido: md = ficha de prompt, sm = diálogos de apoyo.
+   Nomenclatura BEM pedida por el brief; el patrón del linter es kebab-case. */
+/* stylelint-disable selector-class-pattern */
+.modal--md {
+  width: min(880px, 100%);
+}
+
+.modal--sm {
+  width: min(600px, 100%);
+}
+
+/* stylelint-enable selector-class-pattern */
+
 .modal-stripe {
   height: 3px;
   flex-shrink: 0;
@@ -158,6 +171,21 @@
   min-height: 120px;
 }
 
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-5);
+}
+
+.modal-intro {
+  font-family: var(--f-body);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-read);
+  color: var(--txt-2);
+  max-width: 70ch;
+  margin-bottom: var(--space-4);
+}
+
 .modal-prompt {
   font-family: var(--f-mono);
   font-size: var(--fs-sm);
@@ -197,22 +225,64 @@
 .var-modal-fields {
   display: grid;
   gap: var(--space-3);
+}
 
+.var-field {
   label {
-    font-family: var(--f-body);
-    font-size: var(--fs-xs);
+    display: block;
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
     color: var(--txt-2);
+    margin-bottom: var(--space-1);
   }
 
   input {
     width: 100%;
-    font-family: var(--f-mono);
-    font-size: var(--fs-xs);
+    font-family: var(--f-body);
+    font-size: var(--fs-sm);
     color: var(--txt);
     background: var(--bg-0);
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* ---- tabla de atajos ---- */
+.shortcuts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+
+  th {
+    font-family: var(--f-body);
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+    color: var(--txt-3);
+    text-align: left;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--line-2);
+  }
+
+  td {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--line);
+    color: var(--txt-2);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  kbd {
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    color: var(--accent-text);
+    background: var(--bg-3);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-xs);
+    padding: var(--space-1) var(--space-2);
+    white-space: nowrap;
   }
 }
 
@@ -228,14 +298,45 @@
   flex-shrink: 0;
 }
 
-/* ---- acciones ---- */
+/* ---- acciones: primaria + grupos funcionales + utilidades ---- */
 .modal-actions {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-2);
   padding: var(--space-4) var(--space-5);
   border-top: 1px solid var(--line);
   flex-shrink: 0;
+}
+
+.actions-primary {
+  display: flex;
+  flex-shrink: 0;
+
+  .btn {
+    padding-inline: var(--space-5);
+  }
+}
+
+.actions-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--line);
+}
+
+.actions-utils {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+.actions-utils .btn:not(.is-fav) {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--txt-2);
 }
 
 /* ---- familia de botones del sistema ---- */
@@ -247,7 +348,7 @@
   font-family: var(--f-body);
   font-size: var(--fs-sm);
   font-weight: 600;
-  padding: var(--space-3) var(--space-2);
+  padding: var(--space-2) var(--space-3);
   border: 1px solid var(--line-2);
   border-radius: var(--radius-sm);
   background: var(--bg-2);
@@ -280,10 +381,6 @@
     border-color: var(--ok);
     color: var(--accent-ink);
   }
-}
-
-.modal-actions .btn-primary {
-  grid-column: span 2;
 }
 
 .btn-outline {

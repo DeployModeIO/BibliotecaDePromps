@@ -53,6 +53,44 @@ const PLATFORM_SPECS = {
 };
 const PLATFORM_KEYS = Object.keys(PLATFORM_SPECS);
 
+/* Matiz de industria por categoría (tokens --ind-*): el color codifica el
+   sistema al que pertenece cada ficha. Cubre los 33 IDs reales de los datos. */
+const CAT_HUE = {
+  oil_gas: 'var(--ind-oilgas)',
+  oil_gas_v2: 'var(--ind-oilgas)',
+  mineria: 'var(--ind-mineria)',
+  construccion: 'var(--ind-mineria)',
+  desalinizacion: 'var(--ind-desal)',
+  medio_ambiente: 'var(--ind-desal)',
+  energia: 'var(--ind-energia)',
+  automatizacion: 'var(--ind-automatizacion)',
+  automatizacion_v2: 'var(--ind-automatizacion)',
+  logistica: 'var(--ind-automatizacion)',
+  capacitacion: 'var(--ind-capacitacion)',
+  capacitacion_v2: 'var(--ind-capacitacion)',
+  educacion: 'var(--ind-capacitacion)',
+  fullstack: 'var(--ind-fullstack)',
+  fintech: 'var(--ind-fullstack)',
+  com_desarrollo: 'var(--ind-fullstack)',
+  general: 'var(--ind-herramientas)',
+  salud: 'var(--ind-herramientas)',
+  retail: 'var(--ind-herramientas)',
+  real_estate: 'var(--ind-herramientas)',
+  gastronomia: 'var(--ind-herramientas)',
+  entretenimiento: 'var(--ind-herramientas)',
+  deportes: 'var(--ind-herramientas)',
+  legal: 'var(--ind-herramientas)',
+  gobierno: 'var(--ind-herramientas)',
+  agroindustria: 'var(--ind-herramientas)',
+  ciencia: 'var(--ind-herramientas)',
+  com_escritura: 'var(--ind-herramientas)',
+  com_idiomas: 'var(--ind-herramientas)',
+  com_buscadores: 'var(--ind-herramientas)',
+  com_roles: 'var(--ind-herramientas)',
+  com_productividad: 'var(--ind-herramientas)',
+  gpt4o_imagen: 'var(--ind-herramientas)',
+};
+
 /* Almacenamiento resistente: si Brave Shields (o modo privado) bloquea
    localStorage, se usa un fallback en memoria para que la app no se rompa. */
 const SafeStore = {
@@ -515,6 +553,13 @@ class PromptLibrary {
       this.applyState();
     });
 
+    this.el.searchClear.addEventListener('click', () => {
+      this.el.searchInput.value = '';
+      this.state.q = '';
+      this.applyState();
+      this.el.searchInput.focus();
+    });
+
     this.el.filterBar.addEventListener('click', (e) => this.onFilterClick(e));
 
     this.el.categoriesGrid.addEventListener('click', (e) => {
@@ -727,28 +772,25 @@ class PromptLibrary {
     const wrap = this.el.quickChips;
     if (!wrap) return;
     const cats = this.data.categorias;
-    wrap.innerHTML =
-      '<span class="quick-label">Sistemas</span>' +
-      cats
-        .map((c) => {
-          const n = c.subcategorias.reduce((s, sub) => s + sub.prompts.length, 0);
-          return (
-            '<button type="button" class="qchip" data-cat="' +
-            this.esc(c.id) +
-            '" style="--cat:' +
-            this.esc(c.color) +
-            '" aria-pressed="false" title="' +
-            this.esc(c.nombre) +
-            '">' +
-            this.esc(c.icono) +
-            ' ' +
-            this.esc(c.nombre) +
-            '<span class="qchip-n">' +
-            n +
-            '</span></button>'
-          );
-        })
-        .join('');
+    wrap.innerHTML = cats
+      .map((c) => {
+        const n = c.subcategorias.reduce((s, sub) => s + sub.prompts.length, 0);
+        const hue = CAT_HUE[c.id] || 'var(--ind-herramientas)';
+        return (
+          '<button type="button" class="qchip" data-cat="' +
+          this.esc(c.id) +
+          '" style="--cat:' +
+          hue +
+          '" aria-pressed="false" title="' +
+          this.esc(c.nombre) +
+          '">' +
+          this.esc(c.nombre) +
+          '<span class="qchip-n">' +
+          n +
+          '</span></button>'
+        );
+      })
+      .join('');
   }
 
   onQuickChipClick(e) {
@@ -906,7 +948,7 @@ class PromptLibrary {
     this.animateCount(this.el.statWords, totalWords);
     const standards = ['API', 'ASME', 'OSHA', 'NFPA', 'ISO', 'IEC', 'IOGP', 'NACE', 'GMP', 'AWWA'];
     this.el.statStandards.textContent = standards.slice(0, 3).join(' · ') + ' +' + (standards.length - 3);
-    this.el.catCount.textContent = this.data.categorias.length + ' SISTEMAS ACTIVOS';
+    this.el.catCount.textContent = this.data.categorias.length + ' sistemas';
   }
 
   animateCount(el, target, dur = 1000) {
@@ -931,19 +973,18 @@ class PromptLibrary {
       panel.setAttribute('role', 'button');
       panel.tabIndex = 0;
       panel.setAttribute('aria-label', `Abrir sistema ${cat.nombre} (${totalPrompts} prompts)`);
-      panel.style.setProperty('--cat', cat.color);
+      panel.style.setProperty('--cat', CAT_HUE[cat.id] || 'var(--ind-herramientas)');
       panel.style.transitionDelay = (i % 6) * 55 + 'ms';
       panel.innerHTML = `
         <div class="cat-top">
           <span class="cat-code">SYS-${String(i + 1).padStart(2, '0')}</span>
-          <span class="cat-count">${String(totalPrompts).padStart(2, '0')} PROMPTS</span>
+          <span class="cat-count">${totalPrompts} prompts</span>
         </div>
-        <div class="cat-icon">${cat.icono}</div>
         <h3>${this.esc(cat.nombre)}</h3>
         <p>${this.esc(cat.descripcion)}</p>
         <div class="cat-foot">
-          <span>${String(cat.subcategorias.length).padStart(2, '0')} SUBSISTEMAS</span>
-          <span class="cat-go">ACCEDER →</span>
+          <span>${cat.subcategorias.length} subsistemas</span>
+          <span class="cat-go">Ver prompts</span>
         </div>`;
       this.el.categoriesGrid.appendChild(panel);
     });
@@ -971,16 +1012,15 @@ class PromptLibrary {
     const totalPrompts = cat.subcategorias.reduce((s, sub) => s + sub.prompts.length, 0);
 
     this.el.catBanner.innerHTML = `
-      <div class="banner" style="--cat:${cat.color}">
-        <button class="btn-back" id="backBtn">← VOLVER</button>
+      <div class="banner" style="--cat:${CAT_HUE[cat.id] || 'var(--ind-herramientas)'}">
+        <button class="btn-back" id="backBtn">Volver</button>
         <div class="banner-info">
-          <span class="banner-icon">${cat.icono}</span>
           <div>
             <h2>${this.esc(cat.nombre)}</h2>
             <p>${this.esc(cat.descripcion)}</p>
           </div>
         </div>
-        <div class="banner-stats">${String(cat.subcategorias.length).padStart(2, '0')} SUBSISTEMAS · ${String(totalPrompts).padStart(2, '0')} PROMPTS</div>
+        <div class="banner-stats">${cat.subcategorias.length} subsistemas · ${totalPrompts} prompts</div>
       </div>`;
 
     this.el.promptsList.innerHTML = '';
@@ -1011,16 +1051,26 @@ class PromptLibrary {
   }
 
   renderResultsList(matches) {
-    this.el.resultsCount.textContent = matches.length + ' COINCIDENCIAS';
+    this.el.resultsCount.textContent = matches.length + ' coincidencias';
     this.el.resultsList.innerHTML = '';
 
     if (!matches.length) {
-      this.el.resultsList.innerHTML = `
-        <div class="empty" style="grid-column:1/-1">
-          <span class="glyph">⌀</span>
-          <h3>Sin resultados</h3>
-          <p>AJUSTE LOS TÉRMINOS DE BÚSQUEDA O LOS FILTROS ACTIVOS</p>
+      const q = this.state.q;
+      this.el.resultsList.innerHTML = q
+        ? `
+        <div class="empty">
+          <h3>Sin coincidencias para «${this.esc(q)}»</h3>
+          <p>Prueba con menos términos o limpia los filtros.</p>
+          <button type="button" class="btn empty-reset" id="emptyResetBtn">Limpiar filtros</button>
+        </div>`
+        : `
+        <div class="empty">
+          <h3>Sin coincidencias con los filtros activos</h3>
+          <p>Prueba con otros filtros o límpialos todos.</p>
+          <button type="button" class="btn empty-reset" id="emptyResetBtn">Limpiar filtros</button>
         </div>`;
+      const resetBtn = this.el.resultsList.querySelector('#emptyResetBtn');
+      if (resetBtn) resetBtn.addEventListener('click', () => this.resetAllFilters());
       return;
     }
     matches.forEach((e, i) => this.el.resultsList.appendChild(this.buildCard(e.p, i, e.cat)));
@@ -1046,7 +1096,8 @@ class PromptLibrary {
     card.setAttribute('aria-label', `Ver prompt ${p.titulo}`);
     card.style.transitionDelay = (i % 8) * 45 + 'ms';
     const words = this.wordCount(p.prompt);
-    const catLabel = cat ? `<span>SISTEMA: <b>${this.esc(cat.nombre.toUpperCase())}</b></span>` : '';
+    const hueCat = cat || this.currentCategory;
+    card.style.setProperty('--cat', (hueCat && CAT_HUE[hueCat.id]) || 'var(--ind-herramientas)');
     card.innerHTML = `
       <div class="pcard-rail p-${p.prioridad}"></div>
       <div class="pcard-body">
@@ -1058,19 +1109,17 @@ class PromptLibrary {
           </span>
         </div>
         <h3 class="pcard-title">${this.esc(p.titulo)}</h3>
-        <div class="pcard-meta">
-          ${catLabel}
-          <span>USO: <b>${this.esc(p.uso)}</b></span>
-          <span>≡ <b>${this.fmt(words)}</b> PALABRAS</span>
-        </div>
         <div class="pcard-tags">
           ${p.tags
             .slice(0, 4)
             .map((t) => `<span class="tag">${this.esc(t)}</span>`)
             .join('')}
         </div>
+        <div class="pcard-meta">
+          <span><b>${this.fmt(words)}</b> palabras</span>
+        </div>
       </div>
-      <div class="pcard-cta">VER PROMPT →</div>`;
+      <div class="pcard-cta">Copiar</div>`;
     return card;
   }
 
@@ -1120,7 +1169,17 @@ class PromptLibrary {
   /* ---------- share / permalinks / variables ---------- */
 
   handleHashRoute() {
-    const m = (location.hash || '').match(/^#p\/([\w-]+)/);
+    const hash = location.hash || '';
+    /* #cat/<id> abre un sistema (ruta usada por los enlaces de la landing) */
+    const mc = hash.match(/^#cat\/([\w-]+)/);
+    if (mc) {
+      const raw = mc[1].toLowerCase();
+      const catId = raw.replace(/-/g, '_');
+      const cat = this.data.categorias.find((c) => c.id === catId || c.id === raw || c.id.replace(/_/g, '-') === raw);
+      if (cat) this.openCategory(cat.id);
+      return;
+    }
+    const m = hash.match(/^#p\/([\w-]+)/);
     if (!m) return;
     const id = m[1].toLowerCase().replace(/-/g, '_');
     const entry = this.index.get(id) || [...this.index.values()].find((e) => e.prompt.id.replace(/_/g, '-') === m[1]);
@@ -1157,9 +1216,9 @@ class PromptLibrary {
     // Editor de variables {{...}}
     this.el.varModalFields.innerHTML = vars
       .map(
-        (v, i) => `<div style="margin-bottom:0.7rem">
-        <label for="varField${i}" style="display:block;font-family:var(--f-mono);font-size:0.65rem;color:var(--txt-2);margin-bottom:0.25rem">${this.esc(v)}</label>
-        <input id="varField${i}" data-var="${this.esc(v)}" type="text" style="width:100%;padding:0.5rem 0.7rem;background:var(--bg-3);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:0.85rem">
+        (v, i) => `<div class="var-field">
+        <label for="varField${i}">${this.esc(v)}</label>
+        <input id="varField${i}" data-var="${this.esc(v)}" type="text">
       </div>`
       )
       .join('');
@@ -1337,13 +1396,14 @@ class PromptLibrary {
       `Tags: ${prompt.tags.join(', ')}\n` +
       '=====================================\n\n';
 
-    let body = header + this.getFullPrompt() + '\n\n---\nEnviado desde Biblioteca de Promps Industriales v3.2';
+    let body = header + this.getFullPrompt() + '\n\n---\nEnviado desde Biblioteca de Promps Industriales · Rev 3.5';
     const full = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     if (full.length > 8000) {
       this.copyText(this.getFullPrompt(), null);
       body =
-        header + '[PROMPT COMPLETO COPIADO AL PORTAPAPELES — PÉGUELO AQUÍ]\n\n---\nEnviado desde Biblioteca de Promps Industriales v3.2';
+        header +
+        '[PROMPT COMPLETO COPIADO AL PORTAPAPELES — PÉGUELO AQUÍ]\n\n---\nEnviado desde Biblioteca de Promps Industriales · Rev 3.5';
       this.showToast('✓ Prompt copiado — péguelo en el correo (demasiado largo para mailto)', 'ok');
     } else {
       this.showToast('✓ Abriendo cliente de correo…', 'ok');
@@ -1621,10 +1681,10 @@ class PromptLibrary {
   }
 
   renderFavList() {
-    this.renderDrawerList(this.el.favList, this.favorites, 'SIN FAVORITOS AÚN<br><br>MARQUE PROMPTS CON ☆');
+    this.renderDrawerList(this.el.favList, this.favorites, 'Sin favoritos todavía. Marca la estrella de un prompt para guardarlo aquí.');
   }
   renderHistList() {
-    this.renderDrawerList(this.el.histList, this.history, 'SIN ACTIVIDAD AÚN');
+    this.renderDrawerList(this.el.histList, this.history, 'Sin actividad todavía. Los prompts que abras aparecerán aquí.');
   }
 
   /* ---------- drawers ---------- */
@@ -2085,15 +2145,13 @@ class PromptLibrary {
   setupTheme() {
     const saved = SafeStore.get('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', saved);
-    this.el.themeToggle.textContent = saved === 'dark' ? '◐' : '◑';
   }
 
   toggleTheme() {
     const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     SafeStore.set('theme', next);
-    this.el.themeToggle.textContent = next === 'dark' ? '◐' : '◑';
-    this.showToast(next === 'dark' ? '◐ Modo sala de control activo' : '◑ Modo daylight activo');
+    this.showToast(next === 'dark' ? 'Tema oscuro: sala de control' : 'Tema claro: documento técnico');
   }
 
   setupSW() {
@@ -2193,9 +2251,9 @@ window.addEventListener('unhandledrejection', (event) => {
     const isMac = /Mac/i.test(navigator.platform || '');
     tbody.innerHTML = SHORTCUTS.map((s) => {
       const display = isMac ? s.macKeys || s.keys : s.keys;
-      return `<tr style="border-bottom:1px solid var(--line)">
-        <td style="padding:0.5rem;font-family:var(--f-mono);font-size:0.75rem;color:var(--amber);white-space:nowrap">${display}</td>
-        <td style="padding:0.5rem;color:var(--txt-2)">${s.desc}</td>
+      return `<tr>
+        <td>${s.desc}</td>
+        <td><kbd>${display}</kbd></td>
       </tr>`;
     }).join('');
   }
@@ -2225,7 +2283,7 @@ window.addEventListener('unhandledrejection', (event) => {
       document.getElementById('modalClose')?.click();
       return;
     }
-    const sandbox = document.getElementById('sandboxDrawer');
+    const sandbox = document.getElementById('sandboxPanel');
     if (sandbox && sandbox.classList.contains('active')) {
       sandbox.classList.remove('active');
       return;
@@ -2340,22 +2398,34 @@ function renderDashboard() {
 
   const maxViews = Math.max(1, ...topPrompts.map((p) => p.score));
 
+  /* Iconos de actividad: SVG inline (lucide, CSP-safe, sin emojis) */
+  const dashSvg = (paths) =>
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+  const TIMELINE_ICONS = {
+    view: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+    copy: '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+    favorite: '<path d="m12 3.6 2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8z"/>',
+    unfavorite: '<path d="m12 3.6 2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8z"/>',
+    export:
+      '<path d="M15 2H6a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/>',
+    chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  };
+
   const timelineHTML = timeline.length
-    ? // prettier-ignore
-      timeline
+    ? timeline
         .slice(0, 10)
         .map((t) => {
-          const icons = { view: '👁', copy: '📋', favorite: '⭐', unfavorite: '☆', export: '📤', chat: '💬' };
           const time = new Date(t.time);
           const timeStr = time.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+          const icon = TIMELINE_ICONS[t.type] ? dashSvg(TIMELINE_ICONS[t.type]) : '•';
           return `<div class="dash-timeline-item">
-        <span class="dash-timeline-icon">${icons[t.type] || '•'}</span>
+        <span class="dash-timeline-icon">${icon}</span>
         <span class="dash-timeline-text">${t.label}</span>
         <span class="dash-timeline-time">${timeStr}</span>
       </div>`;
         })
         .join('')
-    : '<div class="dash-timeline-item" style="color:var(--txt-3)">Sin actividad reciente</div>';
+    : '<div class="dash-timeline-item dash-muted">Sin actividad reciente</div>';
 
   /* Bento Grid de métricas — iconos lucide inline (sin CDN, CSP-safe) */
   const bentoSvg = (paths) =>
@@ -2380,10 +2450,10 @@ function renderDashboard() {
   body.innerHTML = `
     <div class="bento-grid">
       ${bentoItem({
-        title: 'Prompts Vistos',
-        meta: 'tiempo real',
+        title: 'Prompts vistos',
+        meta: 'esta sesión',
         value: stats.totalPromptViews,
-        desc: 'Métricas de uso de la biblioteca durante esta sesión.',
+        desc: 'Fichas de prompt abiertas en esta sesión.',
         icon: bentoSvg('<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'),
         color: 'var(--info)',
         status: 'En vivo',
@@ -2393,10 +2463,10 @@ function renderDashboard() {
         tags: ['Métricas', 'Sesión'],
       })}
       ${bentoItem({
-        title: 'Copias Realizadas',
-        meta: 'clipboard',
+        title: 'Copias de prompt',
+        meta: 'portapapeles',
         value: stats.totalPromptCopies,
-        desc: 'Prompts copiados al portapapeles, listos para pegar en tu IA.',
+        desc: 'Copias de prompt en esta sesión, listas para pegar en tu IA.',
         icon: bentoSvg(
           '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>'
         ),
@@ -2405,21 +2475,21 @@ function renderDashboard() {
         tags: ['Clipboard', 'Uso'],
       })}
       ${bentoItem({
-        title: 'Mensajes Chat IA',
+        title: 'Mensajes al chat IA',
         meta: 'multi-motor',
         value: stats.chatMessagesSent,
-        desc: 'Conversaciones enviadas al chat integrado (OpenAI, Anthropic, Groq, local…).',
+        desc: 'Mensajes enviados al chat integrado (proveedores en la nube o servidor local).',
         icon: bentoSvg('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
-        color: 'var(--brand)',
+        color: 'var(--accent)',
         status: 'Multi-IA',
         statusCls: 'info',
         tags: ['Chat', 'IA'],
       })}
       ${bentoItem({
-        title: 'Palabras Generadas',
+        title: 'Palabras generadas',
         meta: '≈ tokens IA',
         value: `${(stats.chatWordsGenerated / 1000).toFixed(1)}k`,
-        desc: 'Volumen de texto generado por los modelos en el chat y sandbox.',
+        desc: 'Palabras generadas por los modelos en el chat y el sandbox.',
         icon: bentoSvg(
           '<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>'
         ),
@@ -2431,13 +2501,13 @@ function renderDashboard() {
       })}
       ${bentoItem({
         title: 'Exportaciones',
-        meta: 'PDF · XLSX · Email',
+        meta: 'PDF · Excel · Email',
         value: stats.totalExports,
-        desc: 'Documentos exportados en los formatos soportados por la biblioteca.',
+        desc: 'Documentos exportados desde las fichas de prompt.',
         icon: bentoSvg(
           '<path d="M15 2H6a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/>'
         ),
-        color: 'var(--amber-2)',
+        color: 'var(--accent-2)',
         status: 'Multi-formato',
         span2: true,
         tags: ['PDF', 'Excel', 'Email'],
@@ -2446,7 +2516,7 @@ function renderDashboard() {
         title: 'Sesiones',
         meta: 'histórico local',
         value: stats.sessionCount,
-        desc: 'Sesiones registradas por el tracker de uso (almacenamiento local).',
+        desc: 'Sesiones de uso registradas en este navegador.',
         icon: bentoSvg('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),
         color: 'var(--info)',
         status: 'Sync',
@@ -2454,7 +2524,7 @@ function renderDashboard() {
       })}
     </div>
     <div class="dash-chart">
-      <h4>🏆 Top Prompts Más Usados</h4>
+      <h4>Prompts más usados</h4>
       ${
         topPrompts.length
           ? topPrompts
@@ -2471,7 +2541,7 @@ function renderDashboard() {
       }
     </div>
     <div class="dash-timeline">
-      <h4>⏱ Actividad Reciente</h4>
+      <h4>Actividad reciente</h4>
       ${timelineHTML}
     </div>
   `;

@@ -184,6 +184,17 @@
 .dash-timeline-icon {
   flex-shrink: 0;
   color: var(--txt-2);
+  display: inline-flex;
+  align-items: center;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.dash-muted {
+  color: var(--txt-3);
 }
 
 .dash-timeline-text {
