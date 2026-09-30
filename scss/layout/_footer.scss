@@ -1,34 +1,29 @@
 /* ============================================================
-   FOOTER
+   FOOTER — pie de hoja de datos.
    ============================================================ */
 
 footer {
   border-top: 1px solid var(--line);
-  background: var(--bg-2);
+  background: var(--bg-1);
   position: relative;
-  z-index: 2;
-
-  .hazard-line {
-    opacity: 0.7;
-  }
+  z-index: var(--z-raised);
 }
 
 .foot-inner {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 1.3rem 1.4rem;
+  padding: var(--space-4) var(--space-5);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-4);
   flex-wrap: wrap;
-  font-family: var(--f-mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.06em;
+  font-family: var(--f-body);
+  font-size: var(--fs-xs);
   color: var(--txt-3);
 
   b {
-    color: var(--brand);
+    color: var(--accent-text);
     font-weight: 600;
   }
 }

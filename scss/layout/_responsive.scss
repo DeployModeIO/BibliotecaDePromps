@@ -3,25 +3,8 @@
    ============================================================ */
 
 @media (width <= 1024px) {
-  .stats-strip {
-    grid-template-columns: repeat(3, 1fr);
-
-    .stat:nth-child(4),
-    .stat:nth-child(5) {
-      grid-column: auto;
-    }
-  }
-
   .modal-meta {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .modal-actions {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .btn-primary {
-    grid-column: span 2;
   }
 }
 
@@ -38,14 +21,10 @@
 
   .stats-strip {
     grid-template-columns: repeat(2, 1fr);
-
-    .stat:nth-child(5) {
-      grid-column: 1 / -1;
-    }
   }
 
   .stat-val {
-    font-size: 1.15rem;
+    font-size: var(--fs-lg);
   }
 
   .cat-grid,
@@ -63,15 +42,36 @@
   }
 
   .modal-head h2 {
-    font-size: 1.12rem;
+    font-size: var(--fs-lg);
   }
 
-  .modal-actions {
-    grid-template-columns: 1fr 1fr;
+  .actions-primary {
+    width: 100%;
+
+    .btn {
+      width: 100%;
+    }
+  }
+
+  .actions-group {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .actions-utils {
+    margin-left: 0;
   }
 
   .clock {
     display: none;
+  }
+
+  .topbar-sep {
+    display: none;
+  }
+
+  .plant-line {
+    margin-right: 0;
   }
 
   .search-wrap kbd {
@@ -79,16 +79,37 @@
   }
 
   main {
-    padding: 1.2rem 0.9rem 2.5rem;
+    padding: var(--space-5) var(--space-4) var(--space-6);
   }
 
   .command,
   .stats-strip {
-    padding: 0 0.9rem;
+    padding: 0 var(--space-4);
   }
 
   .topbar-inner {
-    padding: 0.8rem 0.9rem;
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+@media (width <= 480px) {
+  .topbar-status {
+    width: 100%;
+    justify-content: center;
+    gap: var(--space-1);
+  }
+
+  .topbar-group {
+    gap: var(--space-1);
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .status-pill {
+    padding: var(--space-1) var(--space-2);
   }
 }
 

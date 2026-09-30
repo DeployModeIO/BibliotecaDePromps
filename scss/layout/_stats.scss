@@ -1,57 +1,65 @@
 /* ============================================================
-   STATS STRIP
+   STATS STRIP — registro de instrumentos. Encendido único al
+   cargar (stat-on, escalonado, dentro de la ventana de 600ms).
    ============================================================ */
 
 .stats-strip {
   max-width: 1440px;
-  margin: 1.4rem auto 0;
-  padding: 0 1.4rem;
+  margin: var(--space-5) auto 0;
+  padding: 0 var(--space-5);
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
 }
 
 .stat {
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow);
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: border-color var(--dur) var(--ease);
+  animation: stat-on var(--dur-slow) var(--ease) backwards;
 
   &:hover {
     border-color: var(--line-2);
-    box-shadow: var(--shadow-lg);
+  }
+
+  &:nth-child(2) {
+    animation-delay: 45ms;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 90ms;
+  }
+
+  &:nth-child(4) {
+    animation-delay: 135ms;
   }
 }
 
 .stat-val {
   display: block;
-  font-family: var(--f-mono);
-  font-size: 1.35rem;
+  font-family: var(--f-display);
+  font-size: var(--fs-xl);
   font-weight: 600;
-  color: var(--brand);
-  line-height: 1.15;
+  color: var(--accent-text);
+  line-height: var(--lh-tight);
   white-space: nowrap;
 
   &.small {
-    font-size: 0.8rem;
-    letter-spacing: 0.03em;
-    padding-top: 0.4rem;
-    color: var(--info);
+    font-family: var(--f-mono);
+    font-size: var(--fs-xs);
+    padding-top: var(--space-1);
+    color: var(--info-text);
   }
 }
 
 .stat-key {
   display: block;
-  font-family: var(--f-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.08em;
+  font-family: var(--f-body);
+  font-size: var(--fs-2xs);
   color: var(--txt-3);
-  text-transform: uppercase;
-  margin-top: 0.25rem;
+  margin-top: var(--space-1);
 }

@@ -1,0 +1,90 @@
+/* ============================================================
+   TOKENS — «Índice de instrumentos»
+   Hoja de datos de ingeniería: dark = sala de control,
+   light = documento impreso. Color = código (ámbar interacción,
+   rojo/ámbar/azul prioridad, matiz por industria).
+   ============================================================ */
+
+:root {
+  color-scheme: dark;
+
+  --bg-0: #0a101d;
+  --bg-1: #0e1626;
+  --bg-2: #141f36;
+  --bg-3: #1b2a47;
+  --line: #263754;
+  --line-2: #35496b;
+  --txt: #e8edf6;
+  --txt-2: #a3b1c9;
+  --txt-3: #7b8aa7;
+  --accent: #ffb020;
+  --accent-2: #ffc95e;
+  --accent-ink: #221a04;
+  --accent-text: #ffc24d;
+  --accent-dim: rgb(255 176 32 / 14%);
+  --info: #56c2ff;
+  --info-text: #8ad4ff;
+  --info-dim: rgb(86 194 255 / 12%);
+  --ok: #43d69b;
+  --ok-text: #7ce3bc;
+  --ok-dim: rgb(67 214 155 / 12%);
+  --err: #ff7a6b;
+  --err-text: #ffa69b;
+  --err-dim: rgb(255 122 107 / 12%);
+  --warn: #ffb020;
+  --warn-text: #ffc24d;
+  --warn-dim: rgb(255 176 32 / 14%);
+  --neutral-bg: #263754;
+  --neutral-fg: #c6d2e5;
+  --ind-oilgas: #e8b150;
+  --ind-mineria: #c98a3d;
+  --ind-desal: #4fc3e8;
+  --ind-energia: #f2d34c;
+  --ind-automatizacion: #a78bfa;
+  --ind-capacitacion: #57c785;
+  --ind-fullstack: #f08a5d;
+  --ind-herramientas: #8fa3bf;
+  --f-display: 'Chakra Petch', 'Barlow', system-ui, sans-serif;
+  --f-body: 'Archivo', 'Barlow', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --fs-2xs: 0.6875rem;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-3xl: clamp(2rem, 4vw, 2.75rem);
+  --lh-tight: 1.15;
+  --lh-ui: 1.45;
+  --lh-read: 1.6;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-8: 48px;
+  --space-10: 64px;
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-full: 999px;
+  --elev-1: 0 1px 2px rgb(4 10 20 / 50%), 0 2px 8px rgb(4 10 20 / 35%);
+  --elev-2: 0 8px 32px rgb(4 10 20 / 60%);
+  --scrim: rgb(4 9 18 / 62%);
+  --focus-ring: 0 0 0 2px var(--bg-1), 0 0 0 4px var(--accent);
+  --z-base: 1;
+  --z-raised: 2;
+  --z-handle: 10;
+  --z-topbar: 100;
+  --z-overlay: 200;
+  --z-scrim: 300;
+  --z-drawer: 310;
+  --z-modal: 400;
+  --z-toast: 500;
+  --dur-fast: 120ms;
+  --dur: 180ms;
+  --dur-slow: 260ms;
+  --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+}

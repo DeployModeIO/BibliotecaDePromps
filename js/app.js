@@ -53,6 +53,136 @@ const PLATFORM_SPECS = {
 };
 const PLATFORM_KEYS = Object.keys(PLATFORM_SPECS);
 
+/* Matiz de industria por categoría (tokens --ind-*): el color codifica el
+   sistema al que pertenece cada ficha. Cubre los 33 IDs reales de los datos. */
+/* Iconos SVG monocromos (lucide, CSP-safe) para la paleta de comandos:
+   sustituyen a los emojis de los datos y de las etiquetas de grupo. */
+const uiSvg = (paths) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+
+const UI_ICONS = {
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  folders:
+    '<path d="M20 17a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3.9a2 2 0 0 1-1.69-.9l-.81-1.2a2 2 0 0 0-1.67-.9H8a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2Z"/><path d="M2 8v11a2 2 0 0 0 2 2h14"/>',
+  star: '<path d="m12 3.6 2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8z"/>',
+  zap: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+  home: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  dashboard:
+    '<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+  keyboard:
+    '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/>',
+  backspace: '<path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><path d="m9.5 9 5 5"/><path d="m14.5 9-5 5"/>',
+  contrast: '<circle cx="12" cy="12" r="10"/><path d="M12 2v20a10 10 0 0 0 0-20z" fill="currentColor"/>',
+  droplet: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
+  factory:
+    '<path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>',
+  pickaxe:
+    '<path d="M14.531 12.469 6.619 20.38a1 1 0 1 1-3-3l7.912-7.912"/><path d="M15.686 4.314A12.5 12.5 0 0 0 5.461 2.958 1 1 0 0 0 5.58 4.71a22 22 0 0 1 6.318 3.393"/><path d="M17.7 3.7a1 1 0 0 0-1.4 0l-4.6 4.6a1 1 0 0 0 0 1.4l2.6 2.6a1 1 0 0 0 1.4 0l4.6-4.6a1 1 0 0 0 0-1.4z"/><path d="M19.686 8.314a12.501 12.501 0 0 1 1.356 10.225 1 1 0 0 1-1.751-.119 22 22 0 0 0-3.393-6.319"/>',
+  waves:
+    '<path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>',
+  cap: '<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
+  leaf: '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+  sprout:
+    '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
+  utensils: '<path d="M3 2v7c0 1 1 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1 1 2 2 2h3Zm0 0v7"/>',
+  clapper:
+    '<path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  landmark:
+    '<path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="m12 2 9 4v3H3V6Z"/>',
+  cross:
+    '<path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2z"/>',
+  banknote: '<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+  microscope:
+    '<path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  cart: '<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+  pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  masks: '<circle cx="12" cy="12" r="10"/><path d="M8 10h.01M16 10h.01"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/>',
+  laptop: '<path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/>',
+  chart: '<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  palette:
+    '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+  scale:
+    '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+  ball: '<circle cx="12" cy="12" r="10"/><path d="M12 2v10l8.5 5"/><path d="M12 12 3.5 17"/>',
+  box: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>',
+};
+
+/* Emoji de los datos → trazo SVG equivalente (firma visual del índice). */
+const EMOJI_SVG = {
+  '🛢️': 'droplet',
+  '🏭': 'factory',
+  '⛏️': 'pickaxe',
+  '🌊': 'waves',
+  '⚡': 'zap',
+  '🎓': 'cap',
+  '🌿': 'leaf',
+  '🌾': 'sprout',
+  '🍴': 'utensils',
+  '🎬': 'clapper',
+  '🏓️': 'ball',
+  '🏓': 'ball',
+  '🏛️': 'landmark',
+  '🏠': 'home',
+  '🏥': 'cross',
+  '💰': 'banknote',
+  '🔬': 'microscope',
+  '🚚': 'truck',
+  '🛒': 'cart',
+  '✍️': 'pen',
+  '🌐': 'globe',
+  '🎭': 'masks',
+  '💻': 'laptop',
+  '📈': 'chart',
+  '🔎': 'search',
+  '🎨': 'palette',
+  '⚖': 'scale',
+  '⚽': 'ball',
+};
+
+const emojiSvg = (emoji) => uiSvg(UI_ICONS[EMOJI_SVG[emoji] || 'box'] || UI_ICONS.box);
+
+const CAT_HUE = {
+  oil_gas: 'var(--ind-oilgas)',
+  oil_gas_v2: 'var(--ind-oilgas)',
+  mineria: 'var(--ind-mineria)',
+  construccion: 'var(--ind-mineria)',
+  desalinizacion: 'var(--ind-desal)',
+  medio_ambiente: 'var(--ind-desal)',
+  energia: 'var(--ind-energia)',
+  automatizacion: 'var(--ind-automatizacion)',
+  automatizacion_v2: 'var(--ind-automatizacion)',
+  logistica: 'var(--ind-automatizacion)',
+  capacitacion: 'var(--ind-capacitacion)',
+  capacitacion_v2: 'var(--ind-capacitacion)',
+  educacion: 'var(--ind-capacitacion)',
+  fullstack: 'var(--ind-fullstack)',
+  fintech: 'var(--ind-fullstack)',
+  com_desarrollo: 'var(--ind-fullstack)',
+  general: 'var(--ind-herramientas)',
+  salud: 'var(--ind-herramientas)',
+  retail: 'var(--ind-herramientas)',
+  real_estate: 'var(--ind-herramientas)',
+  gastronomia: 'var(--ind-herramientas)',
+  entretenimiento: 'var(--ind-herramientas)',
+  deportes: 'var(--ind-herramientas)',
+  legal: 'var(--ind-herramientas)',
+  gobierno: 'var(--ind-herramientas)',
+  agroindustria: 'var(--ind-herramientas)',
+  ciencia: 'var(--ind-herramientas)',
+  com_escritura: 'var(--ind-herramientas)',
+  com_idiomas: 'var(--ind-herramientas)',
+  com_buscadores: 'var(--ind-herramientas)',
+  com_roles: 'var(--ind-herramientas)',
+  com_productividad: 'var(--ind-herramientas)',
+  gpt4o_imagen: 'var(--ind-herramientas)',
+};
+
 /* Almacenamiento resistente: si Brave Shields (o modo privado) bloquea
    localStorage, se usa un fallback en memoria para que la app no se rompa. */
 const SafeStore = {
@@ -501,7 +631,7 @@ class PromptLibrary {
     this.handleHashRoute();
     if (!SafeStore.available()) {
       setTimeout(
-        () => this.showToast('⚠ Navegador bloquea almacenamiento — favoritos/historial no persistirán (baje los Shields de Brave)', ''),
+        () => this.showToast('Navegador bloquea almacenamiento — favoritos/historial no persistirán (baje los Shields de Brave)', ''),
         800
       );
     }
@@ -513,6 +643,13 @@ class PromptLibrary {
     this.el.searchInput.addEventListener('input', (e) => {
       this.state.q = e.target.value.trim().toLowerCase();
       this.applyState();
+    });
+
+    this.el.searchClear.addEventListener('click', () => {
+      this.el.searchInput.value = '';
+      this.state.q = '';
+      this.applyState();
+      this.el.searchInput.focus();
     });
 
     this.el.filterBar.addEventListener('click', (e) => this.onFilterClick(e));
@@ -727,28 +864,25 @@ class PromptLibrary {
     const wrap = this.el.quickChips;
     if (!wrap) return;
     const cats = this.data.categorias;
-    wrap.innerHTML =
-      '<span class="quick-label">Sistemas</span>' +
-      cats
-        .map((c) => {
-          const n = c.subcategorias.reduce((s, sub) => s + sub.prompts.length, 0);
-          return (
-            '<button type="button" class="qchip" data-cat="' +
-            this.esc(c.id) +
-            '" style="--cat:' +
-            this.esc(c.color) +
-            '" aria-pressed="false" title="' +
-            this.esc(c.nombre) +
-            '">' +
-            this.esc(c.icono) +
-            ' ' +
-            this.esc(c.nombre) +
-            '<span class="qchip-n">' +
-            n +
-            '</span></button>'
-          );
-        })
-        .join('');
+    wrap.innerHTML = cats
+      .map((c) => {
+        const n = c.subcategorias.reduce((s, sub) => s + sub.prompts.length, 0);
+        const hue = CAT_HUE[c.id] || 'var(--ind-herramientas)';
+        return (
+          '<button type="button" class="qchip" data-cat="' +
+          this.esc(c.id) +
+          '" style="--cat:' +
+          hue +
+          '" aria-pressed="false" title="' +
+          this.esc(c.nombre) +
+          '">' +
+          this.esc(c.nombre) +
+          '<span class="qchip-n">' +
+          n +
+          '</span></button>'
+        );
+      })
+      .join('');
   }
 
   onQuickChipClick(e) {
@@ -906,7 +1040,7 @@ class PromptLibrary {
     this.animateCount(this.el.statWords, totalWords);
     const standards = ['API', 'ASME', 'OSHA', 'NFPA', 'ISO', 'IEC', 'IOGP', 'NACE', 'GMP', 'AWWA'];
     this.el.statStandards.textContent = standards.slice(0, 3).join(' · ') + ' +' + (standards.length - 3);
-    this.el.catCount.textContent = this.data.categorias.length + ' SISTEMAS ACTIVOS';
+    this.el.catCount.textContent = this.data.categorias.length + ' sistemas';
   }
 
   animateCount(el, target, dur = 1000) {
@@ -931,19 +1065,18 @@ class PromptLibrary {
       panel.setAttribute('role', 'button');
       panel.tabIndex = 0;
       panel.setAttribute('aria-label', `Abrir sistema ${cat.nombre} (${totalPrompts} prompts)`);
-      panel.style.setProperty('--cat', cat.color);
+      panel.style.setProperty('--cat', CAT_HUE[cat.id] || 'var(--ind-herramientas)');
       panel.style.transitionDelay = (i % 6) * 55 + 'ms';
       panel.innerHTML = `
         <div class="cat-top">
           <span class="cat-code">SYS-${String(i + 1).padStart(2, '0')}</span>
-          <span class="cat-count">${String(totalPrompts).padStart(2, '0')} PROMPTS</span>
+          <span class="cat-count">${totalPrompts} prompts</span>
         </div>
-        <div class="cat-icon">${cat.icono}</div>
         <h3>${this.esc(cat.nombre)}</h3>
         <p>${this.esc(cat.descripcion)}</p>
         <div class="cat-foot">
-          <span>${String(cat.subcategorias.length).padStart(2, '0')} SUBSISTEMAS</span>
-          <span class="cat-go">ACCEDER →</span>
+          <span>${cat.subcategorias.length} subsistemas</span>
+          <span class="cat-go">Ver prompts</span>
         </div>`;
       this.el.categoriesGrid.appendChild(panel);
     });
@@ -971,16 +1104,15 @@ class PromptLibrary {
     const totalPrompts = cat.subcategorias.reduce((s, sub) => s + sub.prompts.length, 0);
 
     this.el.catBanner.innerHTML = `
-      <div class="banner" style="--cat:${cat.color}">
-        <button class="btn-back" id="backBtn">← VOLVER</button>
+      <div class="banner" style="--cat:${CAT_HUE[cat.id] || 'var(--ind-herramientas)'}">
+        <button class="btn-back" id="backBtn">Volver</button>
         <div class="banner-info">
-          <span class="banner-icon">${cat.icono}</span>
           <div>
             <h2>${this.esc(cat.nombre)}</h2>
             <p>${this.esc(cat.descripcion)}</p>
           </div>
         </div>
-        <div class="banner-stats">${String(cat.subcategorias.length).padStart(2, '0')} SUBSISTEMAS · ${String(totalPrompts).padStart(2, '0')} PROMPTS</div>
+        <div class="banner-stats">${cat.subcategorias.length} subsistemas · ${totalPrompts} prompts</div>
       </div>`;
 
     this.el.promptsList.innerHTML = '';
@@ -1011,16 +1143,26 @@ class PromptLibrary {
   }
 
   renderResultsList(matches) {
-    this.el.resultsCount.textContent = matches.length + ' COINCIDENCIAS';
+    this.el.resultsCount.textContent = matches.length + ' coincidencias';
     this.el.resultsList.innerHTML = '';
 
     if (!matches.length) {
-      this.el.resultsList.innerHTML = `
-        <div class="empty" style="grid-column:1/-1">
-          <span class="glyph">⌀</span>
-          <h3>Sin resultados</h3>
-          <p>AJUSTE LOS TÉRMINOS DE BÚSQUEDA O LOS FILTROS ACTIVOS</p>
+      const q = this.state.q;
+      this.el.resultsList.innerHTML = q
+        ? `
+        <div class="empty">
+          <h3>Sin coincidencias para «${this.esc(q)}»</h3>
+          <p>Prueba con menos términos o limpia los filtros.</p>
+          <button type="button" class="btn empty-reset" id="emptyResetBtn">Limpiar filtros</button>
+        </div>`
+        : `
+        <div class="empty">
+          <h3>Sin coincidencias con los filtros activos</h3>
+          <p>Prueba con otros filtros o límpialos todos.</p>
+          <button type="button" class="btn empty-reset" id="emptyResetBtn">Limpiar filtros</button>
         </div>`;
+      const resetBtn = this.el.resultsList.querySelector('#emptyResetBtn');
+      if (resetBtn) resetBtn.addEventListener('click', () => this.resetAllFilters());
       return;
     }
     matches.forEach((e, i) => this.el.resultsList.appendChild(this.buildCard(e.p, i, e.cat)));
@@ -1046,7 +1188,8 @@ class PromptLibrary {
     card.setAttribute('aria-label', `Ver prompt ${p.titulo}`);
     card.style.transitionDelay = (i % 8) * 45 + 'ms';
     const words = this.wordCount(p.prompt);
-    const catLabel = cat ? `<span>SISTEMA: <b>${this.esc(cat.nombre.toUpperCase())}</b></span>` : '';
+    const hueCat = cat || this.currentCategory;
+    card.style.setProperty('--cat', (hueCat && CAT_HUE[hueCat.id]) || 'var(--ind-herramientas)');
     card.innerHTML = `
       <div class="pcard-rail p-${p.prioridad}"></div>
       <div class="pcard-body">
@@ -1058,19 +1201,17 @@ class PromptLibrary {
           </span>
         </div>
         <h3 class="pcard-title">${this.esc(p.titulo)}</h3>
-        <div class="pcard-meta">
-          ${catLabel}
-          <span>USO: <b>${this.esc(p.uso)}</b></span>
-          <span>≡ <b>${this.fmt(words)}</b> PALABRAS</span>
-        </div>
         <div class="pcard-tags">
           ${p.tags
             .slice(0, 4)
             .map((t) => `<span class="tag">${this.esc(t)}</span>`)
             .join('')}
         </div>
+        <div class="pcard-meta">
+          <span><b>${this.fmt(words)}</b> palabras</span>
+        </div>
       </div>
-      <div class="pcard-cta">VER PROMPT →</div>`;
+      <div class="pcard-cta">Copiar</div>`;
     return card;
   }
 
@@ -1120,7 +1261,17 @@ class PromptLibrary {
   /* ---------- share / permalinks / variables ---------- */
 
   handleHashRoute() {
-    const m = (location.hash || '').match(/^#p\/([\w-]+)/);
+    const hash = location.hash || '';
+    /* #cat/<id> abre un sistema (ruta usada por los enlaces de la landing) */
+    const mc = hash.match(/^#cat\/([\w-]+)/);
+    if (mc) {
+      const raw = mc[1].toLowerCase();
+      const catId = raw.replace(/-/g, '_');
+      const cat = this.data.categorias.find((c) => c.id === catId || c.id === raw || c.id.replace(/_/g, '-') === raw);
+      if (cat) this.openCategory(cat.id);
+      return;
+    }
+    const m = hash.match(/^#p\/([\w-]+)/);
     if (!m) return;
     const id = m[1].toLowerCase().replace(/-/g, '_');
     const entry = this.index.get(id) || [...this.index.values()].find((e) => e.prompt.id.replace(/_/g, '-') === m[1]);
@@ -1132,7 +1283,7 @@ class PromptLibrary {
     const id = this.currentPrompt.id.toUpperCase().replace(/_/g, '-');
     const url = location.origin + location.pathname + '#p/' + this.currentPrompt.id;
     this.copyText(url, null);
-    this.showToast('🔗 Enlace copiado — PRM-' + id, 'ok');
+    this.showToast('✓ Enlace copiado — PRM-' + id, 'ok');
   }
 
   getPromptVariables(text) {
@@ -1157,9 +1308,9 @@ class PromptLibrary {
     // Editor de variables {{...}}
     this.el.varModalFields.innerHTML = vars
       .map(
-        (v, i) => `<div style="margin-bottom:0.7rem">
-        <label for="varField${i}" style="display:block;font-family:var(--f-mono);font-size:0.65rem;color:var(--txt-2);margin-bottom:0.25rem">${this.esc(v)}</label>
-        <input id="varField${i}" data-var="${this.esc(v)}" type="text" style="width:100%;padding:0.5rem 0.7rem;background:var(--bg-3);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:0.85rem">
+        (v, i) => `<div class="var-field">
+        <label for="varField${i}">${this.esc(v)}</label>
+        <input id="varField${i}" data-var="${this.esc(v)}" type="text">
       </div>`
       )
       .join('');
@@ -1337,13 +1488,14 @@ class PromptLibrary {
       `Tags: ${prompt.tags.join(', ')}\n` +
       '=====================================\n\n';
 
-    let body = header + this.getFullPrompt() + '\n\n---\nEnviado desde Biblioteca de Promps Industriales v3.2';
+    let body = header + this.getFullPrompt() + '\n\n---\nEnviado desde Biblioteca de Promps Industriales · Rev 3.5';
     const full = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     if (full.length > 8000) {
       this.copyText(this.getFullPrompt(), null);
       body =
-        header + '[PROMPT COMPLETO COPIADO AL PORTAPAPELES — PÉGUELO AQUÍ]\n\n---\nEnviado desde Biblioteca de Promps Industriales v3.2';
+        header +
+        '[PROMPT COMPLETO COPIADO AL PORTAPAPELES — PÉGUELO AQUÍ]\n\n---\nEnviado desde Biblioteca de Promps Industriales · Rev 3.5';
       this.showToast('✓ Prompt copiado — péguelo en el correo (demasiado largo para mailto)', 'ok');
     } else {
       this.showToast('✓ Abriendo cliente de correo…', 'ok');
@@ -1621,10 +1773,10 @@ class PromptLibrary {
   }
 
   renderFavList() {
-    this.renderDrawerList(this.el.favList, this.favorites, 'SIN FAVORITOS AÚN<br><br>MARQUE PROMPTS CON ☆');
+    this.renderDrawerList(this.el.favList, this.favorites, 'Sin favoritos todavía. Marca la estrella de un prompt para guardarlo aquí.');
   }
   renderHistList() {
-    this.renderDrawerList(this.el.histList, this.history, 'SIN ACTIVIDAD AÚN');
+    this.renderDrawerList(this.el.histList, this.history, 'Sin actividad todavía. Los prompts que abras aparecerán aquí.');
   }
 
   /* ---------- drawers ---------- */
@@ -1764,19 +1916,19 @@ class PromptLibrary {
 
     if (!terms.length) {
       const recents = this.paletteRecentDocs();
-      if (recents.length) groups.push({ label: '⏱ Recientes', items: recents });
-      groups.push({ label: '🗂 Sistemas', items: this.catDocs.slice(0, 6).map((c) => this._catRow(c, q)) });
-      groups.push({ label: '★ Destacados', items: this.paletteSuggestDocs() });
+      if (recents.length) groups.push({ label: 'Recientes', icon: uiSvg(UI_ICONS.clock), items: recents });
+      groups.push({ label: 'Sistemas', icon: uiSvg(UI_ICONS.folders), items: this.catDocs.slice(0, 6).map((c) => this._catRow(c, q)) });
+      groups.push({ label: 'Destacados', icon: uiSvg(UI_ICONS.star), items: this.paletteSuggestDocs() });
     } else {
       const actions = this.paletteActions(q);
-      if (actions.length) groups.push({ label: '⚡ Acciones', items: actions });
+      if (actions.length) groups.push({ label: 'Acciones', icon: uiSvg(UI_ICONS.zap), items: actions });
 
       const cats = this.catDocs
         .map((c) => ({ c, s: this._scoreCatDoc(c, terms) }))
         .filter((x) => x.s > 0)
         .sort((a, b) => b.s - a.s)
         .slice(0, 4);
-      if (cats.length) groups.push({ label: '🗂 Sistemas', items: cats.map((x) => this._catRow(x.c, q)) });
+      if (cats.length) groups.push({ label: 'Sistemas', icon: uiSvg(UI_ICONS.folders), items: cats.map((x) => this._catRow(x.c, q)) });
 
       const docs = [];
       for (const d of this.searchDocs) {
@@ -1784,7 +1936,7 @@ class PromptLibrary {
         if (s > 0) docs.push({ d, s });
       }
       docs.sort((a, b) => b.s - a.s || String(a.d.titulo).localeCompare(String(b.d.titulo), 'es'));
-      groups.push({ label: '◆ Prompts', items: docs.slice(0, 40).map((x) => this._promptRow(x.d, q)) });
+      groups.push({ label: 'Prompts', icon: uiSvg(UI_ICONS.file), items: docs.slice(0, 40).map((x) => this._promptRow(x.d, q)) });
     }
 
     const total = groups.reduce((n, g) => n + g.items.length, 0);
@@ -1801,7 +1953,7 @@ class PromptLibrary {
       .filter((g) => g.items.length)
       .map(
         (g) =>
-          `<div class="palette-group" role="group"><div class="palette-group-label">${this.esc(g.label)}</div>${g.items
+          `<div class="palette-group" role="group"><div class="palette-group-label">${g.icon || ''}${this.esc(g.label)}</div>${g.items
             .map((it) => this._paletteRowHtml(it))
             .join('')}</div>`
       )
@@ -1822,8 +1974,8 @@ class PromptLibrary {
     return {
       kind: 'prompt',
       id: doc.id,
-      icon: doc.catIcono || '◆',
-      color: doc.color,
+      icon: emojiSvg(doc.catIcono),
+      color: CAT_HUE[doc.catId] || null,
       title: this._highlight(doc.titulo, q),
       sub: this.esc(`${doc.catNombre} · ${doc.sub} · ${doc.words} palabras`),
       tag: this._sourceCode(doc.fuente),
@@ -1836,8 +1988,8 @@ class PromptLibrary {
     return {
       kind: 'cat',
       id: cat.id,
-      icon: cat.icono || '▣',
-      color: cat.color,
+      icon: emojiSvg(cat.icono),
+      color: CAT_HUE[cat.id] || null,
       title: this._highlight(cat.nombre, q),
       sub: this.esc(`${cat.total} prompts · ${(cat.subs || []).slice(0, 4).join(' / ')}`),
       tag: 'SISTEMA',
@@ -1854,7 +2006,7 @@ class PromptLibrary {
       it.kind === 'prompt' ? `<span class="prow-fav${it.fav ? ' is-fav' : ''}" aria-hidden="true">${it.fav ? '★' : '☆'}</span>` : '';
     // role=option + tabindex=-1: patrón combobox con aria-activedescendant.
     return `<button type="button" tabindex="-1" class="prow" role="option" aria-selected="false" id="prow-${i}" data-i="${i}">
-      <span class="prow-icon"${style} aria-hidden="true">${this.esc(it.icon)}</span>
+      <span class="prow-icon"${style} aria-hidden="true">${it.icon}</span>
       <span class="prow-main"><span class="prow-title">${it.title}</span><span class="prow-sub">${it.sub}</span></span>
       ${tag}${dot}${fav}<span class="prow-key" aria-hidden="true">↵</span>
     </button>`;
@@ -1899,14 +2051,14 @@ class PromptLibrary {
   /* Acciones de navegación que coinciden con la consulta escrita. */
   paletteActions(q) {
     const catalog = [
-      { id: 'home', icon: '⌂', label: 'Ir al inicio', keys: 'home inicio inicio sistemas categorias' },
-      { id: 'fav', icon: '★', label: 'Ver favoritos', keys: 'favoritos fav starred destacados' },
-      { id: 'hist', icon: '⏱', label: 'Ver historial', keys: 'historial hist recientes usage' },
-      { id: 'gen', icon: '⚡', label: 'Generar aplicación', keys: 'generar app build crear' },
-      { id: 'dash', icon: '▦', label: 'Panel de control', keys: 'dashboard panel stats estadisticas' },
-      { id: 'keys', icon: '⌨', label: 'Atajos de teclado', keys: 'atajos keys help ayuda' },
-      { id: 'clear', icon: '⌫', label: 'Limpiar filtros', keys: 'limpiar reset clear filtros' },
-      { id: 'theme', icon: '◐', label: 'Cambiar tema', keys: 'tema theme dark light claro oscuro' },
+      { id: 'home', icon: uiSvg(UI_ICONS.home), label: 'Ir al inicio', keys: 'home inicio inicio sistemas categorias' },
+      { id: 'fav', icon: uiSvg(UI_ICONS.star), label: 'Ver favoritos', keys: 'favoritos fav starred destacados' },
+      { id: 'hist', icon: uiSvg(UI_ICONS.clock), label: 'Ver historial', keys: 'historial hist recientes usage' },
+      { id: 'gen', icon: uiSvg(UI_ICONS.zap), label: 'Generar aplicación', keys: 'generar app build crear' },
+      { id: 'dash', icon: uiSvg(UI_ICONS.dashboard), label: 'Panel de control', keys: 'dashboard panel stats estadisticas' },
+      { id: 'keys', icon: uiSvg(UI_ICONS.keyboard), label: 'Atajos de teclado', keys: 'atajos keys help ayuda' },
+      { id: 'clear', icon: uiSvg(UI_ICONS.backspace), label: 'Limpiar filtros', keys: 'limpiar reset clear filtros' },
+      { id: 'theme', icon: uiSvg(UI_ICONS.contrast), label: 'Cambiar tema', keys: 'tema theme dark light claro oscuro' },
     ];
     const terms = this._normTerms(q);
     return catalog
@@ -2085,15 +2237,13 @@ class PromptLibrary {
   setupTheme() {
     const saved = SafeStore.get('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', saved);
-    this.el.themeToggle.textContent = saved === 'dark' ? '◐' : '◑';
   }
 
   toggleTheme() {
     const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     SafeStore.set('theme', next);
-    this.el.themeToggle.textContent = next === 'dark' ? '◐' : '◑';
-    this.showToast(next === 'dark' ? '◐ Modo sala de control activo' : '◑ Modo daylight activo');
+    this.showToast(next === 'dark' ? 'Tema oscuro: sala de control' : 'Tema claro: documento técnico');
   }
 
   setupSW() {
@@ -2193,9 +2343,9 @@ window.addEventListener('unhandledrejection', (event) => {
     const isMac = /Mac/i.test(navigator.platform || '');
     tbody.innerHTML = SHORTCUTS.map((s) => {
       const display = isMac ? s.macKeys || s.keys : s.keys;
-      return `<tr style="border-bottom:1px solid var(--line)">
-        <td style="padding:0.5rem;font-family:var(--f-mono);font-size:0.75rem;color:var(--amber);white-space:nowrap">${display}</td>
-        <td style="padding:0.5rem;color:var(--txt-2)">${s.desc}</td>
+      return `<tr>
+        <td>${s.desc}</td>
+        <td><kbd>${display}</kbd></td>
       </tr>`;
     }).join('');
   }
@@ -2225,7 +2375,7 @@ window.addEventListener('unhandledrejection', (event) => {
       document.getElementById('modalClose')?.click();
       return;
     }
-    const sandbox = document.getElementById('sandboxDrawer');
+    const sandbox = document.getElementById('sandboxPanel');
     if (sandbox && sandbox.classList.contains('active')) {
       sandbox.classList.remove('active');
       return;
@@ -2340,22 +2490,34 @@ function renderDashboard() {
 
   const maxViews = Math.max(1, ...topPrompts.map((p) => p.score));
 
+  /* Iconos de actividad: SVG inline (lucide, CSP-safe, sin emojis) */
+  const dashSvg = (paths) =>
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+  const TIMELINE_ICONS = {
+    view: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+    copy: '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+    favorite: '<path d="m12 3.6 2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8z"/>',
+    unfavorite: '<path d="m12 3.6 2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8z"/>',
+    export:
+      '<path d="M15 2H6a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/>',
+    chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  };
+
   const timelineHTML = timeline.length
-    ? // prettier-ignore
-      timeline
+    ? timeline
         .slice(0, 10)
         .map((t) => {
-          const icons = { view: '👁', copy: '📋', favorite: '⭐', unfavorite: '☆', export: '📤', chat: '💬' };
           const time = new Date(t.time);
           const timeStr = time.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+          const icon = TIMELINE_ICONS[t.type] ? dashSvg(TIMELINE_ICONS[t.type]) : '•';
           return `<div class="dash-timeline-item">
-        <span class="dash-timeline-icon">${icons[t.type] || '•'}</span>
+        <span class="dash-timeline-icon">${icon}</span>
         <span class="dash-timeline-text">${t.label}</span>
         <span class="dash-timeline-time">${timeStr}</span>
       </div>`;
         })
         .join('')
-    : '<div class="dash-timeline-item" style="color:var(--txt-3)">Sin actividad reciente</div>';
+    : '<div class="dash-timeline-item dash-muted">Sin actividad reciente</div>';
 
   /* Bento Grid de métricas — iconos lucide inline (sin CDN, CSP-safe) */
   const bentoSvg = (paths) =>
@@ -2380,10 +2542,10 @@ function renderDashboard() {
   body.innerHTML = `
     <div class="bento-grid">
       ${bentoItem({
-        title: 'Prompts Vistos',
-        meta: 'tiempo real',
+        title: 'Prompts vistos',
+        meta: 'esta sesión',
         value: stats.totalPromptViews,
-        desc: 'Métricas de uso de la biblioteca durante esta sesión.',
+        desc: 'Fichas de prompt abiertas en esta sesión.',
         icon: bentoSvg('<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'),
         color: 'var(--info)',
         status: 'En vivo',
@@ -2393,10 +2555,10 @@ function renderDashboard() {
         tags: ['Métricas', 'Sesión'],
       })}
       ${bentoItem({
-        title: 'Copias Realizadas',
-        meta: 'clipboard',
+        title: 'Copias de prompt',
+        meta: 'portapapeles',
         value: stats.totalPromptCopies,
-        desc: 'Prompts copiados al portapapeles, listos para pegar en tu IA.',
+        desc: 'Copias de prompt en esta sesión, listas para pegar en tu IA.',
         icon: bentoSvg(
           '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>'
         ),
@@ -2405,21 +2567,21 @@ function renderDashboard() {
         tags: ['Clipboard', 'Uso'],
       })}
       ${bentoItem({
-        title: 'Mensajes Chat IA',
+        title: 'Mensajes al chat IA',
         meta: 'multi-motor',
         value: stats.chatMessagesSent,
-        desc: 'Conversaciones enviadas al chat integrado (OpenAI, Anthropic, Groq, local…).',
+        desc: 'Mensajes enviados al chat integrado (proveedores en la nube o servidor local).',
         icon: bentoSvg('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
-        color: 'var(--brand)',
+        color: 'var(--accent)',
         status: 'Multi-IA',
         statusCls: 'info',
         tags: ['Chat', 'IA'],
       })}
       ${bentoItem({
-        title: 'Palabras Generadas',
+        title: 'Palabras generadas',
         meta: '≈ tokens IA',
         value: `${(stats.chatWordsGenerated / 1000).toFixed(1)}k`,
-        desc: 'Volumen de texto generado por los modelos en el chat y sandbox.',
+        desc: 'Palabras generadas por los modelos en el chat y el sandbox.',
         icon: bentoSvg(
           '<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>'
         ),
@@ -2431,13 +2593,13 @@ function renderDashboard() {
       })}
       ${bentoItem({
         title: 'Exportaciones',
-        meta: 'PDF · XLSX · Email',
+        meta: 'PDF · Excel · Email',
         value: stats.totalExports,
-        desc: 'Documentos exportados en los formatos soportados por la biblioteca.',
+        desc: 'Documentos exportados desde las fichas de prompt.',
         icon: bentoSvg(
           '<path d="M15 2H6a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/>'
         ),
-        color: 'var(--amber-2)',
+        color: 'var(--accent-2)',
         status: 'Multi-formato',
         span2: true,
         tags: ['PDF', 'Excel', 'Email'],
@@ -2446,7 +2608,7 @@ function renderDashboard() {
         title: 'Sesiones',
         meta: 'histórico local',
         value: stats.sessionCount,
-        desc: 'Sesiones registradas por el tracker de uso (almacenamiento local).',
+        desc: 'Sesiones de uso registradas en este navegador.',
         icon: bentoSvg('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'),
         color: 'var(--info)',
         status: 'Sync',
@@ -2454,7 +2616,7 @@ function renderDashboard() {
       })}
     </div>
     <div class="dash-chart">
-      <h4>🏆 Top Prompts Más Usados</h4>
+      <h4>Prompts más usados</h4>
       ${
         topPrompts.length
           ? topPrompts
@@ -2471,7 +2633,7 @@ function renderDashboard() {
       }
     </div>
     <div class="dash-timeline">
-      <h4>⏱ Actividad Reciente</h4>
+      <h4>Actividad reciente</h4>
       ${timelineHTML}
     </div>
   `;

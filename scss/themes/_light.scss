@@ -1,70 +1,49 @@
 /* ============================================================
-   LIGHT THEME — SLDS / Field Service enterprise
+   LIGHT THEME — «documento impreso»
+   El matiz industrial (--ind-*) NO cambia entre temas: se
+   usa sobre placas con tinta oscura (--accent-ink / #221a04).
    ============================================================ */
 
 [data-theme='light'] {
-  /* surfaces */
-  --bg-0: #eef4f9; /* deepest inset */
-  --bg-1: #eef4f9; /* canvas */
-  --bg-2: #fff; /* card */
-  --bg-3: #f6f9fc; /* raised / hover / chip */
-  --bg-4: #e9f1f8; /* alternate surface */
-  --prompt-bg: #fff;
+  color-scheme: light;
 
-  /* lines */
-  --line: #e5e7eb;
-  --line-2: #d1d5db;
-
-  /* text */
-  --txt: #181b25;
-  --txt-2: #5c5c5c;
-  --txt-3: #5f6b7d; /* A11y: subido desde #8a94a6 (~2.9:1) a ≥4.5:1 (WCAG AA) */
-
-  /* brand / primary action */
-  --brand: #0070d2;
-  --brand-hover: #005fb2;
-  --brand-fg: #fff;
-  --brand-dim: rgb(0 112 210 / 10%);
-
-  /* info / secondary accent */
-  --info: #0284c7;
-  --info-dim: rgb(2 132 199 / 10%);
-
-  /* semantic states */
-  --ok: #059669;
-  --ok-bg: #def7ec;
-  --ok-fg: #03543f;
-  --ok-dim: rgb(5 150 105 / 10%);
-  --warn: #d97706;
-  --warn-bg: #fef08a;
-  --warn-fg: #713f12;
-  --warn-dim: rgb(217 119 6 / 10%);
-  --err: #dc2626;
-  --err-bg: #fde8e8;
-  --err-fg: #9b1c1c;
-  --err-dim: rgb(220 38 38 / 10%);
-  --neutral-bg: #f3f4f6;
-  --neutral-fg: #4b5563;
-
-  /* prompt variables */
-  --var-bg: #f0f7ff;
-  --var-fg: #0a47a3;
-  --var-border: rgb(10 71 163 / 18%);
-
-  /* legacy aliases */
-  --amber: var(--warn);
-  --amber-2: #b45309;
-  --amber-dim: var(--warn-dim);
-  --green: var(--ok);
-  --green-dim: var(--ok-dim);
-  --red: var(--err);
-  --red-dim: var(--err-dim);
-  --cyan: var(--info);
-  --cyan-dim: var(--info-dim);
-
-  /* effects */
-  --glow-a: rgb(2 132 199 / 6%);
-  --glow-b: rgb(0 112 210 / 6%);
-  --shadow: 0 1px 3px rgb(24 27 37 / 5%);
-  --shadow-lg: 0 12px 32px rgb(24 27 37 / 12%);
+  --bg-0: #eef2f7;
+  --bg-1: #f5f8fb;
+  --bg-2: #fff;
+  --bg-3: #e8eef5;
+  --line: #d3dce7;
+  --line-2: #b9c6d6;
+  --txt: #17202e;
+  --txt-2: #49586e;
+  --txt-3: #5a6b84;
+  --accent: #ffb020;
+  --accent-2: #e89b0a;
+  --accent-ink: #221a04;
+  --accent-text: #8f5400;
+  --accent-dim: rgb(255 176 32 / 18%);
+  --info: #0e7bb0;
+  --info-text: #0b6390;
+  --info-dim: rgb(14 123 176 / 10%);
+  --ok: #0e8a5f;
+  --ok-text: #0a6b49;
+  --ok-dim: rgb(14 138 95 / 12%);
+  --err: #c63d2f;
+  --err-text: #a93326;
+  --err-dim: rgb(198 61 47 / 10%);
+  --warn: #9a6200;
+  --warn-text: #7a4e00;
+  --warn-dim: rgb(154 98 0 / 12%);
+  --ind-oilgas: #8a6100;
+  --ind-mineria: #7c4a12;
+  --ind-desal: #0e6f8f;
+  --ind-energia: #7a6100;
+  --ind-automatizacion: #5b3fbf;
+  --ind-capacitacion: #0a6b49;
+  --ind-fullstack: #a03e14;
+  --ind-herramientas: #4a5a72;
+  --neutral-bg: #dce4ee;
+  --neutral-fg: #3d4c61;
+  --elev-1: 0 1px 2px rgb(23 32 46 / 6%), 0 4px 12px rgb(23 32 46 / 8%);
+  --elev-2: 0 12px 40px rgb(23 32 46 / 18%);
+  --scrim: rgb(23 32 46 / 45%);
 }

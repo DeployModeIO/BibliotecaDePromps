@@ -1,18 +1,17 @@
 /* ============================================================
-   COMMAND PALETTE — búsqueda instantánea (Ctrl/⌘ + K)
-   Panel centrado con resultados agrupados, navegación por teclado
-   y resaltado de coincidencias. Patrón combobox accesible.
+   COMMAND PALETTE — búsqueda instantánea (Ctrl/⌘ + K).
+   Patrón combobox accesible con scrim unificado.
    ============================================================ */
 
 .palette-overlay {
   position: fixed;
   inset: 0;
-  z-index: 120;
+  z-index: var(--z-overlay);
   display: none;
   justify-content: center;
   align-items: flex-start;
-  padding: max(10vh, 4rem) 1rem 2rem;
-  background: rgb(4 8 15 / 62%);
+  padding: max(10vh, var(--space-8)) var(--space-4) var(--space-6);
+  background: var(--scrim);
   backdrop-filter: blur(3px);
 
   &.active {
@@ -24,19 +23,19 @@
   width: min(680px, 100%);
   background: var(--bg-2);
   border: 1px solid var(--line-2);
-  border-radius: 14px;
-  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--elev-2);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   max-height: min(70vh, 560px);
-  animation: palette-in 0.18s var(--ease-out);
+  animation: palette-in var(--dur) var(--ease);
 }
 
 @keyframes palette-in {
   from {
     opacity: 0;
-    transform: translateY(-10px) scale(0.99);
+    transform: translateY(-8px) scale(0.99);
   }
 }
 
@@ -45,14 +44,14 @@
 .palette-input-row {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  padding: 0.95rem 1.1rem;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--line);
   background: var(--bg-3);
 
   .search-glyph {
     width: 20px;
-    color: var(--brand);
+    color: var(--accent);
     flex-shrink: 0;
 
     svg {
@@ -70,7 +69,7 @@
   background: transparent;
   color: var(--txt);
   font-family: var(--f-body);
-  font-size: 1.02rem;
+  font-size: var(--fs-md);
   font-weight: 500;
 
   &::placeholder {
@@ -81,58 +80,61 @@
 
 .palette-count {
   font-family: var(--f-mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.06em;
+  font-size: var(--fs-2xs);
   color: var(--txt-3);
   white-space: nowrap;
-  text-transform: uppercase;
 }
 
-/* ---- results list ---- */
+/* ---- lista de resultados ---- */
 
 .palette-list {
   overflow-y: auto;
-  padding: 0.4rem 0.5rem 0.6rem;
+  padding: var(--space-1) var(--space-2) var(--space-2);
   scrollbar-width: thin;
 }
 
 .palette-group + .palette-group {
-  margin-top: 0.35rem;
+  margin-top: var(--space-1);
 }
 
 .palette-group-label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 0.7rem 0.3rem;
-  font-family: var(--f-mono);
-  font-size: 0.6rem;
+  gap: var(--space-2);
+
+  svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+
+  padding: var(--space-2) var(--space-3) var(--space-1);
+  font-family: var(--f-body);
+  font-size: var(--fs-2xs);
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   color: var(--txt-3);
 }
 
 .prow {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
   width: 100%;
   text-align: left;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0.6rem 0.7rem;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
   color: var(--txt);
   cursor: pointer;
   font-family: inherit;
   transition:
-    background 0.14s ease,
-    border-color 0.14s ease;
+    background var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
 
   &.is-active {
-    background: var(--brand-dim);
-    border-color: var(--brand);
+    background: var(--accent-dim);
+    border-color: var(--accent);
   }
 
   &:hover {
@@ -141,11 +143,16 @@
 }
 
 .prow-icon {
-  font-size: 1.15rem;
-  line-height: 1;
   width: 24px;
-  text-align: center;
+  display: grid;
+  place-items: center;
+  color: var(--txt-3);
   flex-shrink: 0;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 .prow-main {
@@ -156,9 +163,9 @@
 .prow-title {
   display: block;
   font-family: var(--f-body);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   font-weight: 600;
-  line-height: 1.35;
+  line-height: var(--lh-ui);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -167,10 +174,9 @@
 .prow-sub {
   display: block;
   font-family: var(--f-mono);
-  font-size: 0.63rem;
-  letter-spacing: 0.03em;
+  font-size: var(--fs-2xs);
   color: var(--txt-3);
-  margin-top: 0.15rem;
+  margin-top: var(--space-1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -178,21 +184,19 @@
 
 .prow-tag {
   font-family: var(--f-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-size: var(--fs-2xs);
   color: var(--txt-2);
   background: var(--bg-3);
   border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-2);
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .prow-key {
   font-family: var(--f-mono);
-  font-size: 0.62rem;
+  font-size: var(--fs-2xs);
   color: var(--txt-3);
   flex-shrink: 0;
   opacity: 0;
@@ -200,15 +204,15 @@
 
 .prow.is-active .prow-key {
   opacity: 1;
-  color: var(--brand);
+  color: var(--accent-text);
 }
 
-/* ---- priority dot ---- */
+/* ---- punto de prioridad ---- */
 
 .prow-dot {
   width: 7px;
   height: 7px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   flex-shrink: 0;
   background: var(--txt-3);
 
@@ -217,35 +221,33 @@
   }
 
   &.p-alta {
-    background: var(--warn);
+    background: var(--accent);
   }
 
   &.p-media {
-    background: var(--ok);
+    background: var(--info);
   }
 }
 
 /* ---- favorito (estrella clicable en cada fila) ---- */
 
 .prow-fav {
-  width: 16px;
+  width: var(--space-4);
   flex-shrink: 0;
-  text-align: center;
-  font-size: 0.95rem;
+  display: grid;
+  place-items: center;
+  font-size: var(--fs-sm);
   line-height: 1;
   color: var(--txt-3);
   cursor: pointer;
-  transition:
-    color 0.12s ease,
-    transform 0.12s ease;
+  transition: color var(--dur-fast) var(--ease);
 
   &:hover {
-    color: var(--warn);
-    transform: scale(1.18);
+    color: var(--accent-text);
   }
 
   &.is-fav {
-    color: var(--warn);
+    color: var(--accent);
   }
 }
 
@@ -253,32 +255,31 @@
   color: var(--txt-2);
 
   &.is-fav {
-    color: var(--warn);
+    color: var(--accent);
   }
 }
 
-/* ---- empty / hints ---- */
+/* ---- vacío / sugerencias ---- */
 
 .palette-empty {
-  padding: 1.6rem 1.1rem 1.8rem;
+  padding: var(--space-6) var(--space-4);
   text-align: center;
   color: var(--txt-2);
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
 
   .glyph {
     display: block;
-    font-size: 1.8rem;
-    opacity: 0.45;
-    margin-bottom: 0.5rem;
+    color: var(--txt-3);
+    margin-bottom: var(--space-2);
   }
 }
 
 .palette-suggests {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: var(--space-2);
   justify-content: center;
-  margin-top: 0.9rem;
+  margin-top: var(--space-3);
 }
 
 /* Chips de sugerencia (atajos a categorías desde el estado vacío). */
@@ -286,82 +287,64 @@
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--line-2);
-  border-radius: 999px;
-  padding: 0.28rem 0.72rem;
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-3);
   background: var(--bg-2);
   color: var(--txt-2);
   font-family: inherit;
-  font-size: 0.74rem;
+  font-size: var(--fs-sm);
   font-weight: 600;
   cursor: pointer;
   transition:
-    background 0.14s ease,
-    color 0.14s ease,
-    border-color 0.14s ease;
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
 
-  &:hover,
-  &:focus-visible {
-    border-color: var(--brand);
-    background: var(--brand-dim);
-    color: var(--brand);
-    outline: none;
+  &:hover {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    color: var(--accent-text);
   }
 }
 
-/* ---- footer legend ---- */
+/* ---- leyenda del pie ---- */
 
 .palette-foot {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.6rem 1.1rem;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-4);
   border-top: 1px solid var(--line);
   background: var(--bg-3);
-  font-family: var(--f-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.04em;
+  font-family: var(--f-body);
+  font-size: var(--fs-2xs);
   color: var(--txt-3);
 
   span {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: var(--space-1);
   }
 
   kbd {
     border: 1px solid var(--line-2);
     border-bottom-width: 2px;
-    border-radius: 4px;
-    padding: 0.1rem 0.34rem;
+    border-radius: var(--radius-xs);
+    padding: 0 var(--space-1);
     background: var(--bg-2);
     color: var(--txt-2);
-    font-family: inherit;
-    font-size: 0.62rem;
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
   }
 }
 
-/* ---- matched text highlight ---- */
+/* ---- resaltado de coincidencias ---- */
 
 mark,
 .hl {
-  background: var(--warn-bg);
-  color: var(--warn-fg);
-  border-radius: 3px;
+  background: var(--accent-dim);
+  color: var(--accent-text);
+  border-radius: var(--radius-xs);
   padding: 0 0.12em;
   font-weight: 700;
-}
-
-@media (width <= 720px) {
-  .palette-overlay {
-    padding: 6vh 0.6rem 1rem;
-  }
-
-  .palette {
-    max-height: 82vh;
-    border-radius: 12px;
-  }
-
-  .palette-foot span:nth-child(n + 3) {
-    display: none;
-  }
 }

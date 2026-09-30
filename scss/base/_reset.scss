@@ -1,83 +1,7 @@
 /* ============================================================
-   BASE — Design tokens (SLDS / Field Service, enterprise B2B),
-   reset, typography, scrollbars, pills, utilities
+   BASE — reset, defaults de elemento, focus global, utilidades.
+   Las custom properties viven en abstracts/_tokens.scss.
    ============================================================ */
-
-/* ---- dark theme (default) ---- */
-:root {
-  /* surfaces */
-  --bg-0: #0b1222; /* deepest inset: prompt / code blocks */
-  --bg-1: #0f172a; /* canvas */
-  --bg-2: #1e293b; /* card */
-  --bg-3: #25324a; /* raised / hover / chip */
-  --bg-4: #16233b; /* alternate surface */
-  --prompt-bg: #0b1222;
-
-  /* lines */
-  --line: #334155;
-  --line-2: #475569;
-
-  /* text */
-  --txt: #e2e8f0;
-  --txt-2: #94a3b8;
-  --txt-3: #8a99b0; /* A11y: subido desde #64748b para contraste ≥4.5:1 (WCAG AA) */
-
-  /* brand / primary action */
-  --brand: #0070d2;
-  --brand-hover: #005fb2;
-  --brand-fg: #fff;
-  --brand-dim: rgb(0 112 210 / 16%);
-
-  /* info / secondary accent */
-  --info: #38bdf8;
-  --info-dim: rgb(56 189 248 / 14%);
-
-  /* semantic states */
-  --ok: #22c55e;
-  --ok-bg: #064e3b;
-  --ok-fg: #a7f3d0;
-  --ok-dim: rgb(34 197 94 / 14%);
-  --warn: #fbbf24;
-  --warn-bg: #78350f;
-  --warn-fg: #fde68a;
-  --warn-dim: rgb(251 191 36 / 14%);
-  --err: #f87171;
-  --err-bg: #7f1d1d;
-  --err-fg: #fecaca;
-  --err-dim: rgb(248 113 113 / 14%);
-  --neutral-bg: #334155;
-  --neutral-fg: #cbd5e1;
-
-  /* prompt variables */
-  --var-bg: rgb(30 58 138 / 55%);
-  --var-fg: #93c5fd;
-  --var-border: rgb(147 197 253 / 28%);
-
-  /* legacy aliases (kept so older references render sensibly) */
-  --amber: var(--warn);
-  --amber-2: #f59e0b;
-  --amber-dim: var(--warn-dim);
-  --green: var(--ok);
-  --green-dim: var(--ok-dim);
-  --red: var(--err);
-  --red-dim: var(--err-dim);
-  --cyan: var(--info);
-  --cyan-dim: var(--info-dim);
-
-  /* effects */
-  --glow-a: rgb(56 189 248 / 6%);
-  --glow-b: rgb(0 112 210 / 6%);
-  --shadow: 0 1px 3px rgb(2 6 23 / 45%);
-  --shadow-lg: 0 12px 32px rgb(2 6 23 / 55%);
-
-  /* motion + type */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-  --f-display: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
-  --f-body: 'Barlow', 'Segoe UI', system-ui, sans-serif;
-  --f-mono: 'IBM Plex Mono', 'Cascadia Mono', consolas, monospace;
-}
 
 /* ---- reset ---- */
 * {
@@ -97,15 +21,15 @@ html {
 body {
   font-family: var(--f-body);
   color: var(--txt);
-  background: var(--bg-1);
+  background: var(--bg-0);
   min-height: 100vh;
-  line-height: 1.55;
+  line-height: var(--lh-ui);
   overflow-x: hidden;
 }
 
 ::selection {
-  background: var(--brand);
-  color: #fff;
+  background: var(--accent);
+  color: var(--accent-ink);
 }
 
 /* ---- scrollbars ---- */
@@ -120,20 +44,20 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--line-2);
-  border-radius: 999px;
-  border: 2px solid var(--bg-1);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--bg-0);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--brand);
+  background: var(--accent);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--line-2) var(--bg-1);
+  scrollbar-color: var(--line-2) var(--bg-0);
 }
 
-/* ---- typography helpers ---- */
+/* ---- helpers tipográficos ---- */
 .mono {
   font-family: var(--f-mono);
 }
@@ -142,19 +66,34 @@ body {
   font-family: var(--f-display);
 }
 
-/* ---- interactive defaults ---- */
+/* ---- oculto visual, accesible para lectores de pantalla ---- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- interactivos: foco visible global (anillo del sistema) ---- */
 button {
   font-family: inherit;
   cursor: pointer;
 }
 
+a:focus-visible,
 button:focus-visible,
 input:focus-visible,
-a:focus-visible,
 select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 /* ---- skip link ---- */
@@ -165,70 +104,102 @@ textarea:focus-visible {
   width: 1px;
   height: 1px;
   overflow: hidden;
-  z-index: 9999;
+  z-index: var(--z-toast);
 }
 
 .skip-link:focus {
   position: fixed;
-  left: 1rem;
-  top: 1rem;
+  left: var(--space-4);
+  top: var(--space-4);
   width: auto;
   height: auto;
-  padding: 0.6rem 1.2rem;
-  background: var(--brand);
-  color: #fff;
-  z-index: 9999;
-  font-family: var(--f-display);
-  font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent);
+  color: var(--accent-ink);
+  z-index: var(--z-toast);
+  font-family: var(--f-body);
+  font-weight: 600;
+  font-size: var(--fs-sm);
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
-/* ---- accent divider (replaces hazard stripes) ---- */
+/* ---- hazard line: regla del índice con único barrido de encendido ---- */
 .hazard-line {
+  position: relative;
   height: 3px;
-  background: linear-gradient(90deg, var(--brand), var(--info));
-  opacity: 0.9;
+  background: var(--line);
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateX(-100%);
+    animation: hazard-sweep 600ms var(--ease) forwards;
+  }
 }
 
-/* ---- pills (semantic, pastel / desaturated) ---- */
+/* ---- pills (chips de datos; solo neutral sigue en uso) ---- */
 .pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--space-1);
   font-family: var(--f-mono);
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-size: var(--fs-2xs);
+  font-weight: 500;
   line-height: 1;
-  padding: 0.34rem 0.62rem;
-  border-radius: 999px;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
   white-space: nowrap;
-}
-
-.pill-ok {
-  background: var(--ok-bg);
-  color: var(--ok-fg);
-  border: 1px solid rgb(34 197 94 / 24%);
-}
-
-.pill-warn {
-  background: var(--warn-bg);
-  color: var(--warn-fg);
-  border: 1px solid rgb(251 191 36 / 22%);
-}
-
-.pill-err {
-  background: var(--err-bg);
-  color: var(--err-fg);
-  border: 1px solid rgb(248 113 113 / 22%);
 }
 
 .pill-neutral {
   background: var(--neutral-bg);
   color: var(--neutral-fg);
   border: 1px solid var(--line);
+}
+
+/* ---- keyframes globales (definición única) ---- */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes hazard-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes stat-on {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
