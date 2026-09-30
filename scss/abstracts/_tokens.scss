@@ -74,6 +74,9 @@
   --elev-2: 0 8px 32px rgb(4 10 20 / 60%);
   --scrim: rgb(4 9 18 / 62%);
   --focus-ring: 0 0 0 2px var(--bg-1), 0 0 0 4px var(--accent);
+  --z-base: 1;
+  --z-raised: 2;
+  --z-handle: 10;
   --z-topbar: 100;
   --z-overlay: 200;
   --z-scrim: 300;

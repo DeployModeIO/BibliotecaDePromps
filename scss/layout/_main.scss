@@ -1,39 +1,37 @@
 /* ============================================================
-   MAIN — section heads, reveals, empty state
+   MAIN — cabeceras de sección, reveal neutralizado, vacío.
    ============================================================ */
 
 main {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 1.6rem 1.4rem 3rem;
+  padding: var(--space-5) var(--space-5) var(--space-8);
   position: relative;
-  z-index: 2;
+  z-index: var(--z-raised);
 }
 
 .section-head {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.3rem;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
 
   h2 {
     font-family: var(--f-display);
-    font-size: 1.05rem;
+    font-size: var(--fs-lg);
     font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
     color: var(--txt);
     white-space: nowrap;
 
     &::before {
       content: '';
       display: inline-block;
-      width: 4px;
+      width: 3px;
       height: 1em;
-      margin-right: 0.6rem;
+      margin-right: var(--space-2);
       vertical-align: -0.1em;
-      border-radius: 2px;
-      background: var(--brand);
+      border-radius: var(--radius-xs);
+      background: var(--accent);
     }
   }
 
@@ -45,54 +43,42 @@ main {
 
   .count {
     font-family: var(--f-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.08em;
+    font-size: var(--fs-2xs);
     color: var(--txt-3);
     white-space: nowrap;
   }
 }
 
-/* ---- reveal animations ---- */
+/* Reveal neutralizado: el JS sigue añadiendo .reveal/.in,
+   pero el contenido es visible siempre, sin animación de entrada. */
 .reveal {
-  opacity: 0;
-  transform: translateY(18px);
-  transition:
-    opacity 0.45s var(--ease-out),
-    transform 0.45s var(--ease-out);
-
-  &.in {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  opacity: 1;
+  transform: none;
 }
 
-/* ---- empty state ---- */
+/* ---- estado vacío ---- */
 .empty {
   border: 1px dashed var(--line-2);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--bg-2);
-  padding: 3.5rem 1.5rem;
+  padding: var(--space-8) var(--space-5);
   text-align: center;
 
   .glyph {
-    font-size: 2.4rem;
-    opacity: 0.5;
     display: block;
-    margin-bottom: 0.8rem;
+    color: var(--txt-3);
+    margin-bottom: var(--space-3);
   }
 
   h3 {
     font-family: var(--f-display);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-size: 0.95rem;
-    margin-bottom: 0.3rem;
+    font-size: var(--fs-md);
+    margin-bottom: var(--space-1);
   }
 
   p {
-    font-family: var(--f-mono);
-    font-size: 0.72rem;
+    font-family: var(--f-body);
+    font-size: var(--fs-sm);
     color: var(--txt-3);
-    letter-spacing: 0.04em;
   }
 }

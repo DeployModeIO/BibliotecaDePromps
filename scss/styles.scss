@@ -34,5 +34,8 @@
 @use 'components/dashboard';
 @use 'components/app-preview';
 
+// ---- Pages ----
+@use 'pages/landing';
+
 // ---- Responsive (el último: fix del bug de cascada P1) ----
 @use 'layout/responsive';

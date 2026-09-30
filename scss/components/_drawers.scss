@@ -1,18 +1,18 @@
 /* ============================================================
-   DRAWERS — favorites, history, chat panel
+   DRAWERS — favoritos e historial (scrim unificado + toast).
    ============================================================ */
 
 /* ---- scrim ---- */
 .drawer-scrim {
   position: fixed;
   inset: 0;
-  z-index: 400;
-  background: rgb(2 6 23 / 55%);
+  z-index: var(--z-scrim);
+  background: var(--scrim);
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity 0.25s ease,
-    visibility 0.25s ease;
+    opacity var(--dur-slow) var(--ease),
+    visibility var(--dur-slow) var(--ease);
 
   &.active {
     opacity: 1;
@@ -20,21 +20,21 @@
   }
 }
 
-/* ---- fav/hist drawer ---- */
+/* ---- drawer favoritos/historial ---- */
 .drawer {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   width: min(400px, 92vw);
-  z-index: 450;
+  z-index: var(--z-drawer);
   background: var(--bg-2);
   border-left: 1px solid var(--line-2);
   transform: translateX(102%);
-  transition: transform 0.32s var(--ease-drawer);
+  transition: transform var(--dur-slow) var(--ease);
   display: flex;
   flex-direction: column;
-  box-shadow: -18px 0 50px rgb(2 6 23 / 45%);
+  box-shadow: var(--elev-2);
 
   &.active {
     transform: translateX(0);
@@ -45,19 +45,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.1rem 1.3rem;
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--line);
   background: var(--bg-3);
 
   h3 {
     font-family: var(--f-display);
-    font-size: 0.95rem;
+    font-size: var(--fs-sm);
     font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
 
     span {
-      color: var(--brand);
+      color: var(--accent-text);
     }
   }
 }
@@ -69,18 +67,16 @@
   place-items: center;
   background: transparent;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--txt-2);
   transition:
-    border-color 0.18s var(--ease-out),
-    color 0.18s var(--ease-out),
-    background 0.18s var(--ease-out),
-    box-shadow 0.18s var(--ease-out),
-    transform 0.16s var(--ease-out);
+    border-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    background var(--dur) var(--ease);
 
   &:hover {
     border-color: var(--err);
-    color: var(--err);
+    color: var(--err-text);
     background: var(--err-dim);
   }
 }
@@ -88,31 +84,28 @@
 .drawer-list {
   flex: 1;
   overflow-y: auto;
-  padding: 0.8rem;
+  padding: var(--space-3);
 }
 
 .drawer-item {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: var(--space-3);
   width: 100%;
   text-align: left;
-  background: var(--bg-3);
+  background: var(--bg-2);
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0.75rem 0.85rem;
-  margin-bottom: 0.55rem;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-2);
   color: var(--txt);
   transition:
-    border-color 0.18s var(--ease-out),
-    color 0.18s var(--ease-out),
-    background 0.18s var(--ease-out),
-    box-shadow 0.18s var(--ease-out),
-    transform 0.16s var(--ease-out);
+    border-color var(--dur) var(--ease),
+    transform var(--dur-fast) var(--ease);
 
   &:hover {
-    border-color: var(--brand);
-    transform: translateX(-4px);
+    border-color: var(--accent);
+    transform: translateX(-2px);
   }
 
   .di-main {
@@ -121,9 +114,9 @@
   }
 
   .di-title {
-    font-size: 0.82rem;
+    font-size: var(--fs-sm);
     font-weight: 600;
-    line-height: 1.3;
+    line-height: var(--lh-ui);
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -133,8 +126,7 @@
 
   .di-sub {
     font-family: var(--f-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.04em;
+    font-size: var(--fs-2xs);
     color: var(--txt-3);
   }
 
@@ -146,48 +138,47 @@
     place-items: center;
     background: transparent;
     border: 1px solid transparent;
-    border-radius: 6px;
+    border-radius: var(--radius-xs);
     color: var(--txt-3);
-    font-size: 0.8rem;
-    transition: all 0.15s ease;
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease);
 
     &:hover {
       border-color: var(--err);
-      color: var(--err);
+      color: var(--err-text);
     }
   }
 }
 
 .drawer-empty {
   text-align: center;
-  padding: 3rem 1rem;
-  font-family: var(--f-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
+  padding: var(--space-8) var(--space-4);
+  font-family: var(--f-body);
+  font-size: var(--fs-sm);
   color: var(--txt-3);
 }
 
 /* ---- toast ---- */
 .toast {
   position: fixed;
-  bottom: 1.6rem;
+  bottom: var(--space-5);
   left: 50%;
-  z-index: 900;
+  z-index: var(--z-toast);
   transform: translate(-50%, 90px);
-  background: var(--bg-3);
+  background: var(--bg-2);
   border: 1px solid var(--line-2);
-  border-left: 4px solid var(--brand);
-  border-radius: 10px;
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
   color: var(--txt);
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.03em;
-  padding: 0.85rem 1.3rem;
-  box-shadow: var(--shadow-lg);
+  font-family: var(--f-body);
+  font-size: var(--fs-sm);
+  padding: var(--space-3) var(--space-4);
+  box-shadow: var(--elev-2);
   opacity: 0;
   transition:
-    transform 0.3s var(--ease-out),
-    opacity 0.3s var(--ease-out);
+    transform var(--dur-slow) var(--ease),
+    opacity var(--dur-slow) var(--ease);
   max-width: 92vw;
 
   &.show {

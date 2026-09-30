@@ -1,26 +1,28 @@
 /* ============================================================
-   CATEGORY PANELS — grid cards for each industry
+   CATEGORY PANELS — fichas de índice por industria (SYS-NN).
+   El código en mono lleva el color de la industria (--cat).
    ============================================================ */
 
 .cat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.1rem;
+  gap: var(--space-4);
 }
 
 .cat-panel {
   position: relative;
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 1.3rem 1.3rem 1.1rem;
+  border-radius: var(--radius-sm);
+  padding: var(--space-4);
   cursor: pointer;
-  box-shadow: var(--shadow);
+  box-shadow: var(--elev-1);
   transition:
-    transform 0.22s var(--ease-out),
-    border-color 0.22s ease,
-    box-shadow 0.22s ease;
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    transform var(--dur-fast) var(--ease);
 
+  /* vía superior con el matiz de la industria */
   &::before {
     content: '';
     position: absolute;
@@ -28,90 +30,90 @@
     left: 0;
     right: 0;
     height: 3px;
-    border-radius: 12px 12px 0 0;
-    background: var(--cat, var(--brand));
-  }
-
-  &:hover {
-    transform: translateY(-5px);
-    border-color: var(--cat, var(--brand));
-    box-shadow: var(--shadow-lg);
-
-    .cat-icon {
-      transform: scale(1.1) rotate(-3deg);
-    }
-
-    .cat-go {
-      transform: translateX(5px);
-    }
-  }
-
-  &:active {
-    transform: translateY(-2px);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: var(--cat, var(--ind-herramientas));
   }
 
   h3 {
     font-family: var(--f-display);
-    font-size: 1.15rem;
+    font-size: var(--fs-lg);
     font-weight: 700;
-    letter-spacing: 0.02em;
-    margin-bottom: 0.35rem;
+    margin-bottom: var(--space-1);
   }
 
   p {
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-read);
     color: var(--txt-2);
-    min-height: 2.6em;
   }
+}
+
+/* hover con lift ≤2px solo donde hay puntero fino */
+@media (hover: hover) {
+  .cat-panel:hover {
+    border-color: var(--cat, var(--ind-herramientas));
+    box-shadow: var(--elev-2);
+    transform: translateY(-2px);
+  }
+}
+
+.cat-panel:active {
+  transform: translateY(0);
 }
 
 .cat-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-3);
 }
 
 .cat-code {
   font-family: var(--f-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.1em;
-  color: var(--txt-3);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.04em;
+  color: var(--cat, var(--ind-herramientas));
   border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 0.22rem 0.6rem;
+  border-radius: var(--radius-xs);
+  padding: var(--space-1) var(--space-2);
   background: var(--bg-3);
 }
 
 .cat-count {
   font-family: var(--f-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.06em;
-  color: var(--cat, var(--brand));
+  font-size: var(--fs-2xs);
+  color: var(--cat, var(--ind-herramientas));
 }
 
 .cat-icon {
-  font-size: 2.5rem;
-  line-height: 1;
-  margin-bottom: 0.8rem;
-  transition: transform 0.25s ease;
+  display: block;
+  color: var(--cat, var(--ind-herramientas));
+  margin-bottom: var(--space-3);
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .cat-foot {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1.1rem;
-  padding-top: 0.8rem;
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
   border-top: 1px solid var(--line);
-  font-family: var(--f-mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.06em;
+  font-family: var(--f-body);
+  font-size: var(--fs-2xs);
   color: var(--txt-3);
 }
 
 .cat-go {
-  color: var(--cat, var(--brand));
-  transition: transform 0.2s ease;
+  color: var(--cat, var(--ind-herramientas));
+  transition: transform var(--dur-fast) var(--ease);
   display: inline-block;
+}
+
+.cat-panel:hover .cat-go {
+  transform: translateX(2px);
 }
