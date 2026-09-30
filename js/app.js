@@ -55,6 +55,98 @@ const PLATFORM_KEYS = Object.keys(PLATFORM_SPECS);
 
 /* Matiz de industria por categoría (tokens --ind-*): el color codifica el
    sistema al que pertenece cada ficha. Cubre los 33 IDs reales de los datos. */
+/* Iconos SVG monocromos (lucide, CSP-safe) para la paleta de comandos:
+   sustituyen a los emojis de los datos y de las etiquetas de grupo. */
+const uiSvg = (paths) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+
+const UI_ICONS = {
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  folders:
+    '<path d="M20 17a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3.9a2 2 0 0 1-1.69-.9l-.81-1.2a2 2 0 0 0-1.67-.9H8a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2Z"/><path d="M2 8v11a2 2 0 0 0 2 2h14"/>',
+  star: '<path d="m12 3.6 2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8z"/>',
+  zap: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+  home: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  dashboard:
+    '<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+  keyboard:
+    '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/>',
+  backspace: '<path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><path d="m9.5 9 5 5"/><path d="m14.5 9-5 5"/>',
+  contrast: '<circle cx="12" cy="12" r="10"/><path d="M12 2v20a10 10 0 0 0 0-20z" fill="currentColor"/>',
+  droplet: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
+  factory:
+    '<path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>',
+  pickaxe:
+    '<path d="M14.531 12.469 6.619 20.38a1 1 0 1 1-3-3l7.912-7.912"/><path d="M15.686 4.314A12.5 12.5 0 0 0 5.461 2.958 1 1 0 0 0 5.58 4.71a22 22 0 0 1 6.318 3.393"/><path d="M17.7 3.7a1 1 0 0 0-1.4 0l-4.6 4.6a1 1 0 0 0 0 1.4l2.6 2.6a1 1 0 0 0 1.4 0l4.6-4.6a1 1 0 0 0 0-1.4z"/><path d="M19.686 8.314a12.501 12.501 0 0 1 1.356 10.225 1 1 0 0 1-1.751-.119 22 22 0 0 0-3.393-6.319"/>',
+  waves:
+    '<path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>',
+  cap: '<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
+  leaf: '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+  sprout:
+    '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
+  utensils: '<path d="M3 2v7c0 1 1 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1 1 2 2 2h3Zm0 0v7"/>',
+  clapper:
+    '<path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  landmark:
+    '<path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="m12 2 9 4v3H3V6Z"/>',
+  cross:
+    '<path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2z"/>',
+  banknote: '<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+  microscope:
+    '<path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  cart: '<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+  pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  masks: '<circle cx="12" cy="12" r="10"/><path d="M8 10h.01M16 10h.01"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/>',
+  laptop: '<path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/>',
+  chart: '<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  palette:
+    '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+  scale:
+    '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+  ball: '<circle cx="12" cy="12" r="10"/><path d="M12 2v10l8.5 5"/><path d="M12 12 3.5 17"/>',
+  box: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>',
+};
+
+/* Emoji de los datos → trazo SVG equivalente (firma visual del índice). */
+const EMOJI_SVG = {
+  '🛢️': 'droplet',
+  '🏭': 'factory',
+  '⛏️': 'pickaxe',
+  '🌊': 'waves',
+  '⚡': 'zap',
+  '🎓': 'cap',
+  '🌿': 'leaf',
+  '🌾': 'sprout',
+  '🍴': 'utensils',
+  '🎬': 'clapper',
+  '🏓️': 'ball',
+  '🏓': 'ball',
+  '🏛️': 'landmark',
+  '🏠': 'home',
+  '🏥': 'cross',
+  '💰': 'banknote',
+  '🔬': 'microscope',
+  '🚚': 'truck',
+  '🛒': 'cart',
+  '✍️': 'pen',
+  '🌐': 'globe',
+  '🎭': 'masks',
+  '💻': 'laptop',
+  '📈': 'chart',
+  '🔎': 'search',
+  '🎨': 'palette',
+  '⚖': 'scale',
+  '⚽': 'ball',
+};
+
+const emojiSvg = (emoji) => uiSvg(UI_ICONS[EMOJI_SVG[emoji] || 'box'] || UI_ICONS.box);
+
 const CAT_HUE = {
   oil_gas: 'var(--ind-oilgas)',
   oil_gas_v2: 'var(--ind-oilgas)',
@@ -539,7 +631,7 @@ class PromptLibrary {
     this.handleHashRoute();
     if (!SafeStore.available()) {
       setTimeout(
-        () => this.showToast('⚠ Navegador bloquea almacenamiento — favoritos/historial no persistirán (baje los Shields de Brave)', ''),
+        () => this.showToast('Navegador bloquea almacenamiento — favoritos/historial no persistirán (baje los Shields de Brave)', ''),
         800
       );
     }
@@ -1191,7 +1283,7 @@ class PromptLibrary {
     const id = this.currentPrompt.id.toUpperCase().replace(/_/g, '-');
     const url = location.origin + location.pathname + '#p/' + this.currentPrompt.id;
     this.copyText(url, null);
-    this.showToast('🔗 Enlace copiado — PRM-' + id, 'ok');
+    this.showToast('✓ Enlace copiado — PRM-' + id, 'ok');
   }
 
   getPromptVariables(text) {
@@ -1824,19 +1916,19 @@ class PromptLibrary {
 
     if (!terms.length) {
       const recents = this.paletteRecentDocs();
-      if (recents.length) groups.push({ label: '⏱ Recientes', items: recents });
-      groups.push({ label: '🗂 Sistemas', items: this.catDocs.slice(0, 6).map((c) => this._catRow(c, q)) });
-      groups.push({ label: '★ Destacados', items: this.paletteSuggestDocs() });
+      if (recents.length) groups.push({ label: 'Recientes', icon: uiSvg(UI_ICONS.clock), items: recents });
+      groups.push({ label: 'Sistemas', icon: uiSvg(UI_ICONS.folders), items: this.catDocs.slice(0, 6).map((c) => this._catRow(c, q)) });
+      groups.push({ label: 'Destacados', icon: uiSvg(UI_ICONS.star), items: this.paletteSuggestDocs() });
     } else {
       const actions = this.paletteActions(q);
-      if (actions.length) groups.push({ label: '⚡ Acciones', items: actions });
+      if (actions.length) groups.push({ label: 'Acciones', icon: uiSvg(UI_ICONS.zap), items: actions });
 
       const cats = this.catDocs
         .map((c) => ({ c, s: this._scoreCatDoc(c, terms) }))
         .filter((x) => x.s > 0)
         .sort((a, b) => b.s - a.s)
         .slice(0, 4);
-      if (cats.length) groups.push({ label: '🗂 Sistemas', items: cats.map((x) => this._catRow(x.c, q)) });
+      if (cats.length) groups.push({ label: 'Sistemas', icon: uiSvg(UI_ICONS.folders), items: cats.map((x) => this._catRow(x.c, q)) });
 
       const docs = [];
       for (const d of this.searchDocs) {
@@ -1844,7 +1936,7 @@ class PromptLibrary {
         if (s > 0) docs.push({ d, s });
       }
       docs.sort((a, b) => b.s - a.s || String(a.d.titulo).localeCompare(String(b.d.titulo), 'es'));
-      groups.push({ label: '◆ Prompts', items: docs.slice(0, 40).map((x) => this._promptRow(x.d, q)) });
+      groups.push({ label: 'Prompts', icon: uiSvg(UI_ICONS.file), items: docs.slice(0, 40).map((x) => this._promptRow(x.d, q)) });
     }
 
     const total = groups.reduce((n, g) => n + g.items.length, 0);
@@ -1861,7 +1953,7 @@ class PromptLibrary {
       .filter((g) => g.items.length)
       .map(
         (g) =>
-          `<div class="palette-group" role="group"><div class="palette-group-label">${this.esc(g.label)}</div>${g.items
+          `<div class="palette-group" role="group"><div class="palette-group-label">${g.icon || ''}${this.esc(g.label)}</div>${g.items
             .map((it) => this._paletteRowHtml(it))
             .join('')}</div>`
       )
@@ -1882,8 +1974,8 @@ class PromptLibrary {
     return {
       kind: 'prompt',
       id: doc.id,
-      icon: doc.catIcono || '◆',
-      color: doc.color,
+      icon: emojiSvg(doc.catIcono),
+      color: CAT_HUE[doc.catId] || null,
       title: this._highlight(doc.titulo, q),
       sub: this.esc(`${doc.catNombre} · ${doc.sub} · ${doc.words} palabras`),
       tag: this._sourceCode(doc.fuente),
@@ -1896,8 +1988,8 @@ class PromptLibrary {
     return {
       kind: 'cat',
       id: cat.id,
-      icon: cat.icono || '▣',
-      color: cat.color,
+      icon: emojiSvg(cat.icono),
+      color: CAT_HUE[cat.id] || null,
       title: this._highlight(cat.nombre, q),
       sub: this.esc(`${cat.total} prompts · ${(cat.subs || []).slice(0, 4).join(' / ')}`),
       tag: 'SISTEMA',
@@ -1914,7 +2006,7 @@ class PromptLibrary {
       it.kind === 'prompt' ? `<span class="prow-fav${it.fav ? ' is-fav' : ''}" aria-hidden="true">${it.fav ? '★' : '☆'}</span>` : '';
     // role=option + tabindex=-1: patrón combobox con aria-activedescendant.
     return `<button type="button" tabindex="-1" class="prow" role="option" aria-selected="false" id="prow-${i}" data-i="${i}">
-      <span class="prow-icon"${style} aria-hidden="true">${this.esc(it.icon)}</span>
+      <span class="prow-icon"${style} aria-hidden="true">${it.icon}</span>
       <span class="prow-main"><span class="prow-title">${it.title}</span><span class="prow-sub">${it.sub}</span></span>
       ${tag}${dot}${fav}<span class="prow-key" aria-hidden="true">↵</span>
     </button>`;
@@ -1959,14 +2051,14 @@ class PromptLibrary {
   /* Acciones de navegación que coinciden con la consulta escrita. */
   paletteActions(q) {
     const catalog = [
-      { id: 'home', icon: '⌂', label: 'Ir al inicio', keys: 'home inicio inicio sistemas categorias' },
-      { id: 'fav', icon: '★', label: 'Ver favoritos', keys: 'favoritos fav starred destacados' },
-      { id: 'hist', icon: '⏱', label: 'Ver historial', keys: 'historial hist recientes usage' },
-      { id: 'gen', icon: '⚡', label: 'Generar aplicación', keys: 'generar app build crear' },
-      { id: 'dash', icon: '▦', label: 'Panel de control', keys: 'dashboard panel stats estadisticas' },
-      { id: 'keys', icon: '⌨', label: 'Atajos de teclado', keys: 'atajos keys help ayuda' },
-      { id: 'clear', icon: '⌫', label: 'Limpiar filtros', keys: 'limpiar reset clear filtros' },
-      { id: 'theme', icon: '◐', label: 'Cambiar tema', keys: 'tema theme dark light claro oscuro' },
+      { id: 'home', icon: uiSvg(UI_ICONS.home), label: 'Ir al inicio', keys: 'home inicio inicio sistemas categorias' },
+      { id: 'fav', icon: uiSvg(UI_ICONS.star), label: 'Ver favoritos', keys: 'favoritos fav starred destacados' },
+      { id: 'hist', icon: uiSvg(UI_ICONS.clock), label: 'Ver historial', keys: 'historial hist recientes usage' },
+      { id: 'gen', icon: uiSvg(UI_ICONS.zap), label: 'Generar aplicación', keys: 'generar app build crear' },
+      { id: 'dash', icon: uiSvg(UI_ICONS.dashboard), label: 'Panel de control', keys: 'dashboard panel stats estadisticas' },
+      { id: 'keys', icon: uiSvg(UI_ICONS.keyboard), label: 'Atajos de teclado', keys: 'atajos keys help ayuda' },
+      { id: 'clear', icon: uiSvg(UI_ICONS.backspace), label: 'Limpiar filtros', keys: 'limpiar reset clear filtros' },
+      { id: 'theme', icon: uiSvg(UI_ICONS.contrast), label: 'Cambiar tema', keys: 'tema theme dark light claro oscuro' },
     ];
     const terms = this._normTerms(q);
     return catalog
