@@ -88,7 +88,6 @@ const UI_ICONS = {
   utensils: '<path d="M3 2v7c0 1 1 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1 1 2 2 2h3Zm0 0v7"/>',
   clapper:
     '<path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>',
-  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
   landmark:
     '<path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="m12 2 9 4v3H3V6Z"/>',
   cross:
@@ -104,7 +103,7 @@ const UI_ICONS = {
   masks: '<circle cx="12" cy="12" r="10"/><path d="M8 10h.01M16 10h.01"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/>',
   laptop: '<path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/>',
   chart: '<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
-  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
   palette:
     '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
   scale:
@@ -126,7 +125,6 @@ const EMOJI_SVG = {
   '🍴': 'utensils',
   '🎬': 'clapper',
   '🏓️': 'ball',
-  '🏓': 'ball',
   '🏛️': 'landmark',
   '🏠': 'home',
   '🏥': 'cross',
@@ -147,6 +145,10 @@ const EMOJI_SVG = {
 
 const emojiSvg = (emoji) => uiSvg(UI_ICONS[EMOJI_SVG[emoji] || 'box'] || UI_ICONS.box);
 
+/* Unica fuente de verdad del mapeo id -> var(--ind-*): los matices de la app
+   y los de `.l-industries .ind-*` de scss/pages/_landing.scss deben coincidir.
+   Cualquier alta o cambio de industria se toca aqui y alli (y en el fallback
+   --ind-herramientas). */
 const CAT_HUE = {
   oil_gas: 'var(--ind-oilgas)',
   oil_gas_v2: 'var(--ind-oilgas)',
@@ -446,7 +448,6 @@ class PromptLibrary {
         catId: cat.id,
         catNombre: cat.nombre,
         catIcono: cat.icono,
-        color: cat.color,
         tags: p.tags || [],
         prioridad: p.prioridad || 'media',
         fuente: this._sourceLabel(p),
@@ -460,7 +461,6 @@ class PromptLibrary {
       id: cat.id,
       nombre: cat.nombre,
       icono: cat.icono,
-      color: cat.color,
       descripcion: cat.descripcion || '',
       total: cat.subcategorias.reduce((s, sub) => s + sub.prompts.length, 0),
       subs: cat.subcategorias.map((s) => s.nombre),
@@ -1211,7 +1211,7 @@ class PromptLibrary {
           <span><b>${this.fmt(words)}</b> palabras</span>
         </div>
       </div>
-      <div class="pcard-cta">Copiar</div>`;
+      <div class="pcard-cta">Ver prompt</div>`;
     return card;
   }
 
@@ -1268,7 +1268,17 @@ class PromptLibrary {
       const raw = mc[1].toLowerCase();
       const catId = raw.replace(/-/g, '_');
       const cat = this.data.categorias.find((c) => c.id === catId || c.id === raw || c.id.replace(/_/g, '-') === raw);
-      if (cat) this.openCategory(cat.id);
+      if (cat) {
+        /* Los filtros activos harían que applyState() ocultara categoryView; se
+           restablecen en silencio (misma mecánica de resetAllFilters, sin toast). */
+        this.state.q = '';
+        this.state.priority = null;
+        this.state.type = null;
+        this.state.source = null;
+        this.state.cat = null;
+        if (this.el.searchInput) this.el.searchInput.value = '';
+        this.openCategory(cat.id);
+      }
       return;
     }
     const m = hash.match(/^#p\/([\w-]+)/);
@@ -1503,8 +1513,21 @@ class PromptLibrary {
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
+  /* Lee un token de color del tema (#rgb/#rrggbb) como [r,g,b] para jsPDF.
+     Fallback: valores corrientes de scss/abstracts/_tokens.scss. */
+  _themeRgb(token, fallback) {
+    const raw = String(getComputedStyle(document.documentElement).getPropertyValue(token) || '').trim();
+    const m = /^#?([\da-f]{3}|[\da-f]{6})$/i.exec(raw);
+    if (!m) return fallback;
+    const hex = m[1].length === 3 ? m[1].replace(/./g, (c) => c + c) : m[1];
+    return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)];
+  }
+
   async exportToPDF(prompt) {
     const meta = this.currentMeta;
+    const accent = this._themeRgb('--accent', [255, 176, 32]);
+    const bg2 = this._themeRgb('--bg-2', [20, 31, 54]);
+    const txt3 = this._themeRgb('--txt-3', [123, 138, 167]);
     // Lazy-load: jsPDF (~366 KB) solo se descarga al exportar el primer PDF
     if (!window.jspdf && window.LibLoader) await window.LibLoader.jspdf();
     const lib = window.jspdf || {};
@@ -1518,18 +1541,18 @@ class PromptLibrary {
     const pageH = doc.internal.pageSize.getHeight();
     const margin = 48;
     let y = margin;
-    doc.setFillColor(255, 176, 32);
+    doc.setFillColor(accent[0], accent[1], accent[2]);
     doc.rect(0, 0, pageW, 10, 'F');
-    doc.setFillColor(20, 32, 46);
+    doc.setFillColor(bg2[0], bg2[1], bg2[2]);
     doc.rect(0, 10, pageW, 4, 'F');
     doc.setFont('courier', 'bold');
     doc.setFontSize(9);
-    doc.setTextColor(122, 138, 160);
+    doc.setTextColor(txt3[0], txt3[1], txt3[2]);
     doc.text('PRM-' + prompt.id.toUpperCase().replace(/_/g, '-') + ' · PRIORIDAD ' + prompt.prioridad.toUpperCase(), margin, y);
     y += 18;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
-    doc.setTextColor(20, 32, 46);
+    doc.setTextColor(bg2[0], bg2[1], bg2[2]);
     const titleLines = doc.splitTextToSize(prompt.titulo, pageW - margin * 2);
     doc.text(titleLines, margin, y);
     y += titleLines.length * 20 + 8;
@@ -1564,7 +1587,7 @@ class PromptLibrary {
       doc.setPage(i);
       doc.setFont('courier', 'normal');
       doc.setFontSize(7);
-      doc.setTextColor(122, 138, 160);
+      doc.setTextColor(txt3[0], txt3[1], txt3[2]);
       doc.text('BIBLIOTECA DE PROMPS INDUSTRIALES · REV 3.5', margin, pageH - 24);
       doc.text('Página ' + i + ' de ' + pageCount, pageW - margin, pageH - 24, { align: 'right' });
     }
@@ -2491,8 +2514,7 @@ function renderDashboard() {
   const maxViews = Math.max(1, ...topPrompts.map((p) => p.score));
 
   /* Iconos de actividad: SVG inline (lucide, CSP-safe, sin emojis) */
-  const dashSvg = (paths) =>
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+  const dashSvg = uiSvg; /* alias del wrapper único (uiSvg) */
   const TIMELINE_ICONS = {
     view: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
     copy: '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
@@ -2520,8 +2542,7 @@ function renderDashboard() {
     : '<div class="dash-timeline-item dash-muted">Sin actividad reciente</div>';
 
   /* Bento Grid de métricas — iconos lucide inline (sin CDN, CSP-safe) */
-  const bentoSvg = (paths) =>
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+  const bentoSvg = uiSvg; /* alias del wrapper único (uiSvg) */
 
   const bentoItem = ({ title, meta, value, desc, icon, color, status, statusCls = '', span2 = false, hover = false, tags = [] }) => `
     <div class="bento-item${span2 ? ' bento-item-span2' : ''}${hover ? ' bento-item-active' : ''}">
@@ -2546,7 +2567,7 @@ function renderDashboard() {
         meta: 'esta sesión',
         value: stats.totalPromptViews,
         desc: 'Fichas de prompt abiertas en esta sesión.',
-        icon: bentoSvg('<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'),
+        icon: bentoSvg(TIMELINE_ICONS.view),
         color: 'var(--info)',
         status: 'En vivo',
         statusCls: 'ok',
@@ -2559,9 +2580,7 @@ function renderDashboard() {
         meta: 'portapapeles',
         value: stats.totalPromptCopies,
         desc: 'Copias de prompt en esta sesión, listas para pegar en tu IA.',
-        icon: bentoSvg(
-          '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>'
-        ),
+        icon: bentoSvg(TIMELINE_ICONS.copy),
         color: 'var(--ok)',
         status: 'OK',
         tags: ['Clipboard', 'Uso'],
@@ -2571,7 +2590,7 @@ function renderDashboard() {
         meta: 'multi-motor',
         value: stats.chatMessagesSent,
         desc: 'Mensajes enviados al chat integrado (proveedores en la nube o servidor local).',
-        icon: bentoSvg('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
+        icon: bentoSvg(TIMELINE_ICONS.chat),
         color: 'var(--accent)',
         status: 'Multi-IA',
         statusCls: 'info',
@@ -2596,9 +2615,7 @@ function renderDashboard() {
         meta: 'PDF · Excel · Email',
         value: stats.totalExports,
         desc: 'Documentos exportados desde las fichas de prompt.',
-        icon: bentoSvg(
-          '<path d="M15 2H6a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/>'
-        ),
+        icon: bentoSvg(TIMELINE_ICONS.export),
         color: 'var(--accent-2)',
         status: 'Multi-formato',
         span2: true,
