@@ -1,8 +1,13 @@
 /* ============================================================
-   BIBLIOTECA DE PROMPS INDUSTRIALES — HMI CONTROL ROOM UI
-   Generated from SCSS modules. Edit source files in scss/ and
-   compile with: npx sass scss/styles.scss css/styles.css
+   BIBLIOTECA DE PROMPS INDUSTRIALES — «Índice de instrumentos»
+   Manifiesto SCSS. Orden canónico:
+   abstracts → base → themes → layout → components → pages →
+   responsive (SIEMPRE el último: gana la cascada móvil).
+   Compilar: npm run build:css
    ============================================================ */
+
+// ---- Abstracts (tokens) ----
+@use 'abstracts/tokens';
 
 // ---- Base ----
 @use 'base/reset';
@@ -16,7 +21,6 @@
 @use 'layout/commandbar';
 @use 'layout/main';
 @use 'layout/footer';
-@use 'layout/responsive';
 
 // ---- Components ----
 @use 'components/bento';
@@ -29,3 +33,6 @@
 @use 'components/sandbox';
 @use 'components/dashboard';
 @use 'components/app-preview';
+
+// ---- Responsive (el último: fix del bug de cascada P1) ----
+@use 'layout/responsive';
