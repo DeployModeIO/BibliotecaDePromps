@@ -1,36 +1,48 @@
-const CACHE_NAME = 'biblioteca-promps-v3.9';
+const CACHE_NAME = 'biblioteca-promps-v4.0';
 const ASSETS_TO_CACHE = [
+  // Páginas
   '/',
   '/index.html',
+  '/landing.html',
   '/test.html',
   '/generar-iconos.html',
+  // Estilos
   '/css/styles.css',
-  '/js/app.js',
-  '/js/ai-chat.js',
-  '/js/agent-tools.js',
-  '/js/store.js',
-  '/js/crypto.js',
-  '/js/usage-tracker.js',
+  '/css/highlight-github-dark.min.css',
+  // Manifiesto e iconos
+  '/manifest.json',
+  '/icons/icon-192.svg',
+  '/icons/icon-512.svg',
+  '/icons/icon-512.png',
+  // Scripts de index.html (mismo orden de carga)
+  '/js/vendor/dompurify.min.js',
+  '/js/vendor/highlight.min.js',
   '/js/lib-loader.js',
   '/js/prompts-data.js',
   '/js/prompts-data-extra.js',
   '/js/prompts-data-v2.js',
   '/js/prompts-data-fullstack.js',
+  '/js/prompts-data-industries.js',
+  '/js/prompts-data-community.js',
+  '/js/prompts-data-gpt4o.js',
+  '/js/prompts-simplified.js',
+  '/js/app-generator.js',
   '/js/platform-tests.js',
-  '/js/bpi-worker.js',
-  '/js/vendor/dompurify.min.js',
+  '/js/crypto.js',
+  '/js/usage-tracker.js',
   '/js/vendor/dexie.min.js',
+  '/js/store.js',
+  '/js/agent-tools.js',
+  '/js/ai-chat.js',
+  '/js/app.js',
+  // Worker (new Worker('js/bpi-worker.js') desde app.js)
+  '/js/bpi-worker.js',
+  // Vendor perezoso vía js/lib-loader.js (exportación offline)
+  '/js/vendor/marked.min.js',
+  '/js/vendor/jszip.min.js',
+  '/js/vendor/mermaid.min.js',
   '/js/vendor/jspdf.umd.min.js',
   '/js/vendor/xlsx.full.min.js',
-  '/js/vendor/highlight.min.js',
-  '/js/vendor/mermaid.min.js',
-  '/js/vendor/jszip.min.js',
-  '/js/vendor/marked.min.js',
-  '/css/highlight-github-dark.min.css',
-  '/manifest.json',
-  '/icons/icon-192.svg',
-  '/icons/icon-512.svg',
-  '/icons/icon-512.png',
 ];
 
 self.addEventListener('install', (event) => {
