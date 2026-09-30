@@ -28,7 +28,9 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="css/styles.css" />
+    <!-- La versión del query debe coincidir con el prefijo de versión de
+         APP_CACHE en sw.js y con su entrada de precache (nginx: immutable 1 año) -->
+    <link rel="stylesheet" href="css/styles.css?v=4.0" />
   </head>
   <body>
     <a class="l-skip" href="#principal">Saltar al contenido principal</a>

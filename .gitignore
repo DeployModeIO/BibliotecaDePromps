@@ -27,3 +27,7 @@ test-results/
 proyectos-agent/
 # Backups de reescritura de prompts
 backup_prompts_*/
+
+# Capturas de pantalla binarias (1,3 MB): fuera del repo; la utilidad se conserva
+capturas/*
+!capturas/generar.mjs

@@ -2,6 +2,7 @@
 Dockerfile
 .dockerignore
 node_modules/
+capturas/
 dist/
 .git/
 *.br

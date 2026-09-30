@@ -17,7 +17,16 @@ fs.rmSync(DIST, { recursive: true, force: true });
 fs.mkdirSync(DIST, { recursive: true });
 
 // Copy static assets (HTML, icons, manifest, sw, vendor)
-const staticFiles = ['index.html', 'test.html', 'generar-iconos.html', 'manifest.json', 'sw.js', 'README.md', 'CHANGELOG.md'];
+const staticFiles = [
+  'index.html',
+  'landing.html',
+  'test.html',
+  'generar-iconos.html',
+  'manifest.json',
+  'sw.js',
+  'README.md',
+  'CHANGELOG.md',
+];
 
 for (const f of staticFiles) {
   const src = path.join(ROOT, f);
@@ -68,6 +77,8 @@ fs.mkdirSync(jsDir, { recursive: true });
 
 // FIX: crypto.js, usage-tracker.js, bpi-worker.js y lib-loader.js faltaban en el
 // build anterior → 404 en producción y Web Worker roto.
+// FIX (rediseño v4.0): prompts-simplified.js y app-generator.js también faltaban
+// (los carga index.html) y landing.html no se emitía a dist/.
 const jsToMinify = [
   'app.js',
   'ai-chat.js',
@@ -78,6 +89,8 @@ const jsToMinify = [
   'usage-tracker.js',
   'bpi-worker.js',
   'lib-loader.js',
+  'prompts-simplified.js',
+  'app-generator.js',
 ];
 const jsToCopy = [
   'prompts-data.js',
