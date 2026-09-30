@@ -178,12 +178,22 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  overflow-x: auto;
-  padding-bottom: var(--space-1);
-  scrollbar-width: thin;
+  flex-wrap: wrap;
+}
 
-  &::-webkit-scrollbar {
-    height: 5px;
+/* En pantallas estrechas la tira pasa a scroll horizontal con
+   fundido en el borde derecho como afordancia de desplazamiento. */
+@media (width <= 1024px) {
+  .quick-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: var(--space-1);
+    scrollbar-width: thin;
+    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 32px), transparent 100%);
+
+    &::-webkit-scrollbar {
+      height: 5px;
+    }
   }
 }
 
@@ -309,6 +319,12 @@
   color: var(--txt-3);
   white-space: nowrap;
   margin-left: var(--space-1);
+}
+
+.sort-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .sort-select {

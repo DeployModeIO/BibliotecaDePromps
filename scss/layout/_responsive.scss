@@ -92,6 +92,27 @@
   }
 }
 
+@media (width <= 480px) {
+  .topbar-status {
+    width: 100%;
+    justify-content: center;
+    gap: var(--space-1);
+  }
+
+  .topbar-group {
+    gap: var(--space-1);
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .status-pill {
+    padding: var(--space-1) var(--space-2);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

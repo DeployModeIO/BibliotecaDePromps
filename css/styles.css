@@ -22,7 +22,7 @@
   --line-2: #35496b;
   --txt: #e8edf6;
   --txt-2: #a3b1c9;
-  --txt-3: #74839f;
+  --txt-3: #7b8aa7;
   --accent: #ffb020;
   --accent-2: #ffc95e;
   --accent-ink: #221a04;
@@ -304,7 +304,7 @@ summary:focus-visible,
   --line-2: #b9c6d6;
   --txt: #17202e;
   --txt-2: #49586e;
-  --txt-3: #5f7089;
+  --txt-3: #5a6b84;
   --accent: #ffb020;
   --accent-2: #e89b0a;
   --accent-ink: #221a04;
@@ -322,6 +322,14 @@ summary:focus-visible,
   --warn: #9a6200;
   --warn-text: #7a4e00;
   --warn-dim: rgb(154 98 0 / 12%);
+  --ind-oilgas: #8a6100;
+  --ind-mineria: #7c4a12;
+  --ind-desal: #0e6f8f;
+  --ind-energia: #7a6100;
+  --ind-automatizacion: #5b3fbf;
+  --ind-capacitacion: #0a6b49;
+  --ind-fullstack: #a03e14;
+  --ind-herramientas: #4a5a72;
   --neutral-bg: #dce4ee;
   --neutral-fg: #3d4c61;
   --elev-1: 0 1px 2px rgb(23 32 46 / 6%), 0 4px 12px rgb(23 32 46 / 8%);
@@ -779,14 +787,23 @@ summary:focus-visible,
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  overflow-x: auto;
-  padding-bottom: var(--space-1);
-  scrollbar-width: thin;
-}
-.quick-row::-webkit-scrollbar {
-  height: 5px;
+  flex-wrap: wrap;
 }
 
+/* En pantallas estrechas la tira pasa a scroll horizontal con
+   fundido en el borde derecho como afordancia de desplazamiento. */
+@media (width <= 1024px) {
+  .quick-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: var(--space-1);
+    scrollbar-width: thin;
+    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 32px), transparent 100%);
+  }
+  .quick-row::-webkit-scrollbar {
+    height: 5px;
+  }
+}
 .qchip {
   display: inline-flex;
   align-items: center;
@@ -892,6 +909,12 @@ summary:focus-visible,
   color: var(--txt-3);
   white-space: nowrap;
   margin-left: var(--space-1);
+}
+
+.sort-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .sort-select {
@@ -1660,6 +1683,13 @@ a.bento-item {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+}
+.palette-group-label svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+.palette-group-label {
   padding: var(--space-2) var(--space-3) var(--space-1);
   font-family: var(--f-body);
   font-size: var(--fs-2xs);
@@ -1696,6 +1726,10 @@ a.bento-item {
   place-items: center;
   color: var(--txt-3);
   flex-shrink: 0;
+}
+.prow-icon svg {
+  width: 16px;
+  height: 16px;
 }
 
 .prow-main {
@@ -4396,6 +4430,23 @@ a.b-card:hover {
   }
   .topbar-inner {
     padding: var(--space-3) var(--space-4);
+  }
+}
+@media (width <= 480px) {
+  .topbar-status {
+    width: 100%;
+    justify-content: center;
+    gap: var(--space-1);
+  }
+  .topbar-group {
+    gap: var(--space-1);
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .status-pill {
+    padding: var(--space-1) var(--space-2);
   }
 }
 @media (prefers-reduced-motion: reduce) {
