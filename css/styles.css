@@ -38,7 +38,6 @@
   --err-text: #ffa69b;
   --err-dim: rgb(255 122 107 / 12%);
   --warn: #ffb020;
-  --warn-text: #ffc24d;
   --warn-dim: rgb(255 176 32 / 14%);
   --neutral-bg: #263754;
   --neutral-fg: #c6d2e5;
@@ -320,7 +319,6 @@ summary:focus-visible,
   --err-text: #a93326;
   --err-dim: rgb(198 61 47 / 10%);
   --warn: #9a6200;
-  --warn-text: #7a4e00;
   --warn-dim: rgb(154 98 0 / 12%);
   --ind-oilgas: #8a6100;
   --ind-mineria: #7c4a12;
@@ -886,7 +884,7 @@ summary:focus-visible,
   background: var(--accent);
 }
 .chip[data-priority=media] .sq {
-  background: var(--ok);
+  background: var(--info);
 }
 .chip:hover {
   border-color: var(--line-2);
@@ -1341,6 +1339,9 @@ a.bento-item {
    PROMPT CARDS — fichas de índice PRM-XXX: vía de prioridad
    de 3px (crítica/roja, alta/ámbar, media/azul), ID en mono y
    CTA «VER PROMPT» siempre visible.
+   Tinta media = var(--info), sincronizada con los consumidores:
+   rails/ptags (aquí), _commandbar.scss (chips), _modal.scss
+   (stripe), _palette.scss (dots), _app-preview.scss.
    ============================================================ */
 .banner {
   position: relative;
@@ -3390,12 +3391,14 @@ mark,
   align-items: center;
   justify-content: center;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity var(--dur) var(--ease);
+  transition: opacity var(--dur) var(--ease), visibility var(--dur) var(--ease);
 }
 
 .dashboard-overlay.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
@@ -3608,12 +3611,14 @@ mark,
   gap: var(--space-4);
   z-index: var(--z-scrim);
   transform: translateY(100%);
-  transition: transform var(--dur-slow) var(--ease);
+  visibility: hidden;
+  transition: transform var(--dur-slow) var(--ease), visibility var(--dur-slow) var(--ease);
   box-shadow: var(--elev-2);
 }
 
 .install-banner.visible {
   transform: translateY(0);
+  visibility: visible;
 }
 
 .install-banner-icon {
@@ -4020,7 +4025,7 @@ a.l-card {
   }
 }
 .l-card-icon {
-  color: var(--ind, var(--accent));
+  color: var(--ind, var(--ind-herramientas));
 }
 .l-card-icon svg {
   width: 22px;
@@ -4075,11 +4080,11 @@ a.ind-card {
 
 @media (hover: hover) {
   a.ind-card:hover {
-    border-color: var(--ind, var(--accent));
+    border-color: var(--ind, var(--ind-herramientas));
   }
 }
 .ind-icon {
-  color: var(--ind, var(--accent));
+  color: var(--ind, var(--ind-herramientas));
 }
 .ind-icon svg {
   width: 22px;
@@ -4102,7 +4107,9 @@ a.ind-card {
   margin-top: var(--space-1);
 }
 
-/* matiz de industria: único punto de color de cada placa */
+/* matiz de industria: único punto de color de cada placa.
+   El mapeo canónico id→matiz vive en CAT_HUE (js/app.js);
+   estas clases .ind-* son su espejo para la landing. */
 .ind-oilgas {
   --ind: var(--ind-oilgas);
 }
@@ -4188,135 +4195,6 @@ a.ind-card {
     text-decoration: underline;
   }
 }
-/* ============================================================
-   LEGACY landing (.bento / .b-card / .b-status / .industries)
-   — misma piel «placa» por si el HTML reutiliza estas clases.
-   ============================================================ */
-.bento {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--space-4);
-}
-
-.b-card {
-  background: var(--bg-2);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: var(--space-5);
-  color: inherit;
-  text-decoration: none;
-  transition: border-color var(--dur) var(--ease);
-}
-
-a.b-card:hover {
-  border-color: var(--line-2);
-}
-
-.b-span2 {
-  grid-column: span 2;
-}
-
-.b-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  margin-bottom: var(--space-3);
-}
-
-.b-icon {
-  color: var(--ind, var(--accent));
-}
-.b-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-.b-status {
-  font-family: var(--f-mono);
-  font-size: var(--fs-2xs);
-  font-weight: 600;
-  line-height: 1;
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-xs);
-  background: var(--bg-3);
-  color: var(--txt-2);
-  white-space: nowrap;
-}
-
-.b-status-info {
-  background: var(--info-dim);
-  color: var(--info-text);
-}
-
-.b-status-warn {
-  background: var(--accent-dim);
-  color: var(--accent-text);
-}
-
-.b-status-live {
-  background: var(--ok-dim);
-  color: var(--ok-text);
-}
-
-.b-title {
-  font-family: var(--f-display);
-  font-size: var(--fs-lg);
-  font-weight: 600;
-}
-
-.b-meta {
-  font-family: var(--f-mono);
-  font-size: var(--fs-2xs);
-  color: var(--txt-3);
-}
-
-.b-desc {
-  font-size: var(--fs-sm);
-  line-height: var(--lh-read);
-  color: var(--txt-2);
-  margin-top: var(--space-2);
-}
-
-.b-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--line);
-}
-
-.b-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-}
-
-.b-tag {
-  font-family: var(--f-mono);
-  font-size: var(--fs-2xs);
-  padding: 0 var(--space-2);
-  border-radius: var(--radius-xs);
-  background: var(--bg-3);
-  color: var(--txt-3);
-}
-
-.b-cta {
-  font-family: var(--f-body);
-  font-size: var(--fs-2xs);
-  color: var(--accent-text);
-  white-space: nowrap;
-}
-
-/* contenedor legacy de industrias */
-.industries {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: var(--space-3);
-}
-
 /* ---- responsive landing ---- */
 @media (width <= 720px) {
   .l-nav {
@@ -4333,13 +4211,8 @@ a.b-card:hover {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-4) var(--space-3);
   }
-  .l-bento,
-  .bento,
-  .industries {
+  .l-bento {
     grid-template-columns: 1fr;
-  }
-  .b-span2 {
-    grid-column: auto;
   }
   .l-features,
   .l-industries {

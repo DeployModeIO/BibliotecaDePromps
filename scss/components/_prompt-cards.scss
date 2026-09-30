@@ -2,6 +2,9 @@
    PROMPT CARDS — fichas de índice PRM-XXX: vía de prioridad
    de 3px (crítica/roja, alta/ámbar, media/azul), ID en mono y
    CTA «VER PROMPT» siempre visible.
+   Tinta media = var(--info), sincronizada con los consumidores:
+   rails/ptags (aquí), _commandbar.scss (chips), _modal.scss
+   (stripe), _palette.scss (dots), _app-preview.scss.
    ============================================================ */
 
 .banner {

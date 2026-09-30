@@ -11,12 +11,16 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity var(--dur) var(--ease);
+  transition:
+    opacity var(--dur) var(--ease),
+    visibility var(--dur) var(--ease);
 }
 
 .dashboard-overlay.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
@@ -232,12 +236,16 @@
   gap: var(--space-4);
   z-index: var(--z-scrim);
   transform: translateY(100%);
-  transition: transform var(--dur-slow) var(--ease);
+  visibility: hidden;
+  transition:
+    transform var(--dur-slow) var(--ease),
+    visibility var(--dur-slow) var(--ease);
   box-shadow: var(--elev-2);
 }
 
 .install-banner.visible {
   transform: translateY(0);
+  visibility: visible;
 }
 
 .install-banner-icon {
